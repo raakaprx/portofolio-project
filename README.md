@@ -1,36 +1,157 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Developer Portfolio
 
-## Getting Started
+A modern and responsive personal portfolio built with **Next.js 15**, **TypeScript**, and **Tailwind CSS** to showcase my projects, technical skills, professional experience, and continuous learning journey as a Full Stack Web Developer.
 
-First, run the development server:
+This portfolio is designed not only as a personal website but also as a long-term project that will continuously evolve with new features and technologies.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## ✨ Overview
+
+This project serves as a central place where recruiters, hiring managers, and clients can explore my work, technical expertise, certifications, and development journey.
+
+Rather than displaying only completed projects, this portfolio highlights my growth—from beginner projects to enterprise-level applications.
+
+---
+
+## 🎯 Objectives
+
+- Showcase personal and professional projects
+- Demonstrate frontend and backend development skills
+- Present work experience and certifications
+- Track my growth as a software developer
+- Build a scalable portfolio for future expansion
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Framer Motion
+- Lucide React
+
+### Backend (Planned)
+
+- Next.js API Routes
+- Prisma ORM
+- Neon PostgreSQL
+
+### Authentication (Planned)
+
+- Auth.js
+
+### Storage (Planned)
+
+- Cloudinary
+
+### Deployment
+
+- Vercel
+
+---
+
+## 📂 Project Structure
+
+```text
+app/
+public/
+components/
+lib/
+hooks/
+types/
+utils/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> The project structure will continue to evolve as new features are added.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ✨ Current Features
 
-## Learn More
+- Responsive Landing Page
+- About Me Section
+- Skills Section
+- Experience Section
+- Featured Projects
+- Project Timeline
+- Certificates
+- Contact Information
+- Modern UI
+- Dark Mode
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Planned Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Portfolio CMS
 
-## Deploy on Vercel
+- Admin Dashboard
+- Authentication
+- Project Management (CRUD)
+- Experience Management
+- Certificate Management
+- Skills Management
+- Blog Management
+- Contact Inbox
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Database
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Prisma ORM
+- Neon PostgreSQL
+
+### Additional Features
+
+- Project Search
+- Category Filter
+- SEO Optimization
+- Analytics
+- Project Detail Pages
+- Image Upload
+- Markdown Blog
+
+---
+
+## 📈 Development Roadmap
+
+- [x] Initialize Next.js project
+- [ ] Design Landing Page
+- [ ] Hero Section
+- [ ] About Me
+- [ ] Skills
+- [ ] Experience
+- [ ] Featured Projects
+- [ ] Project Timeline
+- [ ] Certificates
+- [ ] Contact
+- [ ] Responsive Design
+- [ ] Animations
+- [ ] Prisma Integration
+- [ ] Neon Database
+- [ ] Authentication
+- [ ] Admin Dashboard
+- [ ] CMS Features
+- [ ] Deployment
+
+---
+
+## 👨‍💻 Author
+
+**Muhammad Raka Pradana**
+
+Information Systems Student
+
+Aspiring Full Stack Web Developer
+
+GitHub: https://github.com/raakaprx
+
+---
+
+## ⭐ Status
+
+This project is currently under active development and will continue to improve over time as I gain more experience and build new projects.
