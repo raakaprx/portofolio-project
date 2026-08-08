@@ -17,83 +17,63 @@ interface ProjectItem {
 
 const ALL_PROJECTS: ProjectItem[] = [
   {
-    title: "Apex Warehouse & Inventory ERP",
-    description: "Enterprise-grade warehouse management with multi-site inventory node synchronization, granular RBAC, and WebSockets.",
+    title: "Smart Material Management System (SMMS)",
+    description: "Sistem full-stack web untuk digitalisasi seluruh alur kerja pengajuan material, persetujuan, dan pengadaan di PT. Sundaya Indonesia.",
     year: "2026",
     status: "Academic",
-    techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL", "WebSockets"],
-    github: "https://github.com",
-    demo: "https://example.com",
+    techStack: ["React.js", "Node.js", "Express.js", "MySQL", "Socket.IO", "Docker", "JWT"],
+    github: "https://github.com/raakaprx/warehouse-sundaya-v2",
+    demo: "https://github.com/raakaprx/warehouse-sundaya-v2",
     category: "Full Stack"
   },
   {
-    title: "Aura Machine Learning Insights",
-    description: "Analytics and predictive forecasting dashboard utilizing BigQuery ML forecasting models and ELT pipelines.",
+    title: "Plastani",
+    description: "Platform E-Commerce pertanian untuk membantu produsen lokal dan petani menyalurkan hasil produk mereka secara online dengan integrasi WhatsApp.",
     year: "2025",
+    status: "Freelance",
+    techStack: ["PHP", "Laravel", "MySQL", "Eloquent", "Bootstrap", "Laravel Auth"],
+    github: "https://github.com/raakaprx/plastani",
+    demo: "https://github.com/raakaprx/plastani",
+    category: "Full Stack"
+  },
+  {
+    title: "JajanSepy",
+    description: "Platform e-commerce khusus untuk single brand UMKM yang terintegrasi langsung dengan WhatsApp Admin API untuk transaksi yang ringkas.",
+    year: "2025",
+    status: "Freelance",
+    techStack: ["PHP", "Laravel", "MySQL", "Eloquent", "Bootstrap", "Laravel Auth", "WhatsApp API"],
+    github: "https://github.com/raakaprx/JajanSepy",
+    demo: "https://github.com/raakaprx/JajanSepy",
+    category: "Full Stack"
+  },
+  {
+    title: "Vehicle Price Prediction Model",
+    description: "Model regresi linier machine learning menggunakan Python untuk memprediksi harga kendaraan dengan akurasi 87% berdasarkan fitur spesifik.",
+    year: "2024",
     status: "Personal",
-    techStack: ["Next.js", "BigQuery ML", "Tailwind CSS", "Recharts", "TypeScript"],
-    github: "https://github.com",
-    demo: "https://example.com",
+    techStack: ["Python", "Pandas", "NumPy", "Scikit-learn", "Matplotlib"],
+    github: "https://github.com/raakaprx/vehicle-price-prediction",
+    demo: "https://github.com/raakaprx/vehicle-price-prediction",
     category: "Data Science"
   },
   {
-    title: "Local Retail POS System",
-    description: "Point of Sale (POS) client application focusing on quick local state storage and offline synchronization features.",
-    year: "2024",
-    status: "Freelance",
-    techStack: ["React", "Node.js", "MongoDB", "Express", "Tailwind CSS"],
-    github: "https://github.com",
-    demo: "https://example.com",
-    category: "Full Stack"
-  },
-  {
-    title: "Enterprise Grading Portal",
-    description: "Custom assignments portal for university laboratory courses featuring secure authentication states and CSV reporting.",
-    year: "2024",
-    status: "Academic",
-    techStack: ["Next.js", "TypeScript", "PostgreSQL", "Tailwind CSS"],
-    github: "https://github.com",
-    demo: "https://example.com",
-    category: "Full Stack"
-  },
-  {
-    title: "Industrial Stock Manager",
-    description: "Multi-parameter client-side search dashboard for mechanical hardware stocks with quick CSV exports.",
-    year: "2024",
-    status: "Personal",
-    techStack: ["React", "Tailwind CSS", "TypeScript"],
-    github: "https://github.com",
-    demo: "https://example.com",
-    category: "Frontend"
-  },
-  {
-    title: "SaaS Platform Concept",
-    description: "Modern landing page design showcasing sleek layout transitions, custom typography, and backdrop-filter panels.",
+    title: "Midtrans Payment Gateway Integration",
+    description: "Integrasi sistem pembayaran aman menggunakan Midtrans dengan callback handling, logging transaksi detail, dan penanganan error yang kuat.",
     year: "2023",
     status: "Personal",
-    techStack: ["HTML5", "CSS3", "JavaScript"],
-    github: "https://github.com",
-    demo: "https://example.com",
-    category: "Frontend"
+    techStack: ["PHP", "Laravel", "Midtrans", "MySQL", "REST API"],
+    github: "https://github.com/raakaprx/midtrans-integration",
+    demo: "https://github.com/raakaprx/midtrans-integration",
+    category: "Backend"
   },
   {
-    title: "Interactive Calculator",
-    description: "Neomorphic grid design interface with multi-history calculation caches using pure JavaScript events.",
+    title: "Renbook",
+    description: "Platform penyewaan buku online dengan fitur katalog terstruktur, manajemen penyewaan, pencarian buku, dan analisis kebutuhan sistem dengan UML.",
     year: "2023",
     status: "Academic",
-    techStack: ["HTML5", "CSS3", "JavaScript"],
-    github: "https://github.com",
-    demo: "https://example.com",
-    category: "Frontend"
-  },
-  {
-    title: "Local E-Commerce Portal",
-    description: "Complete localized shopping cart website with integrated payment checkout options and dashboard pages.",
-    year: "2024",
-    status: "Freelance",
-    techStack: ["React", "Express", "MongoDB", "Tailwind CSS"],
-    github: "https://github.com",
-    demo: "https://example.com",
+    techStack: ["PHP", "Laravel", "MySQL", "Eloquent", "Laravel Auth"],
+    github: "https://github.com/raakaprx/renbook",
+    demo: "https://github.com/raakaprx/renbook",
     category: "Full Stack"
   }
 ];
@@ -212,15 +192,14 @@ export default function Projects() {
                 <div>
                   <div className="flex items-center justify-between gap-4 mb-4">
                     <span className="text-[10px] font-mono text-zinc-500">{project.year}</span>
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium border ${
-                      project.status === "Freelance"
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium border ${project.status === "Freelance"
                         ? "bg-purple-950/20 border-purple-800/40 text-purple-400"
                         : project.status === "Academic"
-                        ? "bg-blue-950/20 border-blue-800/40 text-blue-400"
-                        : project.status === "Internship"
-                        ? "bg-emerald-950/20 border-emerald-800/40 text-emerald-400"
-                        : "bg-zinc-900 border-zinc-800 text-zinc-400"
-                    }`}>
+                          ? "bg-blue-950/20 border-blue-800/40 text-blue-400"
+                          : project.status === "Internship"
+                            ? "bg-emerald-950/20 border-emerald-800/40 text-emerald-400"
+                            : "bg-zinc-900 border-zinc-800 text-zinc-400"
+                      }`}>
                       {project.status}
                     </span>
                   </div>

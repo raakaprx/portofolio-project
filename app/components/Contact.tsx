@@ -15,29 +15,29 @@ export default function Contact() {
   const CONTACT_LINKS = [
     {
       label: "Email",
-      value: "hello@raka.dev",
-      href: "mailto:hello@raka.dev",
+      value: "rakapradana.work@gmail.com",
+      href: "mailto:rakapradana.work@gmail.com",
       icon: Mail,
       color: "hover:text-red-400"
     },
     {
       label: "LinkedIn",
-      value: "linkedin.com/in/raka",
-      href: "https://linkedin.com",
+      value: "linkedin.com/in/rakaprx",
+      href: "https://linkedin.com/in/rakaprx",
       icon: LinkedinIcon,
       color: "hover:text-blue-400"
     },
     {
       label: "GitHub",
-      value: "github.com/raka",
-      href: "https://github.com",
+      value: "github.com/raakaprx",
+      href: "https://github.com/raakaprx",
       icon: GithubIcon,
       color: "hover:text-white"
     },
     {
       label: "WhatsApp",
-      value: "+62 812 3456 7890",
-      href: "https://wa.me/6281234567890",
+      value: "+62 851-5600-0636",
+      href: "https://wa.me/6285156000636",
       icon: MessageSquare,
       color: "hover:text-emerald-400"
     }

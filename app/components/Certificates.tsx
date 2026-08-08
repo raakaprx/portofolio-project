@@ -13,25 +13,11 @@ interface Certificate {
 
 const CERTIFICATES: Certificate[] = [
   {
-    title: "AWS Certified Cloud Practitioner",
-    issuer: "Amazon Web Services (AWS)",
-    date: "Dec 2025",
-    credentialUrl: "https://aws.amazon.com",
-    skillsVerified: ["Cloud Computing", "AWS Core Services", "Cloud Security"]
-  },
-  {
-    title: "Meta Full-Stack Developer Professional Certificate",
-    issuer: "Meta (Coursera)",
-    date: "Jul 2024",
-    credentialUrl: "https://coursera.org",
-    skillsVerified: ["React", "Django", "Database Systems", "API Design"]
-  },
-  {
-    title: "MongoDB Certified Associate Developer",
-    issuer: "MongoDB",
-    date: "Mar 2025",
-    credentialUrl: "https://mongodb.com",
-    skillsVerified: ["NoSQL Databases", "Aggregation Pipeline", "Data Modeling"]
+    title: "Sertifikat Kompetensi - Pengembang Web Bersertifikat (CWDev)",
+    issuer: "Badan Nasional Sertifikasi Profesi (BNSP)",
+    date: "Jun 2026",
+    credentialUrl: "https://bnsp.go.id",
+    skillsVerified: ["Pengembangan Perangkat Lunak", "Pemrograman", "Web Development"]
   }
 ];
 

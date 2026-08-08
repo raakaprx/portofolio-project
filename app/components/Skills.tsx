@@ -5,10 +5,7 @@ import {
   Code2,
   Server,
   Database,
-  Layers,
   Wrench,
-  Cloud,
-  Terminal,
   Cpu
 } from "lucide-react";
 
@@ -25,73 +22,51 @@ interface SkillGroup {
 
 const SKILL_GROUPS: SkillGroup[] = [
   {
-    category: "Programming Languages",
+    category: "Languages & Frameworks",
     icon: Code2,
     skills: [
-      { name: "TypeScript", level: 90 },
-      { name: "JavaScript", level: 95 },
+      { name: "JavaScript / TypeScript", level: 92 },
+      { name: "PHP", level: 85 },
+      { name: "React.js & Next.js", level: 90 },
       { name: "Python", level: 75 },
-      { name: "SQL", level: 85 },
     ],
   },
   {
-    category: "Frontend",
+    category: "Frontend Stack",
     icon: Cpu,
     skills: [
-      { name: "React", level: 92 },
-      { name: "Next.js", level: 90 },
       { name: "HTML5 & CSS3", level: 95 },
-      { name: "Vue.js", level: 60 },
+      { name: "Tailwind CSS", level: 92 },
+      { name: "Bootstrap", level: 85 },
+      { name: "Flutter", level: 70 },
     ],
   },
   {
-    category: "Backend",
+    category: "Backend Stack",
     icon: Server,
     skills: [
-      { name: "Node.js (Express)", level: 88 },
-      { name: "NestJS", level: 80 },
-      { name: "REST APIs", level: 90 },
-      { name: "GraphQL", level: 70 },
+      { name: "Node.js & Express.js", level: 88 },
+      { name: "Laravel", level: 85 },
+      { name: "REST APIs & Socket.IO", level: 90 },
     ],
   },
   {
-    category: "Database",
+    category: "Databases & Security",
     icon: Database,
     skills: [
-      { name: "PostgreSQL", level: 85 },
-      { name: "MongoDB", level: 80 },
-      { name: "Redis", level: 70 },
-      { name: "Prisma", level: 88 },
+      { name: "MySQL & PostgreSQL", level: 88 },
+      { name: "Database Modeling", level: 85 },
+      { name: "JWT & RBAC", level: 90 },
     ],
   },
   {
-    category: "UI Framework",
-    icon: Layers,
-    skills: [
-      { name: "Tailwind CSS", level: 95 },
-      { name: "shadcn/ui", level: 92 },
-      { name: "Framer Motion", level: 85 },
-      { name: "Material UI", level: 75 },
-    ],
-  },
-  {
-    category: "DevOps",
-    icon: Cloud,
-    skills: [
-      { name: "Docker", level: 75 },
-      { name: "Vercel / Netlify", level: 90 },
-      { name: "GitHub Actions", level: 70 },
-      { name: "AWS (S3/EC2)", level: 65 },
-    ],
-  },
-  {
-    category: "Tools & Others",
+    category: "Tools & Platforms",
     icon: Wrench,
     skills: [
       { name: "Git & GitHub", level: 92 },
-      { name: "Postman", level: 90 },
-      { name: "Linux CLI", level: 80 },
-      { name: "Figma", level: 75 },
+      { name: "Docker", level: 80 },
+      { name: "Postman & Figma", level: 85 },
+      { name: "Vercel & Supabase", level: 88 },
     ],
   },
 ];

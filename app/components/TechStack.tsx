@@ -21,8 +21,9 @@ const TECH_CATALOG: TechCategory[] = [
     items: [
       { name: "TypeScript", isStrong: true },
       { name: "JavaScript", isStrong: true },
+      { name: "PHP", isStrong: true },
       { name: "Python" },
-      { name: "HTML5 / CSS3", isStrong: true },
+      { name: "HTML / CSS", isStrong: true },
       { name: "SQL", isStrong: true }
     ]
   },
@@ -30,41 +31,45 @@ const TECH_CATALOG: TechCategory[] = [
     title: "Frontend Stack",
     icon: Laptop,
     items: [
-      { name: "React", isStrong: true },
+      { name: "React.js", isStrong: true },
       { name: "Next.js", isStrong: true },
-      { name: "Framer Motion", isStrong: true },
       { name: "Tailwind CSS", isStrong: true },
-      { name: "shadcn/ui", isStrong: true }
+      { name: "Bootstrap" },
+      { name: "Flutter" }
     ]
   },
   {
     title: "Backend Stack",
     icon: Cpu,
     items: [
-      { name: "Node.js (Express)", isStrong: true },
-      { name: "NestJS", isStrong: true },
+      { name: "Node.js", isStrong: true },
+      { name: "Express.js", isStrong: true },
+      { name: "Laravel", isStrong: true },
       { name: "REST APIs", isStrong: true },
-      { name: "GraphQL" }
+      { name: "Socket.IO" }
     ]
   },
   {
-    title: "Databases & ORMs",
+    title: "Databases & Security",
     icon: Database,
     items: [
+      { name: "MySQL", isStrong: true },
       { name: "PostgreSQL", isStrong: true },
-      { name: "MongoDB", isStrong: true },
-      { name: "Prisma ORM", isStrong: true },
-      { name: "Redis" }
+      { name: "Database Modeling" },
+      { name: "JWT Authentication", isStrong: true },
+      { name: "RBAC" }
     ]
   },
   {
-    title: "DevOps & Cloud",
+    title: "Tools & DevOps",
     icon: HardDrive,
     items: [
+      { name: "Git & GitHub", isStrong: true },
       { name: "Docker", isStrong: true },
-      { name: "GitHub Actions" },
-      { name: "Vercel / Netlify", isStrong: true },
-      { name: "AWS S3 / EC2" }
+      { name: "Postman" },
+      { name: "Figma" },
+      { name: "Vercel", isStrong: true },
+      { name: "Supabase" }
     ]
   }
 ];

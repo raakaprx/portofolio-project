@@ -16,76 +16,80 @@ interface Project {
 
 const FEATURED_PROJECTS: Project[] = [
   {
-    title: "Apex Warehouse & Inventory ERP",
-    description: "Enterprise-grade warehouse management system designed to handle real-time inventory counts, automated low-stock warnings, and comprehensive role-based access control.",
+    title: "Smart Material Management System (SMMS)",
+    description: "Sistem full-stack berbasis web untuk digitalisasi seluruh proses pengajuan material, persetujuan, pemantauan stok, dan alur kerja pengadaan untuk PT. Sundaya Indonesia.",
     details: [
-      "Role-Based Access Control (RBAC) with detailed user permission configurations.",
-      "Real-time data synchronization using persistent WebSockets.",
-      "Optimized PostgreSQL queries for rapid analytics aggregation.",
-      "Auto-alert notification triggers for item expiration and low stock thresholds."
+      "Menggantikan proses pencatatan manual berbasis Excel dan WhatsApp menjadi sistem terpusat.",
+      "Membangun frontend interaktif menggunakan React.js dan backend RESTful dengan Node.js & Express.js.",
+      "Mengintegrasikan notifikasi real-time dan dashboard pemantauan menggunakan Socket.IO.",
+      "Mengimplementasikan kontrol akses berbasis peran (RBAC) untuk 5 peran pengguna berbeda."
     ],
-    techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL", "WebSockets"],
-    github: "https://github.com",
-    demo: "https://example.com",
+    techStack: ["React.js", "Node.js", "Express.js", "MySQL", "Socket.IO", "Docker", "JWT"],
+    github: "https://github.com/raakaprx/warehouse-sundaya-v2/tree/main",
+    demo: "https://github.com/raakaprx/warehouse-sundaya-v2/tree/main",
     featured: true,
     visualPlaceholder: () => (
       <div className="w-full h-full bg-zinc-950 border border-zinc-800 rounded-xl relative overflow-hidden flex flex-col justify-between p-4 font-mono text-[9px] text-zinc-500">
         <div className="flex items-center justify-between border-b border-zinc-900 pb-2">
-          <span className="text-zinc-400 font-bold">INVENTORY MANAGER v1.0</span>
-          <span className="px-2 py-0.5 rounded bg-emerald-950 border border-emerald-800 text-emerald-400">ACTIVE CONNECTION</span>
+          <span className="text-zinc-400 font-bold">SMMS DASHBOARD v1.0</span>
+          <span className="px-2 py-0.5 rounded bg-emerald-950 border border-emerald-800 text-emerald-400">ONLINE</span>
         </div>
         <div className="flex-1 py-4 flex flex-col gap-2">
           <div className="flex justify-between items-center bg-zinc-900/40 p-2 border border-zinc-800/40 rounded">
-            <span>[SKU-109] Industrial Steel Coil</span>
-            <span className="text-white font-bold">428 Units</span>
+            <span>[REQ-8902] Copper Winding Wire</span>
+            <span className="text-emerald-400 font-bold">APPROVED</span>
           </div>
           <div className="flex justify-between items-center bg-zinc-900/40 p-2 border border-zinc-800/40 rounded">
-            <span>[SKU-583] Brass Hydraulic Pipe</span>
-            <span className="text-amber-500 font-bold">12 Units (Low Stock)</span>
+            <span>[REQ-8903] LED Driver Board</span>
+            <span className="text-amber-500 font-bold">PENDING APPROVAL</span>
           </div>
           <div className="flex justify-between items-center bg-zinc-900/40 p-2 border border-zinc-800/40 rounded">
-            <span>[SKU-940] High Torque Rotor Motor</span>
-            <span className="text-white font-bold">103 Units</span>
+            <span>[REQ-8904] Aluminum Case</span>
+            <span className="text-white font-bold">IN TRANSIT</span>
           </div>
         </div>
-        <div className="text-[8px] text-zinc-600 flex justify-between">
-          <span>Updates: 2m ago</span>
-          <span>Queries: 0.04s</span>
+        <div className="text-[8px] text-zinc-650 flex justify-between">
+          <span>Active Session: Admin</span>
+          <span>Socket: CONNECTED</span>
         </div>
       </div>
     )
   },
   {
-    title: "Aura Machine Learning Insights",
-    description: "A machine learning and predictive forecasting dashboard utilizing BigQuery ML models. Provides sales predictions, anomaly detection, and data trend visualizations.",
+    title: "Plastani",
+    description: "Platform E-Commerce yang dirancang khusus untuk membantu petani dan produsen lokal (UMKM) dalam memasarkan dan menyalurkan hasil produk mereka secara online.",
     details: [
-      "Integrated BigQuery SQL commands with custom ML.FORECAST models.",
-      "Interactive data charting with precise interactive hover states.",
-      "Automated hourly ELT pipelines pulling from external cloud object storage buckets."
+      "Menyediakan fitur katalog produk terorganisir, pencarian efektif, dan detail produk lengkap.",
+      "Mengintegrasikan komunikasi langsung melalui WhatsApp API untuk menghubungkan pembeli dan penjual secara seamless.",
+      "Membangun sistem administrasi komprehensif untuk manajemen produk, kategori, artikel, dan analitik transaksi."
     ],
-    techStack: ["Next.js", "BigQuery ML", "Tailwind CSS", "Recharts", "TypeScript"],
-    github: "https://github.com",
-    demo: "https://example.com",
+    techStack: ["PHP", "Laravel", "MySQL", "Eloquent", "Bootstrap", "Laravel Auth"],
+    github: "https://github.com/raakaprx/plastani",
+    demo: "https://github.com/raakaprx/plastani",
     featured: true,
     visualPlaceholder: () => (
       <div className="w-full h-full bg-zinc-950 border border-zinc-800 rounded-xl relative overflow-hidden flex flex-col justify-between p-4 font-mono text-[9px] text-zinc-500">
         <div className="flex items-center justify-between border-b border-zinc-900 pb-2">
-          <span className="text-zinc-400 font-bold">FORECASTING PIPELINE</span>
-          <span className="px-2 py-0.5 rounded bg-blue-950 border border-blue-800 text-blue-400">ML ENGINE READY</span>
+          <span className="text-zinc-400 font-bold">PLASTANI E-COMMERCE</span>
+          <span className="px-2 py-0.5 rounded bg-blue-950 border border-blue-800 text-blue-400">ADMIN PORTAL</span>
         </div>
-        <div className="flex-1 py-4 flex items-end gap-1.5 justify-between">
-          <div className="w-6 bg-zinc-900 border border-zinc-800 h-10 rounded-sm" />
-          <div className="w-6 bg-zinc-900 border border-zinc-800 h-16 rounded-sm" />
-          <div className="w-6 bg-zinc-900 border border-zinc-800 h-28 rounded-sm" />
-          <div className="w-6 bg-zinc-900 border border-zinc-800 h-24 rounded-sm" />
-          <div className="w-6 bg-white/20 border border-zinc-700 h-36 rounded-sm relative">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-white animate-pulse" />
+        <div className="flex-1 py-4 flex flex-col gap-2">
+          <div className="flex justify-between items-center bg-zinc-900/40 p-2 border border-zinc-800/40 rounded">
+            <span>Organik Red Rice (5kg)</span>
+            <span className="text-white font-bold">Rp 75,000</span>
           </div>
-          <div className="w-6 bg-white/30 border border-zinc-700 h-44 rounded-sm" />
+          <div className="flex justify-between items-center bg-zinc-900/40 p-2 border border-zinc-800/40 rounded">
+            <span>Fresh Potatoes (1kg)</span>
+            <span className="text-white font-bold">Rp 18,000</span>
+          </div>
+          <div className="flex justify-between items-center bg-zinc-900/40 p-2 border border-zinc-800/40 rounded">
+            <span>Fresh Tomatoes (1kg)</span>
+            <span className="text-white font-bold">Rp 12,000</span>
+          </div>
         </div>
-        <div className="text-[8px] text-zinc-600 flex justify-between">
-          <span>Target: Q4 Sales</span>
-          <span>Confidence: 98.4%</span>
+        <div className="text-[8px] text-zinc-650 flex justify-between">
+          <span>Integrated: WhatsApp API</span>
+          <span>Transactions: Active</span>
         </div>
       </div>
     )

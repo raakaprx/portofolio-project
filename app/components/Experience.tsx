@@ -14,54 +14,37 @@ interface ExperienceItem {
 
 const EXPERIENCES: ExperienceItem[] = [
   {
-    company: "TechCorp Indonesia",
-    role: "Full Stack Developer Intern",
-    duration: "Jun 2025 - Sep 2025",
+    company: "PT. Sundaya",
+    role: "Frontend Developer Intern",
+    duration: "Jan – Mar 2025",
     type: "Internship",
     responsibilities: [
-      "Assisted in refactoring legacy React frontends into modern Next.js 14 applications.",
-      "Developed secure serverless API endpoints using Node.js and PostgreSQL/Prisma.",
-      "Optimized page load speeds by 30% through lazy loading, image optimization, and bundle splitting.",
-      "Wrote clean unit and integration tests to ensure reliable feature deployment."
+      "Mengembangkan dan merancang responsive warehouse management web application yang mendukung 50+ concurrent users di seluruh site distribusi.",
+      "Membangun reusable React.js components dengan optimized state management, serta mengimplementasikan lazy loading dan code-splitting untuk mengurangi page load times hingga 40%.",
+      "Mengintegrasikan frontend dengan REST APIs untuk mengaktifkan pelacakan inventaris real-time, mengurangi kesalahan entri data manual hingga 85%.",
+      "Berkolaborasi dengan stakeholder gudang untuk merancang UI/UX yang intuitif demi mencapai tingkat adopsi pengguna 95%."
     ],
-    technologies: ["Next.js", "React", "TypeScript", "Node.js", "Prisma", "PostgreSQL"],
+    technologies: ["React.js", "JavaScript", "HTML5", "CSS3", "REST APIs"],
   },
   {
-    company: "Self-Employed",
-    role: "Freelance Web Developer",
-    duration: "Jan 2024 - Present",
-    type: "Freelance",
-    responsibilities: [
-      "Designed and deployed customized E-Commerce and portfolio websites for local small businesses.",
-      "Integrated secure payment gateways (Midtrans/Stripe) and automated email notifications.",
-      "Consulted clients on SEO best practices and responsive layout designs.",
-      "Maintained 100% uptime by deploying static sites on Vercel and API servers on Docker/Render."
-    ],
-    technologies: ["React", "Tailwind CSS", "MongoDB", "Express", "Node.js", "Vercel"],
-  },
-  {
-    company: "University Information Systems Lab",
-    role: "Lead Lab Assistant & Developer",
-    duration: "Aug 2024 - Present",
+    company: "Campus Election Committee (PEMIRA)",
+    role: "Public Relations Staff",
+    duration: "2024",
     type: "Organization",
     responsibilities: [
-      "Mentored junior students in Database Management Systems and Web Development courses.",
-      "Co-designed the university's student assignment grading portal dashboard.",
-      "Implemented a secure role-based access control (RBAC) system for students and instructors."
+      "Berkoordinasi dalam mengorganisir stakeholder communication untuk kampanye student election dengan strategi komunikasi yang efektif dan responsif terhadap berbagai stakeholder."
     ],
-    technologies: ["TypeScript", "Next.js", "PostgreSQL", "Tailwind CSS", "Git"],
+    technologies: ["Communication", "Stakeholder Management", "Public Relations"],
   },
   {
-    company: "Warehouse ERP System Project",
-    role: "Lead Full Stack Architect",
-    duration: "Oct 2025 - Jan 2026",
-    type: "Academic",
+    company: "Transformation The Nation",
+    role: "Fundraising Division",
+    duration: "2023",
+    type: "Organization",
     responsibilities: [
-      "Architected the database schema using Prisma ORM with PostgreSQL.",
-      "Implemented real-time inventory count tracking using WebSockets.",
-      "Created an auto-alert notification system for low-stock warnings."
+      "Mengembangkan donor engagement strategies yang berhasil meningkatkan pencapaian target fundraising sebesar 30% melalui strategi komunikasi yang strategic, relationship building yang efektif, dan proposal development yang compelling."
     ],
-    technologies: ["Next.js", "Prisma", "PostgreSQL", "Tailwind CSS", "WebSockets"],
+    technologies: ["Fundraising", "Strategic Communication", "Proposal Development"],
   }
 ];
 

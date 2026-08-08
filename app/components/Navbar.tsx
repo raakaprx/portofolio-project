@@ -9,7 +9,7 @@ const NAV_ITEMS = [
   { label: "About", href: "#about" },
   { label: "Skills", href: "#skills" },
   { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#featured" },
+  { label: "Projects", href: "#projects" },
   { label: "Journey", href: "#journey" },
   { label: "Certificates", href: "#certificates" },
   { label: "Contact", href: "#contact" },
@@ -67,7 +67,7 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-1 bg-zinc-900/40 border border-zinc-800/50 rounded-full px-2 py-1 backdrop-blur-sm">
           {NAV_ITEMS.map((item) => {
             const id = item.href.substring(1);
-            const isActive = activeSection === id || (id === "featured" && activeSection === "projects");
+            const isActive = activeSection === id || (id === "projects" && activeSection === "projects");
             return (
               <a
                 key={item.href}

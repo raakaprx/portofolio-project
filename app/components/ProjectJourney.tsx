@@ -15,35 +15,32 @@ interface JourneyYear {
 const JOURNEY_STEPS: JourneyYear[] = [
   {
     year: "2023",
-    focus: "Foundational Web & Static Sites",
+    focus: "Foundational Web & MVC Platforms",
     projects: [
-      { title: "Calculator App", details: "Clean operations logic and interactive CSS grid layout." },
-      { title: "SaaS Landing Page Mockup", details: "Responsive layouts built with pure semantic HTML & CSS." },
-      { title: "Interactive Todo Web App", details: "Local storage persistence and active/completed filter states." }
+      { title: "Renbook Platform", details: "Aplikasi penyewaan buku online dengan analisis UML yang komprehensif." },
+      { title: "Midtrans Payment Integration", details: "Integrasi payment gateway aman dengan callback handling yang andal." }
     ]
   },
   {
     year: "2024",
-    focus: "Single Page React Architectures",
+    focus: "Data Science & Machine Learning",
     projects: [
-      { title: "Developer Analytics Dashboard", details: "Clean data parsing from external webhooks using React states." },
-      { title: "Retail Inventory Tracker", details: "Client-side search filters, data forms, and CSV exporting." },
-      { title: "Point of Sale (POS) Client UI", details: "Fast calculations, item cart, and offline storage synchronization." }
+      { title: "Vehicle Price Prediction Model", details: "Model regresi linear Python untuk prediksi harga kendaraan dengan akurasi 87%." }
     ]
   },
   {
     year: "2025",
-    focus: "Advanced Data Systems & AI Integrations",
+    focus: "Dynamic UMKM E-Commerce Architectures",
     projects: [
-      { title: "Predictive Sales Forecasting", details: "BigQuery ML models forecasting quarterly target goals." },
-      { title: "Clinical Trial Analytics Engine", details: "APIv2 data query tools extracting disease constraints and trial matches." }
+      { title: "Plastani", details: "Platform E-Commerce multi-seller untuk penyaluran hasil tani lokal terintegrasi WhatsApp." },
+      { title: "JajanSepy", details: "E-commerce khusus single brand UMKM dengan alur transaksi WhatsApp yang ringkas." }
     ]
   },
   {
     year: "2026",
-    focus: "Enterprise Full Stack Systems",
+    focus: "Enterprise Material Management Systems",
     projects: [
-      { title: "Apex Warehouse & Inventory ERP", details: "Multi-site inventory nodes, instant WebSockets syncing, granular RBAC permissions, and automated cron low-stock warning triggers." }
+      { title: "Smart Material Management System", details: "Digitalisasi alur kerja persetujuan dan pengadaan material di PT. Sundaya dengan Socket.IO real-time dashboard." }
     ]
   }
 ];

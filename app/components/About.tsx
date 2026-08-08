@@ -43,20 +43,20 @@ export default function About() {
                 My Journey
               </h3>
               <p className="text-zinc-400 leading-relaxed mb-6">
-                I am a passionate Full Stack Web Developer and an Information Systems student. My journey in tech started with a curiosity about how things work on the internet, which quickly evolved into a dedicated career path. I enjoy bridging the gap between elegant design and complex system architecture.
+                I am a passionate Full-Stack Web Developer and an Informatics student at Telkom University. My journey in technology is driven by a deep curiosity for system design and a focus on developing scalable frontend and backend web applications. I enjoy building efficient systems, integrating AI solutions, and constantly adapting to cutting-edge technologies.
               </p>
               <p className="text-zinc-400 leading-relaxed">
-                Whether designing a minimal frontend layout or architecting database systems, I prioritize scalability, reliability, and smooth user experiences. I focus on modern frameworks such as Next.js, React, and Node.js.
+                With academic training in Software Engineering, Database Systems, OOP, and System Analysis & Design, I prioritize structural reliability, clean code, and intuitive user experiences.
               </p>
             </div>
-            
+
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 mt-8 pt-8 border-t border-zinc-800/60">
               <div>
-                <p className="text-3xl font-extrabold text-white">4+</p>
+                <p className="text-3xl font-extrabold text-white">3+</p>
                 <p className="text-xs font-mono text-zinc-500 uppercase mt-1">Years of Learning</p>
               </div>
               <div>
-                <p className="text-3xl font-extrabold text-white">20+</p>
+                <p className="text-3xl font-extrabold text-white">6+</p>
                 <p className="text-xs font-mono text-zinc-500 uppercase mt-1">Projects Built</p>
               </div>
               <div>
@@ -83,9 +83,10 @@ export default function About() {
                 <h4 className="font-semibold text-white">Education</h4>
               </div>
               <div>
-                <p className="font-medium text-sm text-zinc-300">B.S. Information Systems</p>
-                <p className="text-xs text-zinc-500 mt-0.5">Focus on Enterprise Architecture & Databases</p>
-                <p className="text-xs text-zinc-600 mt-2">Expected Graduation: 2027</p>
+                <p className="font-medium text-sm text-zinc-300">S1 Sistem Informasi</p>
+                <p className="text-xs text-zinc-500 mt-0.5">Telkom University</p>
+                <p className="text-xs text-zinc-650 mt-1">GPA: 3.75/4.00</p>
+                <p className="text-xs text-zinc-600 mt-2">Sep 2022 – Sekarang</p>
               </div>
             </motion.div>
 
@@ -104,7 +105,7 @@ export default function About() {
                 <h4 className="font-semibold text-white">Career Objective</h4>
               </div>
               <p className="text-sm text-zinc-400 leading-relaxed">
-                To build next-generation applications as a Full Stack Web Developer. Aiming to design resilient web architectures that solve high-impact real-world needs.
+                To work as a Full Stack Web Developer, leveraging my experience in developing responsive web systems and robust RESTful backends to solve real-world industry challenges.
               </p>
             </motion.div>
 
@@ -123,7 +124,7 @@ export default function About() {
                 <h4 className="font-semibold text-white">Current Focus</h4>
               </div>
               <p className="text-sm text-zinc-400 leading-relaxed">
-                Exploring Serverless functions, edge runtime optimization, and advanced patterns in NestJS/NextJS.
+                Focusing on full-stack web architectures, optimizing database performance, and integrating secure payment processing and AI technologies.
               </p>
             </motion.div>
           </div>
