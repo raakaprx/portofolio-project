@@ -1,108 +1,169 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, MessageSquare, ArrowUpRight } from "lucide-react";
-
-const GithubIcon = (props: any) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" /><path d="M9 18c-4.51 2-5-2-7-2" /></svg>
-);
-
-const LinkedinIcon = (props: any) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect width="4" height="12" x="2" y="9" /><circle cx="4" cy="4" r="2" /></svg>
-);
+import {
+  Mail,
+  Copy,
+  Check,
+  MessageSquare,
+  ArrowUpRight,
+  Send,
+} from "lucide-react";
+import { Github, Linkedin } from "@/components/icons";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export default function Contact() {
-  const CONTACT_LINKS = [
+  const [copied, setCopied] = useState(false);
+  const emailAddress = "rakapradana.work@gmail.com";
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(emailAddress);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
+  const socialLinks = [
     {
-      label: "Email",
-      value: "rakapradana.work@gmail.com",
-      href: "mailto:rakapradana.work@gmail.com",
-      icon: Mail,
-      color: "hover:text-red-400"
-    },
-    {
-      label: "LinkedIn",
-      value: "linkedin.com/in/rakaprx",
-      href: "https://linkedin.com/in/rakaprx",
-      icon: LinkedinIcon,
-      color: "hover:text-blue-400"
-    },
-    {
-      label: "GitHub",
-      value: "github.com/raakaprx",
+      label: "GitHub Profile",
+      handle: "github.com/raakaprx",
       href: "https://github.com/raakaprx",
-      icon: GithubIcon,
-      color: "hover:text-white"
+      icon: Github,
+      detail: "View open-source repositories & commits",
     },
     {
-      label: "WhatsApp",
-      value: "+62 851-5600-0636",
+      label: "LinkedIn Network",
+      handle: "linkedin.com/in/rakaprx",
+      href: "https://linkedin.com/in/rakaprx",
+      icon: Linkedin,
+      detail: "Professional career updates & endorsements",
+    },
+    {
+      label: "Direct WhatsApp",
+      handle: "+62 851-5600-0636",
       href: "https://wa.me/6285156000636",
       icon: MessageSquare,
-      color: "hover:text-emerald-400"
-    }
+      detail: "Instant messaging for project inquiries",
+    },
   ];
 
   return (
-    <section id="contact" className="py-24 bg-black relative">
-      <div className="max-w-4xl mx-auto px-6 relative z-10">
+    <section id="contact" className="py-24 bg-black relative overflow-hidden">
+      <div className="max-w-5xl mx-auto px-6 relative z-10">
+        {/* Header */}
         <div className="flex flex-col items-center text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-3"
-          >
-            Connection
-          </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl sm:text-4xl font-bold text-white tracking-tight"
-          >
-            Get In Touch
-          </motion.h2>
-          <p className="text-zinc-500 text-sm max-w-sm mt-4">
-            Have an interesting project or career opportunity? Let's build something premium together.
+          <Badge variant="outline" className="mb-3 px-3 py-1 font-mono text-zinc-400">
+            Initiate Contact
+          </Badge>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            Let&apos;s Build Something Exceptional
+          </h2>
+          <p className="text-zinc-400 text-sm max-w-md mt-3">
+            Whether you have an engineering opening, a scalable software challenge, or a contract project, my inbox is always open.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {CONTACT_LINKS.map((link, index) => {
-            const Icon = link.icon;
-            return (
-              <motion.a
-                key={link.label}
-                href={link.href}
-                target="_blank"
-                rel="noreferrer"
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="glass-card rounded-2xl p-6 flex items-center justify-between group cursor-pointer"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-900 text-zinc-500 group-hover:text-white transition-colors duration-300">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-mono text-zinc-500 uppercase tracking-wider">{link.label}</p>
-                    <p className={`text-sm font-semibold text-white mt-1 transition-colors duration-300 ${link.color}`}>
-                      {link.value}
-                    </p>
-                  </div>
+        {/* Minimalist Contact Bento Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Main Email Action Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-7 flex flex-col"
+          >
+            <Card className="h-full flex flex-col justify-between p-8 border-zinc-800/80 bg-zinc-950/80 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+
+              <div>
+                <div className="p-3 rounded-2xl bg-zinc-900 border border-zinc-800 w-fit mb-6 text-zinc-300">
+                  <Mail className="w-6 h-6" />
                 </div>
-                
-                <div className="p-2 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-650 group-hover:text-white group-hover:bg-zinc-800 transition-colors duration-300">
-                  <ArrowUpRight className="w-4 h-4" />
-                </div>
-              </motion.a>
-            );
-          })}
+
+                <p className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-1 font-semibold">
+                  Direct Email Dispatch
+                </p>
+                <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                  {emailAddress}
+                </h3>
+                <p className="text-sm text-zinc-400 leading-relaxed max-w-md">
+                  Expect a prompt response within 24 hours. Feel free to copy my address directly or launch your default mail client.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 pt-8 mt-6 border-t border-zinc-900">
+                <Button
+                  onClick={handleCopyEmail}
+                  className="rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 font-semibold gap-2"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4 text-emerald-600" />
+                      Copied to Clipboard!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      Copy Email Address
+                    </>
+                  )}
+                </Button>
+
+                <Button
+                  asChild
+                  variant="outline"
+                  className="rounded-xl border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-200 gap-2"
+                >
+                  <a href={`mailto:${emailAddress}`}>
+                    Open Mail App
+                    <Send className="w-3.5 h-3.5" />
+                  </a>
+                </Button>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Social Channels List */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="lg:col-span-5 flex flex-col gap-4"
+          >
+            {socialLinks.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-5 flex items-center justify-between hover:border-zinc-700 hover:bg-zinc-900/40 transition-all duration-200"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover:text-white group-hover:border-zinc-700 transition-colors">
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white group-hover:text-zinc-200 transition-colors">
+                        {item.label}
+                      </h4>
+                      <p className="text-xs font-mono text-zinc-500 mt-0.5">{item.handle}</p>
+                    </div>
+                  </div>
+
+                  <div className="p-2 rounded-lg bg-zinc-900/50 border border-zinc-800/60 text-zinc-500 group-hover:text-white group-hover:border-zinc-700 transition-colors">
+                    <ArrowUpRight className="w-4 h-4" />
+                  </div>
+                </a>
+              );
+            })}
+          </motion.div>
         </div>
       </div>
     </section>

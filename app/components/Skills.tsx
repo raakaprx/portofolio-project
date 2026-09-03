@@ -16,7 +16,7 @@ interface SkillItem {
 
 interface SkillGroup {
   category: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   skills: SkillItem[];
 }
 

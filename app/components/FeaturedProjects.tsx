@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, ArrowRight, Layers, Sparkles } from "lucide-react";
+import { ExternalLink, Sparkles } from "lucide-react";
 
 interface Project {
   title: string;
@@ -11,7 +11,7 @@ interface Project {
   github: string;
   demo: string;
   featured: boolean;
-  visualPlaceholder: any; // Render a beautiful customized UI mockup in CSS
+  visualPlaceholder: React.ComponentType; // Render a beautiful customized UI mockup in CSS
 }
 
 const FEATURED_PROJECTS: Project[] = [

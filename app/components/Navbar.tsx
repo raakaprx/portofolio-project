@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, Code2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const NAV_ITEMS = [
   { label: "Home", href: "#home" },
   { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
   { label: "Experience", href: "#experience" },
   { label: "Projects", href: "#projects" },
-  { label: "Journey", href: "#journey" },
+  { label: "Tech Stack", href: "#techstack" },
   { label: "Certificates", href: "#certificates" },
   { label: "Contact", href: "#contact" },
 ];
@@ -24,7 +24,6 @@ export default function Navbar() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
 
-      // Simple active section detection
       const sections = NAV_ITEMS.map((item) => {
         const id = item.href.substring(1);
         const el = document.getElementById(id);
@@ -37,8 +36,7 @@ export default function Navbar() {
 
       const current = sections.find((sec) => {
         if (!sec) return false;
-        // If element is in view (approx)
-        return sec.top <= 120 && sec.top + sec.height > 120;
+        return sec.top <= 140 && sec.top + sec.height > 140;
       });
 
       if (current) {
@@ -53,33 +51,40 @@ export default function Navbar() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "py-4 bg-black/60 backdrop-blur-md border-b border-zinc-800/80" : "py-6 bg-transparent"
+        scrolled
+          ? "py-3.5 bg-black/80 backdrop-blur-xl border-b border-zinc-800/80 shadow-lg shadow-black/40"
+          : "py-6 bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        {/* Brand Logo */}
         <a href="#home" className="flex items-center gap-2 group">
-          <span className="font-mono text-xl font-bold tracking-tight text-white transition-colors duration-300">
-            RAKA<span className="text-zinc-500 group-hover:text-white transition-colors duration-300">.DEV</span>
+          <div className="p-1.5 rounded-lg bg-zinc-900 border border-zinc-800 group-hover:border-zinc-700 transition-colors">
+            <Code2 className="w-4 h-4 text-zinc-300 group-hover:text-white transition-colors" />
+          </div>
+          <span className="font-mono text-sm font-bold tracking-tight text-white transition-colors duration-200">
+            RAKA<span className="text-zinc-500 group-hover:text-zinc-300">.DEV</span>
           </span>
         </a>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1 bg-zinc-900/40 border border-zinc-800/50 rounded-full px-2 py-1 backdrop-blur-sm">
+        <nav className="hidden lg:flex items-center gap-1 bg-zinc-950/70 border border-zinc-800/80 rounded-full px-2 py-1 backdrop-blur-md">
           {NAV_ITEMS.map((item) => {
             const id = item.href.substring(1);
-            const isActive = activeSection === id || (id === "projects" && activeSection === "projects");
+            const isActive = activeSection === id;
+
             return (
               <a
                 key={item.href}
                 href={item.href}
-                className={`relative px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
-                  isActive ? "text-white" : "text-zinc-400 hover:text-white"
+                className={`relative px-3.5 py-1.5 text-xs font-mono font-medium rounded-full transition-colors duration-200 ${
+                  isActive ? "text-white" : "text-zinc-400 hover:text-zinc-200"
                 }`}
               >
                 {isActive && (
                   <motion.span
                     layoutId="activeNav"
-                    className="absolute inset-0 bg-zinc-800/80 rounded-full -z-10"
+                    className="absolute inset-0 bg-zinc-800/90 border border-zinc-700/60 rounded-full -z-10 shadow-sm"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -89,53 +94,61 @@ export default function Navbar() {
           })}
         </nav>
 
-        <div className="hidden md:block">
-          <a
-            href="#contact"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-black font-medium text-sm hover:bg-zinc-200 transition-colors duration-200"
+        {/* Quick Action Button */}
+        <div className="hidden md:flex items-center gap-3">
+          <Button
+            asChild
+            size="sm"
+            className="rounded-full bg-white text-zinc-950 hover:bg-zinc-200 font-semibold px-4 h-9 shadow-sm"
           >
-            Let's Talk
-            <ArrowRight className="w-4 h-4" />
-          </a>
+            <a href="#contact">
+              Let&apos;s Talk
+              <ArrowRight className="w-3.5 h-3.5 ml-1" />
+            </a>
+          </Button>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Toggle Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-zinc-400 hover:text-white transition-colors"
+          className="lg:hidden p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+          aria-label="Toggle Navigation Menu"
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Navigation Dropdown */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 right-0 bg-black/95 border-b border-zinc-800 px-6 py-6 md:hidden flex flex-col gap-4 backdrop-blur-lg"
+            className="absolute top-full left-0 right-0 bg-zinc-950/95 border-b border-zinc-800 px-6 py-6 lg:hidden flex flex-col gap-3 backdrop-blur-2xl"
           >
             {NAV_ITEMS.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-lg font-medium text-zinc-400 hover:text-white transition-colors py-1"
+                className="text-sm font-mono font-medium text-zinc-300 hover:text-white py-2 border-b border-zinc-900 transition-colors"
               >
                 {item.label}
               </a>
             ))}
-            <a
-              href="#contact"
-              onClick={() => setMobileMenuOpen(false)}
-              className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-200 transition-colors"
-            >
-              Let's Talk
-              <ArrowRight className="w-4.5 h-4.5" />
-            </a>
+            <div className="pt-2">
+              <Button
+                asChild
+                className="w-full rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 font-semibold h-11"
+              >
+                <a href="#contact" onClick={() => setMobileMenuOpen(false)}>
+                  Let&apos;s Talk
+                  <ArrowRight className="w-4 h-4 ml-1.5" />
+                </a>
+              </Button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
