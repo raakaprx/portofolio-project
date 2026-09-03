@@ -336,11 +336,11 @@ export default function Projects() {
         {/* Filter Controls: Tabs & Search Bar */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
-            <TabsList className="bg-zinc-950 border border-zinc-800/80 p-1 rounded-xl">
-              <TabsTrigger value="all">All Projects</TabsTrigger>
-              <TabsTrigger value="machine-learning">Machine Learning</TabsTrigger>
-              <TabsTrigger value="laravel">Laravel & Backend</TabsTrigger>
-              <TabsTrigger value="fullstack">Full-Stack</TabsTrigger>
+            <TabsList className="bg-zinc-950 border border-zinc-800/80 p-1 rounded-xl flex overflow-x-auto max-w-full scrollbar-none w-full sm:w-auto justify-start sm:justify-center">
+              <TabsTrigger value="all" className="whitespace-nowrap shrink-0 text-xs">All Projects</TabsTrigger>
+              <TabsTrigger value="machine-learning" className="whitespace-nowrap shrink-0 text-xs">Machine Learning</TabsTrigger>
+              <TabsTrigger value="laravel" className="whitespace-nowrap shrink-0 text-xs">Laravel & Backend</TabsTrigger>
+              <TabsTrigger value="fullstack" className="whitespace-nowrap shrink-0 text-xs">Full-Stack</TabsTrigger>
             </TabsList>
           </Tabs>
 

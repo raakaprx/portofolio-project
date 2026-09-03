@@ -86,7 +86,7 @@ export default function Contact() {
                 <p className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-1 font-semibold">
                   Direct Email Dispatch
                 </p>
-                <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                <h3 className="text-xl sm:text-3xl font-bold text-white mb-3 break-all">
                   {emailAddress}
                 </h3>
                 <p className="text-sm text-zinc-400 leading-relaxed max-w-md">
@@ -94,10 +94,10 @@ export default function Contact() {
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 pt-8 mt-6 border-t border-zinc-900">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 sm:pt-8 mt-6 border-t border-zinc-900">
                 <Button
                   onClick={handleCopyEmail}
-                  className="rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 font-semibold gap-2"
+                  className="rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 font-semibold gap-2 w-full sm:w-auto justify-center"
                 >
                   {copied ? (
                     <>
@@ -115,7 +115,7 @@ export default function Contact() {
                 <Button
                   asChild
                   variant="outline"
-                  className="rounded-xl border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-200 gap-2"
+                  className="rounded-xl border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-200 gap-2 w-full sm:w-auto justify-center"
                 >
                   <a href={`mailto:${emailAddress}`}>
                     Open Mail App

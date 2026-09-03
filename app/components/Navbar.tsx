@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowRight, Code2 } from "lucide-react";
+import { Menu, X, ArrowRight, Code2, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const NAV_ITEMS = [
@@ -95,11 +95,23 @@ export default function Navbar() {
         </nav>
 
         {/* Quick Action Button */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2.5">
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="rounded-full border-zinc-800 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-300 hover:text-white px-3.5 h-9 text-xs gap-1.5"
+          >
+            <a href="/cv.pdf" target="_blank" rel="noopener noreferrer" download="CV_Muhammad_Raka_Pradana.pdf">
+              <FileDown className="w-3.5 h-3.5 text-emerald-400" />
+              <span>CV</span>
+            </a>
+          </Button>
+
           <Button
             asChild
             size="sm"
-            className="rounded-full bg-white text-zinc-950 hover:bg-zinc-200 font-semibold px-4 h-9 shadow-sm"
+            className="rounded-full bg-white text-zinc-950 hover:bg-zinc-200 font-semibold px-4 h-9 shadow-sm text-xs"
           >
             <a href="#contact">
               Let&apos;s Talk
@@ -138,10 +150,27 @@ export default function Navbar() {
                 {item.label}
               </a>
             ))}
-            <div className="pt-2">
+            <div className="pt-2 flex flex-col gap-2.5">
               <Button
                 asChild
-                className="w-full rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 font-semibold h-11"
+                variant="outline"
+                className="w-full rounded-xl border-zinc-800 bg-zinc-900/80 text-zinc-200 hover:text-white h-11 justify-center gap-2"
+              >
+                <a
+                  href="/cv.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download="CV_Muhammad_Raka_Pradana.pdf"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <FileDown className="w-4 h-4 text-emerald-400" />
+                  <span>Download CV</span>
+                </a>
+              </Button>
+
+              <Button
+                asChild
+                className="w-full rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 font-semibold h-11 justify-center"
               >
                 <a href="#contact" onClick={() => setMobileMenuOpen(false)}>
                   Let&apos;s Talk
