@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowRight, Code2, FileDown } from "lucide-react";
+import { Menu, X, ArrowRight, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { RakaLogo } from "@/components/icons";
 
 const NAV_ITEMS = [
   { label: "Home", href: "#home" },
@@ -52,23 +54,18 @@ export default function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "py-3.5 bg-black/80 backdrop-blur-xl border-b border-zinc-800/80 shadow-lg shadow-black/40"
+          ? "py-3.5 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-300 dark:border-zinc-800/80 shadow-md shadow-zinc-200/50 dark:shadow-black/40"
           : "py-6 bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Brand Logo */}
-        <a href="#home" className="flex items-center gap-2 group">
-          <div className="p-1.5 rounded-lg bg-zinc-900 border border-zinc-800 group-hover:border-zinc-700 transition-colors">
-            <Code2 className="w-4 h-4 text-zinc-300 group-hover:text-white transition-colors" />
-          </div>
-          <span className="font-mono text-sm font-bold tracking-tight text-white transition-colors duration-200">
-            RAKA<span className="text-zinc-500 group-hover:text-zinc-300">.DEV</span>
-          </span>
+        <a href="#home" className="flex items-center gap-2 group" aria-label="Raka Dev">
+          <RakaLogo className="w-8 h-8 sm:w-9 sm:h-9 group-hover:scale-105 transition-transform" />
         </a>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-1 bg-zinc-950/70 border border-zinc-800/80 rounded-full px-2 py-1 backdrop-blur-md">
+        <nav className="hidden lg:flex items-center gap-1 bg-zinc-100/90 dark:bg-zinc-900/80 border border-zinc-300 dark:border-zinc-800 rounded-full px-2 py-1 backdrop-blur-md shadow-2xs">
           {NAV_ITEMS.map((item) => {
             const id = item.href.substring(1);
             const isActive = activeSection === id;
@@ -77,14 +74,16 @@ export default function Navbar() {
               <a
                 key={item.href}
                 href={item.href}
-                className={`relative px-3.5 py-1.5 text-xs font-mono font-medium rounded-full transition-colors duration-200 ${
-                  isActive ? "text-white" : "text-zinc-400 hover:text-zinc-200"
+                className={`relative px-3.5 py-1.5 text-xs font-mono font-semibold rounded-full transition-colors duration-200 ${
+                  isActive
+                    ? "text-zinc-950 dark:text-white"
+                    : "text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white"
                 }`}
               >
                 {isActive && (
                   <motion.span
                     layoutId="activeNav"
-                    className="absolute inset-0 bg-zinc-800/90 border border-zinc-700/60 rounded-full -z-10 shadow-sm"
+                    className="absolute inset-0 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700/80 rounded-full -z-10 shadow-xs"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -94,24 +93,14 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Quick Action Button */}
-        <div className="hidden md:flex items-center gap-2.5">
-          <Button
-            asChild
-            variant="outline"
-            size="sm"
-            className="rounded-full border-zinc-800 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-300 hover:text-white px-3.5 h-9 text-xs gap-1.5"
-          >
-            <a href="/cv.pdf" target="_blank" rel="noopener noreferrer" download="CV_Muhammad_Raka_Pradana.pdf">
-              <FileDown className="w-3.5 h-3.5 text-emerald-400" />
-              <span>CV</span>
-            </a>
-          </Button>
+        {/* Quick Actions & Theme Toggle */}
+        <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
 
           <Button
             asChild
             size="sm"
-            className="rounded-full bg-white text-zinc-950 hover:bg-zinc-200 font-semibold px-4 h-9 shadow-sm text-xs"
+            className="rounded-full bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 font-semibold px-4 h-9 shadow-sm text-xs"
           >
             <a href="#contact">
               Let&apos;s Talk
@@ -120,14 +109,17 @@ export default function Navbar() {
           </Button>
         </div>
 
-        {/* Mobile Menu Toggle Button */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-colors cursor-pointer"
-          aria-label="Toggle Navigation Menu"
-        >
-          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        {/* Mobile Menu & Theme Controls */}
+        <div className="flex md:hidden items-center gap-2">
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-colors cursor-pointer shadow-2xs"
+            aria-label="Toggle Navigation Menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Navigation Dropdown */}
@@ -138,14 +130,14 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 right-0 bg-zinc-950/95 border-b border-zinc-800 px-6 py-6 lg:hidden flex flex-col gap-3 backdrop-blur-2xl"
+            className="absolute top-full left-0 right-0 bg-white/95 dark:bg-zinc-950/95 border-b border-zinc-300 dark:border-zinc-800 px-6 py-6 lg:hidden flex flex-col gap-3 backdrop-blur-2xl shadow-xl"
           >
             {NAV_ITEMS.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-sm font-mono font-medium text-zinc-300 hover:text-white py-2 border-b border-zinc-900 transition-colors"
+                className="text-sm font-mono font-medium text-zinc-800 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white py-2 border-b border-zinc-200 dark:border-zinc-900 transition-colors"
               >
                 {item.label}
               </a>
@@ -154,7 +146,7 @@ export default function Navbar() {
               <Button
                 asChild
                 variant="outline"
-                className="w-full rounded-xl border-zinc-800 bg-zinc-900/80 text-zinc-200 hover:text-white h-11 justify-center gap-2"
+                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-750 bg-zinc-100 dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-800 h-11 justify-center gap-2 font-semibold"
               >
                 <a
                   href="/cv.pdf"
@@ -163,14 +155,14 @@ export default function Navbar() {
                   download="CV_Muhammad_Raka_Pradana.pdf"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <FileDown className="w-4 h-4 text-emerald-400" />
+                  <FileDown className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>Download CV</span>
                 </a>
               </Button>
 
               <Button
                 asChild
-                className="w-full rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 font-semibold h-11 justify-center"
+                className="w-full rounded-xl bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 font-semibold h-11 justify-center"
               >
                 <a href="#contact" onClick={() => setMobileMenuOpen(false)}>
                   Let&apos;s Talk

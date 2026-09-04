@@ -9,15 +9,15 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-white text-zinc-950 shadow hover:bg-zinc-200 font-semibold",
+          "bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 shadow-sm font-semibold",
         destructive:
-          "bg-red-500 text-zinc-50 shadow-sm hover:bg-red-600",
+          "bg-red-600 text-white shadow-sm hover:bg-red-700 dark:bg-red-500 dark:text-zinc-50 dark:hover:bg-red-600",
         outline:
-          "border border-zinc-800 bg-zinc-950/40 shadow-sm hover:bg-zinc-900 hover:text-white text-zinc-300",
+          "border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-950/40 shadow-xs hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-900 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white font-medium",
         secondary:
-          "bg-zinc-800 text-zinc-50 shadow-sm hover:bg-zinc-700",
-        ghost: "hover:bg-zinc-800/60 hover:text-zinc-50 text-zinc-400",
-        link: "text-zinc-200 underline-offset-4 hover:underline",
+          "bg-zinc-100 text-zinc-900 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-700 shadow-xs",
+        ghost: "hover:bg-zinc-100 dark:hover:bg-zinc-800/60 text-zinc-800 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-zinc-50",
+        link: "text-zinc-900 dark:text-zinc-200 underline-offset-4 hover:underline",
       },
       size: {
         default: "h-9 px-4 py-2",
