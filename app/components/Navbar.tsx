@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowRight, FileDown } from "lucide-react";
+import { Menu, X, ArrowRight, FileDown, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { RakaLogo } from "@/components/icons";
@@ -94,13 +95,24 @@ export default function Navbar() {
         </nav>
 
         {/* Quick Actions & Theme Toggle */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2.5">
           <ThemeToggle />
+
+          {/* Admin CMS Portal Button */}
+          <Link
+            href="/admin"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-800 bg-zinc-100/80 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-700 text-xs font-mono font-medium transition-colors shadow-2xs"
+            title="Masuk ke CMS Dashboard Admin"
+            id="admin-portal-link"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-purple-500" />
+            <span>Admin</span>
+          </Link>
 
           <Button
             asChild
             size="sm"
-            className="rounded-full bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 font-semibold px-4 h-9 shadow-sm text-xs"
+            className="rounded-full bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 font-semibold px-4 h-9 shadow-sm text-xs cursor-pointer"
           >
             <a href="#contact">
               Let&apos;s Talk
@@ -169,6 +181,16 @@ export default function Navbar() {
                   <ArrowRight className="w-4 h-4 ml-1.5" />
                 </a>
               </Button>
+
+              {/* Mobile Admin Link */}
+              <Link
+                href="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 py-2 text-xs font-mono text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-colors"
+              >
+                <ShieldCheck className="w-4 h-4 text-purple-500" />
+                <span>Masuk ke CMS Dashboard Admin</span>
+              </Link>
             </div>
           </motion.div>
         )}

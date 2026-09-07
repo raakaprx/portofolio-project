@@ -128,6 +128,8 @@ export default function Hero() {
                   target="_blank"
                   rel="noopener noreferrer"
                   download="CV_Muhammad_Raka_Pradana.pdf"
+                  data-track-event="cv_download"
+                  data-track-target="CV Muhammad Raka Pradana"
                 >
                   <FileDown className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>Download CV</span>

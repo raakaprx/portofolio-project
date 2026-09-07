@@ -34,32 +34,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-interface ProjectMetric {
-  label: string;
-  value: string;
-}
-
-interface ProjectItem {
-  id: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  category: "all" | "machine-learning" | "laravel" | "fullstack";
-  techStack: string[];
-  metrics: ProjectMetric[];
-  github: string;
-  demo?: string;
-  icon: React.ComponentType<{ className?: string }>;
-  featuredSpan?: string;
-  architectureFlow: { step: string; detail: string }[];
-  databaseSchema: { table: string; fields: string[] }[];
-  codeSnippet: {
-    language: string;
-    filename: string;
-    code: string;
-  };
-}
+import type { ProjectItem } from "@/lib/portfolio-defaults";
 
 const PROJECTS_DATA: ProjectItem[] = [
   {
@@ -327,7 +302,7 @@ function InteractiveProjectCard({
   project: ProjectItem;
   onExplore: () => void;
 }) {
-  const Icon = project.icon;
+  const Icon = project.icon || Workflow;
   const [activeCardTab, setActiveCardTab] = useState<"overview" | "flow" | "metrics">("overview");
   const [activeStep, setActiveStep] = useState<number>(0);
   const [copiedClone, setCopiedClone] = useState(false);
@@ -410,6 +385,8 @@ function InteractiveProjectCard({
               href={project.github}
               target="_blank"
               rel="noreferrer"
+              data-track-event="project_click"
+              data-track-target={`GitHub: ${project.title}`}
               className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-900/60 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors"
               title="View GitHub Repository"
               aria-label="GitHub Repository"
@@ -419,63 +396,71 @@ function InteractiveProjectCard({
           </div>
         </div>
 
-        {/* Project Titles */}
-        <h3 className="text-xl sm:text-2xl font-extrabold text-zinc-950 dark:text-white tracking-tight mb-1 group-hover:text-blue-600 dark:group-hover:text-zinc-200 transition-colors">
-          {project.title}
-        </h3>
-        <p className="text-xs font-mono text-zinc-700 dark:text-zinc-400 mb-4">{project.subtitle}</p>
+        {/* Project Title & Interactive Icon */}
+        <div className="flex items-start gap-3.5 mb-3">
+          <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 text-blue-600 dark:text-blue-400 shrink-0 group-hover:scale-105 transition-transform duration-300 shadow-2xs">
+            <Icon className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              {project.title}
+            </h3>
+            <p className="text-xs font-mono text-zinc-600 dark:text-zinc-400 mt-0.5 font-medium">
+              {project.subtitle}
+            </p>
+          </div>
+        </div>
 
-        {/* Interactive In-Card Mode Switcher */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-zinc-100 dark:bg-zinc-900/80 border border-zinc-300 dark:border-zinc-800 mb-4">
+        {/* Tab Selector Inside Card */}
+        <div className="flex items-center gap-1 p-1 bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg mb-4 text-xs font-mono">
           <button
             onClick={() => setActiveCardTab("overview")}
-            className={`flex-1 py-1 px-2 rounded-lg text-[11px] font-mono font-bold transition-all ${
+            className={`flex-1 py-1 px-2 rounded-md font-semibold transition-colors cursor-pointer ${
               activeCardTab === "overview"
-                ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-xs"
-                : "text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-200"
+                ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-2xs"
+                : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white"
             }`}
           >
             Overview
           </button>
           <button
             onClick={() => setActiveCardTab("flow")}
-            className={`flex-1 py-1 px-2 rounded-lg text-[11px] font-mono font-bold transition-all flex items-center justify-center gap-1 ${
+            className={`flex-1 py-1 px-2 rounded-md font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1 ${
               activeCardTab === "flow"
-                ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-xs"
-                : "text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-200"
+                ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-2xs"
+                : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white"
             }`}
           >
-            <Workflow className="w-3 h-3" />
+            <Workflow className="w-3 h-3 text-blue-500" />
             Flow
           </button>
           <button
             onClick={() => setActiveCardTab("metrics")}
-            className={`flex-1 py-1 px-2 rounded-lg text-[11px] font-mono font-bold transition-all flex items-center justify-center gap-1 ${
+            className={`flex-1 py-1 px-2 rounded-md font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1 ${
               activeCardTab === "metrics"
-                ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-xs"
-                : "text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-200"
+                ? "bg-white dark:bg-zinc-800 text-zinc-950 dark:text-white shadow-2xs"
+                : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white"
             }`}
           >
-            <Cpu className="w-3 h-3" />
+            <Activity className="w-3 h-3 text-emerald-500" />
             Metrics
           </button>
         </div>
 
-        {/* Interactive Tab Body */}
-        <div className="min-h-[100px] mb-5">
+        {/* Tab Content Container */}
+        <div className="min-h-[140px] mb-5">
           <AnimatePresence mode="wait">
             {activeCardTab === "overview" && (
-              <motion.div
+              <motion.p
                 key="tab-overview"
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.2 }}
+                className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal"
               >
-                <p className="text-sm text-zinc-800 dark:text-zinc-300 leading-relaxed font-normal">
-                  {project.description}
-                </p>
-              </motion.div>
+                {project.description}
+              </motion.p>
             )}
 
             {activeCardTab === "flow" && (
@@ -487,32 +472,28 @@ function InteractiveProjectCard({
                 transition={{ duration: 0.2 }}
                 className="space-y-2"
               >
-                {/* Flow step pills */}
-                <div className="grid grid-cols-4 gap-1.5">
-                  {project.architectureFlow.map((item, idx) => (
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+                  {project.architectureFlow.map((step, idx) => (
                     <button
-                      key={item.step}
+                      key={step.step}
                       onClick={() => setActiveStep(idx)}
-                      className={`py-1.5 px-1 rounded-lg text-[10px] font-mono text-center transition-all cursor-pointer truncate ${
+                      className={`px-2 py-1 text-[11px] font-mono rounded-md shrink-0 transition-colors cursor-pointer ${
                         activeStep === idx
-                          ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 font-bold shadow-xs"
-                          : "bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-850"
+                          ? "bg-blue-600 text-white font-bold"
+                          : "bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-400"
                       }`}
-                      title={item.step}
                     >
-                      {idx + 1}. {item.step.split(" ")[0]}
+                      {idx + 1}. {step.step}
                     </button>
                   ))}
                 </div>
-
-                {/* Active step detail container */}
-                <div className="p-3 rounded-xl bg-zinc-100/90 dark:bg-zinc-900/60 border border-zinc-300 dark:border-zinc-800/80 text-xs shadow-2xs">
-                  <p className="font-bold text-zinc-950 dark:text-white mb-0.5">
-                    Stage {activeStep + 1}: {project.architectureFlow[activeStep]?.step}
-                  </p>
-                  <p className="text-zinc-800 dark:text-zinc-300 leading-normal">
+                <div className="p-3 rounded-xl bg-zinc-100/90 dark:bg-zinc-900/60 border border-zinc-300 dark:border-zinc-800/80 text-xs font-mono shadow-2xs">
+                  <div className="font-bold text-zinc-950 dark:text-white mb-1">
+                    Step {activeStep + 1}: {project.architectureFlow[activeStep]?.step}
+                  </div>
+                  <div className="text-zinc-700 dark:text-zinc-300 text-[11px] leading-relaxed">
                     {project.architectureFlow[activeStep]?.detail}
-                  </p>
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -524,19 +505,19 @@ function InteractiveProjectCard({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.2 }}
-                className="grid grid-cols-3 gap-2"
+                className="grid grid-cols-2 gap-2"
               >
                 {project.metrics.map((m) => (
                   <div
                     key={m.label}
-                    className="p-3 rounded-xl bg-zinc-100/90 dark:bg-zinc-900/60 border border-zinc-300 dark:border-zinc-800/80 flex flex-col justify-between text-center shadow-2xs"
+                    className="p-3 rounded-xl bg-zinc-100/90 dark:bg-zinc-900/60 border border-zinc-300 dark:border-zinc-800/80 shadow-2xs"
                   >
-                    <span className="text-[10px] font-mono text-zinc-600 dark:text-zinc-400 uppercase tracking-wider mb-1 truncate font-semibold">
+                    <div className="text-[10px] font-mono text-zinc-600 dark:text-zinc-400 uppercase tracking-wider mb-1 font-semibold truncate">
                       {m.label}
-                    </span>
-                    <span className="text-xs sm:text-sm font-extrabold text-zinc-950 dark:text-white font-mono truncate">
+                    </div>
+                    <div className="text-xs font-bold text-zinc-950 dark:text-white font-mono truncate">
                       {m.value}
-                    </span>
+                    </div>
                   </div>
                 ))}
               </motion.div>
@@ -546,34 +527,20 @@ function InteractiveProjectCard({
       </div>
 
       <div className="relative z-10">
-        {/* Tech Stack - Genuine Logos Only with Enhanced Tooltips */}
+        {/* Tech Stack */}
         <div className="flex flex-wrap items-center gap-2 mb-6">
           {validTechStack.map((tech) => {
-            const logo = getTechLogo(tech, "w-5 h-5 sm:w-6 sm:h-6");
+            const logo = getTechLogo(tech, "w-5 h-5");
             if (!logo) return null;
-
             return (
-              <Tooltip key={tech}>
-                <TooltipTrigger asChild>
-                  <div
-                    aria-label={tech}
-                    className="p-2 sm:p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 hover:border-zinc-500 dark:hover:border-zinc-600 hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer shadow-xs flex items-center justify-center"
-                  >
-                    {logo}
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="top"
-                  className="border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-2.5 py-1 text-xs font-mono text-zinc-950 dark:text-white shadow-md"
-                >
-                  {tech}
-                </TooltipContent>
-              </Tooltip>
+              <div key={tech} className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800" title={tech}>
+                {logo}
+              </div>
             );
           })}
         </div>
 
-        {/* Card Footer Actions */}
+        {/* Footer */}
         <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-850">
           <Button
             variant="ghost"
@@ -582,13 +549,15 @@ function InteractiveProjectCard({
             className="text-xs font-mono text-zinc-900 dark:text-zinc-200 hover:text-blue-600 dark:hover:text-white gap-1.5 pl-0 hover:bg-transparent cursor-pointer font-bold"
           >
             <Maximize2 className="w-3.5 h-3.5" />
-            Explore Architecture & Code
+            Explore
           </Button>
 
           <a
             href={project.github}
             target="_blank"
             rel="noreferrer"
+            data-track-event="project_click"
+            data-track-target={`GitHub: ${project.title}`}
             className="inline-flex items-center gap-1 text-xs font-mono text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-colors font-semibold"
           >
             GitHub
@@ -600,15 +569,34 @@ function InteractiveProjectCard({
   );
 }
 
-export default function Projects() {
+export default function Projects({
+  initialProjects,
+}: {
+  initialProjects?: ProjectItem[];
+}) {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
   const [modalTab, setModalTab] = useState<"architecture" | "database" | "code">("architecture");
   const [copiedCode, setCopiedCode] = useState(false);
 
+  const projectsList = useMemo(() => {
+    return initialProjects && initialProjects.length > 0
+      ? initialProjects.map((p) => ({
+          ...p,
+          icon:
+            p.icon ||
+            (p.category === "machine-learning"
+              ? Cpu
+              : p.category === "laravel"
+              ? CreditCard
+              : Layers),
+        }))
+      : PROJECTS_DATA;
+  }, [initialProjects]);
+
   const filteredProjects = useMemo(() => {
-    return PROJECTS_DATA.filter((p) => {
+    return projectsList.filter((p) => {
       const matchTab = activeTab === "all" || p.category === activeTab;
       const matchSearch =
         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -616,7 +604,7 @@ export default function Projects() {
         p.techStack.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
       return matchTab && matchSearch;
     });
-  }, [activeTab, searchQuery]);
+  }, [projectsList, activeTab, searchQuery]);
 
   const handleCopySnippet = (codeText: string) => {
     navigator.clipboard.writeText(codeText);

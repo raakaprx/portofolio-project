@@ -93,7 +93,11 @@ const EXPERIENCES: ExperienceItem[] = [
   },
 ];
 
-export default function Experience() {
+export default function Experience({
+  initialExperiences,
+}: {
+  initialExperiences?: ExperienceItem[];
+}) {
   const [expandedIndices, setExpandedIndices] = useState<number[]>([0]);
 
   const toggleExpand = (index: number) => {
@@ -101,6 +105,11 @@ export default function Experience() {
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
     );
   };
+
+  const experienceList =
+    initialExperiences && initialExperiences.length > 0
+      ? initialExperiences
+      : EXPERIENCES;
 
   return (
     <TooltipProvider delayDuration={50}>
@@ -124,7 +133,7 @@ export default function Experience() {
 
           {/* Experience Timeline Cards */}
           <div className="space-y-8">
-            {EXPERIENCES.map((exp, index) => {
+            {experienceList.map((exp, index) => {
               const isCurrent = exp.status === "Active";
               const isExpanded = expandedIndices.includes(index);
               const validTechStack = exp.technologies.filter((t) => Boolean(getTechLogo(t)));

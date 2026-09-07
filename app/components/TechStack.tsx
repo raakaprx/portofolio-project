@@ -32,11 +32,12 @@ import {
   CssLogo,
   RestApiLogo,
   MidtransLogo,
+  getTechLogo,
 } from "@/components/icons";
 
 interface TechItem {
   name: string;
-  logo: React.ComponentType<{ className?: string }>;
+  logo?: React.ComponentType<{ className?: string }>;
   proficiency: "Advanced" | "Proficient";
 }
 
@@ -77,29 +78,36 @@ const TECH_GROUPS: TechGroup[] = [
       { name: "PostgreSQL", logo: PostgresqlLogo, proficiency: "Advanced" },
       { name: "MySQL", logo: MysqlLogo, proficiency: "Advanced" },
       { name: "Prisma ORM", logo: PrismaLogo, proficiency: "Advanced" },
-      { name: "Redis Cache", logo: RedisLogo, proficiency: "Proficient" },
     ],
   },
   {
-    category: "Data Science & Applied ML",
+    category: "AI, Tools & Workflow",
     items: [
-      { name: "Python", logo: PythonLogo, proficiency: "Advanced" },
-      { name: "Scikit-Learn", logo: ScikitlearnLogo, proficiency: "Advanced" },
-      { name: "Pandas", logo: PandasLogo, proficiency: "Advanced" },
-      { name: "NumPy", logo: NumpyLogo, proficiency: "Advanced" },
+      { name: "Scikit-Learn", logo: ScikitlearnLogo, proficiency: "Proficient" },
+      { name: "Pandas", logo: PandasLogo, proficiency: "Proficient" },
+      { name: "NumPy", logo: NumpyLogo, proficiency: "Proficient" },
       { name: "Docker", logo: DockerLogo, proficiency: "Proficient" },
-      { name: "Git & GitHub", logo: GitLogo, proficiency: "Advanced" },
+      { name: "Git", logo: GitLogo, proficiency: "Advanced" },
     ],
   },
 ];
 
-export default function TechStack() {
+export default function TechStack({
+  initialTechGroups,
+}: {
+  initialTechGroups?: TechGroup[];
+}) {
+  const groups =
+    initialTechGroups && initialTechGroups.length > 0
+      ? initialTechGroups
+      : TECH_GROUPS;
+
   return (
     <TooltipProvider delayDuration={50}>
-      <section id="techstack" className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
+      <section id="techstack" className="py-24 bg-background relative transition-colors duration-300">
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           {/* Section Header */}
-          <div className="flex flex-col items-center text-center mb-14">
+          <div className="flex flex-col items-center text-center mb-16">
             <Badge
               variant="outline"
               className="mb-3 px-3.5 py-1 font-mono text-zinc-800 dark:text-zinc-300 border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xs"
@@ -116,7 +124,7 @@ export default function TechStack() {
 
           {/* Categorized Logo Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {TECH_GROUPS.map((group, groupIdx) => (
+            {groups.map((group, groupIdx) => (
               <motion.div
                 key={group.category}
                 initial={{ opacity: 0, y: 20 }}
@@ -134,7 +142,13 @@ export default function TechStack() {
                 {/* Sleek Logo Badges */}
                 <div className="flex flex-wrap items-center gap-3">
                   {group.items.map((item) => {
-                    const LogoComponent = item.logo;
+                    const renderedLogo = item.logo ? (
+                      <item.logo className="w-full h-full object-contain" />
+                    ) : (
+                      getTechLogo(item.name, "w-full h-full object-contain")
+                    );
+
+                    if (!renderedLogo) return null;
 
                     return (
                       <Tooltip key={item.name}>
@@ -145,7 +159,7 @@ export default function TechStack() {
                             className="group relative p-3 sm:p-3.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 hover:border-zinc-500 dark:hover:border-zinc-600 hover:bg-zinc-200 dark:hover:bg-zinc-850 transition-all duration-200 cursor-pointer shadow-xs hover:scale-105 flex items-center justify-center"
                           >
                             <div className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center">
-                              <LogoComponent className="w-full h-full object-contain" />
+                              {renderedLogo}
                             </div>
                           </button>
                         </TooltipTrigger>

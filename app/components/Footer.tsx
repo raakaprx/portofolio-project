@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowUp } from "lucide-react";
+import Link from "next/link";
+import { ArrowUp, ShieldCheck } from "lucide-react";
 import { Github, Linkedin, GmailLogo, RakaLogo } from "@/components/icons";
 
 export default function Footer() {
@@ -57,12 +58,24 @@ export default function Footer() {
           </a>
         </div>
 
-        {/* Right: Copyright & Back to Top */}
-        <div className="flex items-center gap-4">
-          <span className="text-zinc-600 dark:text-zinc-400">&copy; {currentYear} • Built with Next.js & Tailwind</span>
+        {/* Right: Copyright & Admin Portal Link & Back to Top */}
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+          <span className="text-zinc-600 dark:text-zinc-400">
+            &copy; {currentYear} • Built with Next.js & Tailwind
+          </span>
+          <span className="text-zinc-300 dark:text-zinc-700 hidden sm:inline">•</span>
+          <Link
+            href="/admin"
+            className="flex items-center gap-1.5 text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-200 transition-colors font-mono text-xs"
+            title="Buka CMS Dashboard Admin"
+            id="footer-admin-link"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-purple-500" />
+            <span>Admin CMS</span>
+          </Link>
           <button
             onClick={scrollToTop}
-            className="flex items-center gap-1 p-2 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors cursor-pointer shadow-2xs"
+            className="flex items-center gap-1 p-2 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-800 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors cursor-pointer shadow-2xs ml-auto sm:ml-0"
             title="Back to Top"
             aria-label="Back to Top"
           >

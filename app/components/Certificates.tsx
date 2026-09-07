@@ -23,7 +23,16 @@ const CERTIFICATES: Certificate[] = [
   },
 ];
 
-export default function Certificates() {
+export default function Certificates({
+  initialCertificates,
+}: {
+  initialCertificates?: Certificate[];
+}) {
+  const certificateList =
+    initialCertificates && initialCertificates.length > 0
+      ? initialCertificates
+      : CERTIFICATES;
+
   return (
     <section id="certificates" className="py-24 bg-background relative transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -53,7 +62,7 @@ export default function Certificates() {
 
         {/* Dynamic Centered Flex Layout */}
         <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
-          {CERTIFICATES.map((cert, index) => (
+          {certificateList.map((cert, index) => (
             <motion.div
               key={cert.title}
               initial={{ opacity: 0, y: 20 }}

@@ -98,6 +98,8 @@ export default function Contact() {
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 sm:pt-8 mt-6 border-t border-zinc-200 dark:border-zinc-850">
                 <Button
                   onClick={handleCopyEmail}
+                  data-track-event="contact_click"
+                  data-track-target="Copy Email"
                   className="rounded-xl bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 font-semibold gap-2 w-full sm:w-auto justify-center cursor-pointer shadow-sm"
                 >
                   {copied ? (
@@ -118,7 +120,11 @@ export default function Contact() {
                   variant="outline"
                   className="rounded-xl border border-zinc-300 dark:border-zinc-750 bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-800 gap-2 w-full sm:w-auto justify-center font-semibold"
                 >
-                  <a href={`mailto:${emailAddress}`}>
+                  <a
+                    href={`mailto:${emailAddress}`}
+                    data-track-event="contact_click"
+                    data-track-target="Direct Email App"
+                  >
                     Open Mail App
                     <Send className="w-3.5 h-3.5" />
                   </a>
@@ -144,6 +150,8 @@ export default function Contact() {
                   href={item.href}
                   target="_blank"
                   rel="noreferrer"
+                  data-track-event="contact_click"
+                  data-track-target={item.label}
                   className="group rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-950/80 p-5 flex items-center justify-between hover:border-zinc-400 dark:hover:border-zinc-700 hover:shadow-sm transition-all duration-200 shadow-xs"
                 >
                   <div className="flex items-center gap-4">
