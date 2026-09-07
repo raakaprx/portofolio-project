@@ -34,10 +34,10 @@ const NAV_LINKS = [
 export function AdminSidebar({ mobileOpen, onCloseMobile }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const supabase = createClient();
 
   const handleLogout = async () => {
     try {
+      const supabase = createClient();
       await supabase.auth.signOut();
       toast.success("Berhasil keluar dari admin");
       router.push("/admin/login");
