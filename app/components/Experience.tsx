@@ -163,7 +163,7 @@ export default function Experience({
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
                               </span>
-                              Current Role (2026 – Present)
+                              Current Role ({exp.duration})
                             </span>
                           ) : (
                             <Badge variant="secondary" className="font-mono text-zinc-800 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-850 border border-zinc-300 dark:border-zinc-700">

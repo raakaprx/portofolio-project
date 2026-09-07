@@ -10,6 +10,7 @@ import {
   Loader2,
   RefreshCw,
   ExternalLink,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +24,10 @@ import { ImageUploader } from "@/components/admin/ImageUploader";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_CERTIFICATES, type CertificateItem } from "@/lib/portfolio-defaults";
 import { getErrorMessage } from "@/lib/utils";
+import {
+  formatCertificateDate,
+  parseDurationString,
+} from "@/lib/date-utils";
 import { toast } from "sonner";
 
 export default function AdminCertificatesPage() {
@@ -36,6 +41,8 @@ export default function AdminCertificatesPage() {
   const [title, setTitle] = useState("");
   const [issuer, setIssuer] = useState("");
   const [date, setDate] = useState("");
+  const [certMonth, setCertMonth] = useState("");
+  const [isCustomDate, setIsCustomDate] = useState(false);
   const [credentialId, setCredentialId] = useState("");
   const [credentialUrl, setCredentialUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -80,11 +87,22 @@ export default function AdminCertificatesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleCertMonthChange = (val: string) => {
+    setCertMonth(val);
+    if (!isCustomDate) {
+      setDate(formatCertificateDate(val));
+    }
+  };
+
   const openCreateDialog = () => {
     setEditingId(null);
     setTitle("");
     setIssuer("");
-    setDate("");
+    const now = new Date();
+    const currentYM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    setCertMonth(currentYM);
+    setDate(formatCertificateDate(currentYM));
+    setIsCustomDate(false);
     setCredentialId("");
     setCredentialUrl("");
     setImageUrl("");
@@ -97,6 +115,11 @@ export default function AdminCertificatesPage() {
     setTitle(c.title);
     setIssuer(c.issuer);
     setDate(c.date);
+
+    const parsed = parseDurationString(c.date);
+    setCertMonth(parsed.startMonth || "");
+    setIsCustomDate(false);
+
     setCredentialId(c.credentialId || "");
     setCredentialUrl(c.credentialUrl);
     setImageUrl(c.imageUrl || "");
@@ -118,14 +141,19 @@ export default function AdminCertificatesPage() {
         .map((s) => s.trim())
         .filter(Boolean);
 
+      const finalDate = date.trim() || formatCertificateDate(certMonth);
+      const finalIssueDate = certMonth
+        ? `${certMonth}-01`
+        : (finalDate.length === 4 ? `${finalDate}-01-01` : "2024-01-01");
+
       const payload: Record<string, any> = {
-        title,
-        issuer,
-        date,
-        issue_date: date && date.length === 4 ? `${date}-01-01` : "2024-01-01",
-        credential_id: credentialId,
-        credential_url: credentialUrl,
-        image_url: imageUrl,
+        title: title.trim(),
+        issuer: issuer.trim(),
+        date: finalDate,
+        issue_date: finalIssueDate,
+        credential_id: credentialId.trim(),
+        credential_url: credentialUrl.trim(),
+        image_url: imageUrl.trim(),
         skills_verified: skillsVerified,
       };
 
@@ -345,17 +373,62 @@ export default function AdminCertificatesPage() {
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-mono font-medium text-zinc-300">
-                  Tanggal Terbit
-                </label>
+              <div className="space-y-2 p-3 rounded-xl bg-zinc-950/80 border border-zinc-800">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-mono font-medium text-zinc-300 flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Tanggal Terbit (Kalender)</span>
+                  </label>
+                  {date && (
+                    <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-800/60 font-semibold">
+                      {date}
+                    </span>
+                  )}
+                </div>
+
                 <input
-                  type="text"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  placeholder="Jun 2026"
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-500"
+                  type="month"
+                  value={certMonth}
+                  onChange={(e) => handleCertMonthChange(e.target.value)}
+                  className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3 py-1.5 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-emerald-500 transition-colors"
                 />
+
+                {isCustomDate ? (
+                  <div className="pt-1 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono text-amber-400">
+                        Mode Teks Manual:
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCustomDate(false);
+                          setDate(formatCertificateDate(certMonth));
+                        }}
+                        className="text-[10px] font-mono text-emerald-400 hover:underline"
+                      >
+                        Kembalikan ke Kalender
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                      placeholder="Contoh: Jun 2026"
+                      className="w-full bg-zinc-900 border border-amber-500/50 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none font-mono"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex justify-end pt-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setIsCustomDate(true)}
+                      className="text-[10px] font-mono text-zinc-500 hover:text-zinc-300 transition-colors"
+                    >
+                      + Edit Teks Manual (Opsional)
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 

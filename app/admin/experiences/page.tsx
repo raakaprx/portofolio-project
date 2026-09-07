@@ -23,6 +23,12 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_EXPERIENCES, type ExperienceItem } from "@/lib/portfolio-defaults";
 import { getErrorMessage } from "@/lib/utils";
+import {
+  formatMonthYear,
+  calculateDuration,
+  buildDurationPeriod,
+  parseDurationString,
+} from "@/lib/date-utils";
 import { toast } from "sonner";
 
 export default function AdminExperiencesPage() {
@@ -36,12 +42,17 @@ export default function AdminExperiencesPage() {
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
   const [duration, setDuration] = useState("");
+  const [startMonth, setStartMonth] = useState("");
+  const [endMonth, setEndMonth] = useState("");
+  const [isCustomDuration, setIsCustomDuration] = useState(false);
   const [status, setStatus] = useState<"Active" | "Completed">("Active");
   const [type, setType] = useState<"Industry" | "Internship" | "Organization">("Industry");
   const [isCurrent, setIsCurrent] = useState(true);
   const [highlights, setHighlights] = useState("");
   const [deliverablesText, setDeliverablesText] = useState("");
   const [technologiesText, setTechnologiesText] = useState("");
+
+  const elapsed = calculateDuration(startMonth, isCurrent ? "" : endMonth, isCurrent);
 
   const supabase = createClient();
 
@@ -83,14 +94,41 @@ export default function AdminExperiencesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleStartMonthChange = (val: string) => {
+    setStartMonth(val);
+    if (!isCustomDuration) {
+      setDuration(buildDurationPeriod(val, isCurrent ? "" : endMonth, isCurrent));
+    }
+  };
+
+  const handleEndMonthChange = (val: string) => {
+    setEndMonth(val);
+    if (!isCustomDuration) {
+      setDuration(buildDurationPeriod(startMonth, val, isCurrent));
+    }
+  };
+
+  const handleCurrentToggle = (checked: boolean) => {
+    setIsCurrent(checked);
+    setStatus(checked ? "Active" : "Completed");
+    if (!isCustomDuration) {
+      setDuration(buildDurationPeriod(startMonth, checked ? "" : endMonth, checked));
+    }
+  };
+
   const openCreateDialog = () => {
     setEditingId(null);
     setCompany("");
     setRole("");
-    setDuration("");
+    const now = new Date();
+    const currentYM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    setStartMonth(currentYM);
+    setEndMonth("");
+    setIsCurrent(true);
+    setIsCustomDuration(false);
+    setDuration(buildDurationPeriod(currentYM, "", true));
     setStatus("Active");
     setType("Industry");
-    setIsCurrent(true);
     setHighlights("");
     setDeliverablesText("");
     setTechnologiesText("");
@@ -104,7 +142,14 @@ export default function AdminExperiencesPage() {
     setDuration(exp.duration);
     setStatus(exp.status);
     setType(exp.type);
-    setIsCurrent(exp.status === "Active");
+
+    const parsed = parseDurationString(exp.duration);
+    const active = exp.status === "Active" || parsed.isCurrent;
+    setIsCurrent(active);
+    setStartMonth(parsed.startMonth || "");
+    setEndMonth(active ? "" : (parsed.endMonth || ""));
+    setIsCustomDuration(false);
+
     setHighlights(exp.highlights);
     setDeliverablesText(exp.deliverables.join("\n"));
     setTechnologiesText(exp.technologies.join(", "));
@@ -113,8 +158,12 @@ export default function AdminExperiencesPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!company.trim() || !role.trim() || !duration.trim()) {
-      toast.error("Nama Perusahaan, Posisi, dan Durasi wajib diisi");
+    const finalDuration =
+      duration.trim() ||
+      buildDurationPeriod(startMonth, isCurrent ? "" : endMonth, isCurrent);
+
+    if (!company.trim() || !role.trim() || !finalDuration) {
+      toast.error("Nama Perusahaan, Posisi, dan Periode Durasi wajib diisi");
       return;
     }
 
@@ -131,14 +180,15 @@ export default function AdminExperiencesPage() {
         .filter(Boolean);
 
       const payload: Record<string, any> = {
-        company,
-        role,
-        duration,
-        status,
+        company: company.trim(),
+        role: role.trim(),
+        duration: finalDuration,
+        status: isCurrent ? "Active" : status,
         type,
         is_current: isCurrent,
-        start_date: "2024-01-01",
-        highlights,
+        start_date: startMonth ? `${startMonth}-01` : "2024-01-01",
+        end_date: isCurrent ? null : (endMonth ? `${endMonth}-01` : null),
+        highlights: highlights.trim(),
         deliverables,
         technologies,
       };
@@ -365,28 +415,159 @@ export default function AdminExperiencesPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-mono font-medium text-zinc-300">
-                  Periode Durasi <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
-                  placeholder="2026 – Sekarang"
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-500"
-                />
+            {/* Dedicated Calendar-driven Period Section */}
+            <div className="p-4 rounded-2xl bg-zinc-950/90 border border-zinc-800 space-y-3.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-blue-400" />
+                  <span className="text-xs font-mono font-bold text-white">
+                    Periode Waktu & Durasi (Kalender)
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
+                  Format Otomatis
+                </span>
               </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                {/* Tanggal Mulai */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-mono font-medium text-zinc-300 flex items-center justify-between">
+                    <span>Bulan Mulai (Start Date) <span className="text-red-400">*</span></span>
+                    {startMonth && (
+                      <span className="text-blue-400 font-normal">
+                        {formatMonthYear(startMonth)}
+                      </span>
+                    )}
+                  </label>
+                  <input
+                    type="month"
+                    required
+                    value={startMonth}
+                    onChange={(e) => handleStartMonthChange(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3 py-2 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500 transition-colors"
+                  />
+                </div>
+
+                {/* Tanggal Selesai */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-mono font-medium text-zinc-300 flex items-center justify-between">
+                    <span>Bulan Selesai (End Date)</span>
+                    {!isCurrent && endMonth && (
+                      <span className="text-blue-400 font-normal">
+                        {formatMonthYear(endMonth)}
+                      </span>
+                    )}
+                  </label>
+                  {isCurrent ? (
+                    <div className="w-full bg-zinc-900/60 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-400 flex items-center gap-2 min-h-[36px]">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                      </span>
+                      <span className="font-mono text-emerald-400 font-medium text-[11px]">
+                        Sekarang / Masih Bekerja
+                      </span>
+                    </div>
+                  ) : (
+                    <input
+                      type="month"
+                      min={startMonth}
+                      value={endMonth}
+                      onChange={(e) => handleEndMonthChange(e.target.value)}
+                      className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3 py-2 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Toggle Masih Bekerja */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-zinc-800/80">
+                <label className="flex items-center gap-2 cursor-pointer select-none text-xs font-mono text-zinc-300 hover:text-white transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={isCurrent}
+                    onChange={(e) => handleCurrentToggle(e.target.checked)}
+                    className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-blue-500 focus:ring-blue-500/20 cursor-pointer accent-blue-500"
+                  />
+                  <span>Masih Bekerja di Sini (Role Aktif / Sekarang)</span>
+                </label>
+
+                {/* Duration summary badge */}
+                {duration && (
+                  <div className="flex items-center gap-2 text-[11px] font-mono">
+                    <span className="text-zinc-500">Hasil:</span>
+                    <span className="text-white font-semibold bg-zinc-900 px-2 py-0.5 rounded border border-zinc-700">
+                      {duration}
+                    </span>
+                    {elapsed.text && (
+                      <span className="text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/50">
+                        {elapsed.text}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Optional Custom Manual Override */}
+              {isCustomDuration ? (
+                <div className="pt-2 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-amber-400">
+                      Mode Teks Manual Aktif:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCustomDuration(false);
+                        const autoDur = buildDurationPeriod(
+                          startMonth,
+                          isCurrent ? "" : endMonth,
+                          isCurrent
+                        );
+                        setDuration(autoDur);
+                      }}
+                      className="text-[10px] font-mono text-blue-400 hover:underline"
+                    >
+                      Kembalikan ke Otomatis Kalender
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value)}
+                    className="w-full bg-zinc-900 border border-amber-500/50 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 font-mono"
+                  />
+                </div>
+              ) : (
+                <div className="flex justify-end pt-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsCustomDuration(true)}
+                    className="text-[10px] font-mono text-zinc-500 hover:text-zinc-300 transition-colors"
+                  >
+                    + Edit Teks Manual (Opsional)
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-mono font-medium text-zinc-300">
-                  Status
+                  Status Timeline
                 </label>
                 <select
                   value={status}
-                  onChange={(e) => setStatus(e.target.value as "Active" | "Completed")}
+                  onChange={(e) => {
+                    const newStatus = e.target.value as "Active" | "Completed";
+                    setStatus(newStatus);
+                    if (newStatus === "Active" && !isCurrent) {
+                      handleCurrentToggle(true);
+                    } else if (newStatus === "Completed" && isCurrent) {
+                      handleCurrentToggle(false);
+                    }
+                  }}
                   className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
                 >
                   <option value="Active">Active (Masih Bekerja)</option>
