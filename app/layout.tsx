@@ -20,10 +20,59 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://raakaprx.vercel.app");
+
 export const metadata: Metadata = {
-  title: "Muhammad Raka Pradana | Full-Stack Web Developer",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Muhammad Raka Pradana | Full-Stack Web Developer",
+    template: "%s | Muhammad Raka Pradana",
+  },
   description:
-    "Professional portfolio of Muhammad Raka Pradana — Full-Stack Web Developer specializing in scalable architectures, Laravel, Next.js, and machine learning systems.",
+    "Portofolio profesional Muhammad Raka Pradana — Full-Stack Web Developer berpengalaman dalam Next.js, Laravel, PostgreSQL, dan arsitektur web modern.",
+  keywords: [
+    "Muhammad Raka Pradana",
+    "Full-Stack Developer",
+    "Next.js",
+    "Laravel",
+    "Web Developer Indonesia",
+    "Portfolio",
+    "PostgreSQL",
+    "TypeScript",
+  ],
+  authors: [{ name: "Muhammad Raka Pradana", url: siteUrl }],
+  creator: "Muhammad Raka Pradana",
+  openGraph: {
+    title: "Muhammad Raka Pradana — Full-Stack Web Developer",
+    description:
+      "Eksplorasi proyek web modern, arsitektur data, dan pengalaman engineering Muhammad Raka Pradana.",
+    url: "/",
+    siteName: "Muhammad Raka Pradana Portfolio",
+    locale: "id_ID",
+    type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Muhammad Raka Pradana — Full-Stack Web Developer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Muhammad Raka Pradana — Full-Stack Web Developer",
+    description:
+      "Eksplorasi proyek web modern, arsitektur data, dan pengalaman engineering Muhammad Raka Pradana.",
+    images: ["/opengraph-image"],
+    creator: "@raakaprx",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
