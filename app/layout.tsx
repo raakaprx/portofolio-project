@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
 import "./globals.css";
 
 import Script from "next/script";
@@ -56,7 +57,10 @@ export default function RootLayout({
             `,
           }}
         />
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <AnalyticsTracker />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

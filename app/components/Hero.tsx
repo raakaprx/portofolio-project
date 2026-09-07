@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Github, Linkedin, GmailLogo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 
 export const CV_URL = "/cv.pdf";
 
@@ -130,6 +131,7 @@ export default function Hero() {
                   download="CV_Muhammad_Raka_Pradana.pdf"
                   data-track-event="cv_download"
                   data-track-target="CV Muhammad Raka Pradana"
+                  onClick={() => trackEvent("cv_download", "CV Muhammad Raka Pradana")}
                 >
                   <FileDown className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>Download CV</span>
@@ -191,7 +193,7 @@ export default function Hero() {
                   Web Developer
                 </p>
                 <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5 font-mono">
-                  PT Maxxima Innovative
+                  PT Maxxima Innovative Engineering
                 </p>
               </div>
 

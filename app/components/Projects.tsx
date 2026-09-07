@@ -25,6 +25,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { trackEvent } from "@/lib/analytics";
 import type { ProjectItem } from "@/lib/portfolio-defaults";
 
 export default function Projects({
@@ -140,7 +141,10 @@ export default function Projects({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                onClick={() => setPreviewProject(project)}
+                onClick={() => {
+                  setPreviewProject(project);
+                  trackEvent("project_click", `${project.title} (Quick Preview)`);
+                }}
                 className="group cursor-pointer rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/40 hover:border-zinc-400 dark:hover:border-zinc-700 p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
               >
                 <div>
@@ -287,6 +291,9 @@ export default function Projects({
                           href={previewProject.repo_url}
                           target="_blank"
                           rel="noreferrer"
+                          onClick={() =>
+                            trackEvent("project_click", `${previewProject.title} (GitHub Repo)`)
+                          }
                           className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-xs font-mono text-zinc-800 dark:text-zinc-200 hover:text-black dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors w-full sm:w-auto"
                         >
                           <Github className="w-4 h-4" />
@@ -298,6 +305,9 @@ export default function Projects({
                           href={previewProject.live_url}
                           target="_blank"
                           rel="noreferrer"
+                          onClick={() =>
+                            trackEvent("project_click", `${previewProject.title} (Live Demo)`)
+                          }
                           className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-xs font-mono text-zinc-800 dark:text-zinc-200 hover:text-black dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors w-full sm:w-auto"
                         >
                           <ExternalLink className="w-4 h-4" />
@@ -309,6 +319,9 @@ export default function Projects({
                     {/* Primary Button: Lihat Detail Lengkap */}
                     <Link
                       href={`/projects/${previewProject.slug || previewProject.id}`}
+                      onClick={() =>
+                        trackEvent("project_click", `${previewProject.title} (Detail Page)`)
+                      }
                       className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 font-semibold text-xs font-mono transition-all shadow-md hover:shadow-lg"
                     >
                       <span>Lihat Detail Lengkap</span>
