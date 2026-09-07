@@ -130,17 +130,17 @@ export default function AdminExperiencesPage() {
         .map((s) => s.trim())
         .filter(Boolean);
 
-      const payload = {
+      const payload: Record<string, any> = {
         company,
         role,
         duration,
         status,
         type,
         is_current: isCurrent,
+        start_date: "2024-01-01",
         highlights,
         deliverables,
         technologies,
-        updated_at: new Date().toISOString(),
       };
 
       if (!editingId) {
@@ -150,11 +150,16 @@ export default function AdminExperiencesPage() {
         toast.success("Pengalaman kerja berhasil ditambahkan!");
       } else {
         // Update
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("experiences")
           .update(payload)
-          .eq("id", editingId);
+          .eq("id", editingId)
+          .select();
         if (error) throw error;
+        if (!data || data.length === 0) {
+          const { error: insertErr } = await supabase.from("experiences").insert(payload);
+          if (insertErr) throw insertErr;
+        }
         toast.success("Pengalaman kerja berhasil diperbarui!");
       }
 

@@ -118,15 +118,15 @@ export default function AdminCertificatesPage() {
         .map((s) => s.trim())
         .filter(Boolean);
 
-      const payload = {
+      const payload: Record<string, any> = {
         title,
         issuer,
         date,
+        issue_date: date && date.length === 4 ? `${date}-01-01` : "2024-01-01",
         credential_id: credentialId,
         credential_url: credentialUrl,
         image_url: imageUrl,
         skills_verified: skillsVerified,
-        updated_at: new Date().toISOString(),
       };
 
       if (!editingId) {
@@ -134,11 +134,16 @@ export default function AdminCertificatesPage() {
         if (error) throw error;
         toast.success("Sertifikat berhasil ditambahkan!");
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("certificates")
           .update(payload)
-          .eq("id", editingId);
+          .eq("id", editingId)
+          .select();
         if (error) throw error;
+        if (!data || data.length === 0) {
+          const { error: insertErr } = await supabase.from("certificates").insert(payload);
+          if (insertErr) throw insertErr;
+        }
         toast.success("Sertifikat berhasil diperbarui!");
       }
 

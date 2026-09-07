@@ -154,7 +154,7 @@ export default function ProjectFormPage() {
 
     setSaving(true);
     try {
-      const payload = {
+      const payload: Record<string, any> = {
         title,
         slug,
         subtitle,
@@ -167,7 +167,6 @@ export default function ProjectFormPage() {
         github_url: githubUrl,
         thumbnail_url: thumbnailUrl,
         metrics: metrics.filter((m) => m.label.trim() && m.value.trim()),
-        updated_at: new Date().toISOString(),
       };
 
       if (isNew) {
@@ -175,11 +174,16 @@ export default function ProjectFormPage() {
         if (error) throw error;
         toast.success("Project baru berhasil ditambahkan!");
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("projects")
           .update(payload)
-          .or(`id.eq.${projectId},slug.eq.${projectId}`);
+          .or(`id.eq.${projectId},slug.eq.${projectId}`)
+          .select();
         if (error) throw error;
+        if (!data || data.length === 0) {
+          const { error: insertErr } = await supabase.from("projects").insert(payload);
+          if (insertErr) throw insertErr;
+        }
         toast.success("Project berhasil diperbarui!");
       }
 

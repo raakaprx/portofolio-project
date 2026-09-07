@@ -59,9 +59,16 @@ export function ImageUploader({
       toast.success("Gambar berhasil di-upload!");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal upload gambar";
-      toast.error("Upload gagal: " + msg, {
-        description: "Tips: Anda juga bisa menempelkan link/URL gambar langsung.",
-      });
+      if (msg.toLowerCase().includes("bucket not found") || msg.toLowerCase().includes("nosuchbucket")) {
+        toast.error("Bucket Storage 'portfolio-assets' belum dibuat di Supabase", {
+          description: "Silakan masukkan URL gambar langsung di bawah, atau buat bucket 'portfolio-assets' di menu Storage Supabase.",
+          duration: 7000,
+        });
+      } else {
+        toast.error("Upload gagal: " + msg, {
+          description: "Tips: Anda juga bisa menempelkan link/URL gambar langsung.",
+        });
+      }
       setShowUrlInput(true);
     } finally {
       setUploading(false);
