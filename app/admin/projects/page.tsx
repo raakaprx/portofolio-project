@@ -24,13 +24,18 @@ interface ProjectRecord {
   title: string;
   slug: string;
   subtitle?: string;
-  category: string;
+  role?: string;
+  short_summary?: string;
+  category?: string;
   tags?: string[];
+  tech_stacks?: string[];
   featured?: boolean;
+  is_featured?: boolean;
   demo_url?: string;
   github_url?: string;
   thumbnail_url?: string;
   order_index?: number;
+  display_order?: number;
 }
 
 export default function AdminProjectsPage() {
@@ -55,14 +60,15 @@ export default function AdminProjectsPage() {
         const fallbackList: ProjectRecord[] = DEFAULT_PROJECTS.map((p, idx) => ({
           id: p.id,
           title: p.title,
-          slug: p.id,
-          subtitle: p.subtitle,
-          category: p.category,
-          tags: p.techStack,
-          featured: true,
-          demo_url: p.demo,
-          github_url: p.github,
-          order_index: idx + 1,
+          slug: p.slug || p.id,
+          subtitle: p.subtitle || p.role,
+          role: p.role,
+          category: p.category || "fullstack",
+          tags: p.tech_stacks || p.techStack || [],
+          featured: p.is_featured ?? true,
+          demo_url: p.live_url || p.demo,
+          github_url: p.repo_url || p.github,
+          order_index: p.display_order ?? idx + 1,
         }));
         setProjects(fallbackList);
       } else {
@@ -125,8 +131,10 @@ export default function AdminProjectsPage() {
   const filtered = projects.filter(
     (p) =>
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (p.tags && p.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase())))
+      (p.role && p.role.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (p.category && p.category.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (p.tags && p.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))) ||
+      (p.tech_stacks && p.tech_stacks.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase())))
   );
 
   return (
@@ -274,6 +282,18 @@ export default function AdminProjectsPage() {
                   >
                     <Star className="w-3.5 h-3.5" />
                   </button>
+
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="h-8 rounded-xl border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-mono gap-1"
+                  >
+                    <Link href={`/projects/${p.slug || p.id}`} target="_blank" title="Lihat Halaman Publik">
+                      <ExternalLink className="w-3 h-3 text-blue-400" />
+                      <span className="hidden sm:inline">Preview</span>
+                    </Link>
+                  </Button>
 
                   <Button
                     asChild

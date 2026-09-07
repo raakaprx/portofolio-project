@@ -21,12 +21,94 @@ export * from "./portfolio-defaults";
 // SERVER-SIDE DATA FETCHING WITH SAFE FALLBACK
 // ==========================================
 
+export function mapProjectRow(item: any, idx: number = 0): ProjectItem {
+  const fallbackItem = DEFAULT_PROJECTS.find(
+    (p) => p.slug === item.slug || p.id === item.id || p.id === item.slug
+  );
+
+  const slug = item.slug || item.id || `project-${idx + 1}`;
+  const title = item.title || fallbackItem?.title || "Untitled Project";
+  const role = item.role || item.subtitle || fallbackItem?.role || "Full-stack Developer";
+
+  const short_summary =
+    item.short_summary ||
+    item.summary ||
+    (item.description ? item.description.slice(0, 180) : "") ||
+    fallbackItem?.short_summary ||
+    "";
+
+  const full_description =
+    item.full_description ||
+    item.description ||
+    fallbackItem?.full_description ||
+    short_summary;
+
+  const thumbnail_url =
+    item.thumbnail_url ||
+    item.image_url ||
+    fallbackItem?.thumbnail_url ||
+    "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop";
+
+  const gallery_urls = Array.isArray(item.gallery_urls) && item.gallery_urls.length > 0
+    ? item.gallery_urls
+    : (fallbackItem?.gallery_urls || [thumbnail_url]);
+
+  const tech_stacks = Array.isArray(item.tech_stacks) && item.tech_stacks.length > 0
+    ? item.tech_stacks
+    : (Array.isArray(item.tags) && item.tags.length > 0
+      ? item.tags
+      : (fallbackItem?.tech_stacks || ["Next.js", "TypeScript", "Tailwind CSS"]));
+
+  const live_url = item.live_url || item.demo_url || fallbackItem?.live_url || "";
+  const repo_url = item.repo_url || item.github_url || fallbackItem?.repo_url || "";
+  const is_featured = Boolean(item.is_featured ?? item.featured ?? fallbackItem?.is_featured ?? false);
+  const display_order = Number(item.display_order ?? item.order_index ?? idx + 1);
+
+  return {
+    id: item.id || slug,
+    slug,
+    title,
+    role,
+    short_summary,
+    full_description,
+    thumbnail_url,
+    gallery_urls,
+    tech_stacks,
+    live_url,
+    repo_url,
+    is_featured,
+    display_order,
+
+    // Backward-compatible properties
+    subtitle: role,
+    description: full_description,
+    summary: short_summary,
+    category: item.category || fallbackItem?.category || "fullstack",
+    techStack: tech_stacks,
+    metrics: (item.metrics as ProjectMetric[]) || fallbackItem?.metrics || [],
+    github: repo_url,
+    demo: live_url,
+    thumbnailUrl: thumbnail_url,
+    featuredSpan: item.featured_span || fallbackItem?.featuredSpan || "lg:col-span-6",
+    architectureFlow:
+      (item.architecture_flow as ArchitectureFlowStep[]) || fallbackItem?.architectureFlow || [],
+    databaseSchema:
+      (item.database_schema as DatabaseSchemaTable[]) || fallbackItem?.databaseSchema || [],
+    codeSnippet: (item.code_snippet as CodeSnippet) || fallbackItem?.codeSnippet || {
+      language: "typescript",
+      filename: "snippet.ts",
+      code: "// Project source code available on GitHub",
+    },
+  };
+}
+
 export async function getProjects(): Promise<ProjectItem[]> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("projects")
       .select("*")
+      .order("display_order", { ascending: true })
       .order("order_index", { ascending: true })
       .order("created_at", { ascending: false });
 
@@ -34,31 +116,33 @@ export async function getProjects(): Promise<ProjectItem[]> {
       return DEFAULT_PROJECTS;
     }
 
-    return data.map((item) => ({
-      id: item.slug || item.id,
-      title: item.title,
-      slug: item.slug,
-      subtitle: item.subtitle || "",
-      description: item.description || item.summary || "",
-      category: item.category || "fullstack",
-      techStack: item.tags || [],
-      metrics: (item.metrics as ProjectMetric[]) || [],
-      github: item.github_url || "",
-      demo: item.demo_url || undefined,
-      thumbnailUrl: item.thumbnail_url || undefined,
-      featuredSpan: item.featured_span || "lg:col-span-6",
-      architectureFlow:
-        (item.architecture_flow as ArchitectureFlowStep[]) || [],
-      databaseSchema: (item.database_schema as DatabaseSchemaTable[]) || [],
-      codeSnippet: (item.code_snippet as CodeSnippet) || {
-        language: "typescript",
-        filename: "snippet.ts",
-        code: "// Project source code on GitHub",
-      },
-    }));
+    return data.map((item, idx) => mapProjectRow(item, idx));
   } catch {
     return DEFAULT_PROJECTS;
   }
+}
+
+export async function getProjectBySlug(slug: string): Promise<ProjectItem | null> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*")
+      .or(`slug.eq.${slug},id.eq.${slug}`)
+      .single();
+
+    if (data && !error) {
+      return mapProjectRow(data, 0);
+    }
+  } catch {
+    // fallback below
+  }
+
+  // Fallback to static data
+  const fallback = DEFAULT_PROJECTS.find(
+    (p) => p.slug === slug || p.id === slug
+  );
+  return fallback || null;
 }
 
 export async function getExperiences(): Promise<ExperienceItem[]> {

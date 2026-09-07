@@ -7,223 +7,207 @@ const supabase = createClient(
 );
 
 async function seed() {
-  console.log('Seeding portfolio data from CV into Supabase...');
+  console.log('--- Seeding Projects with Rich Markdown & Clean Architecture ---');
 
-  // 1. Experiences
-  const experiences = [
-    {
-      company: 'PT Maxxima Innovative Engineering',
-      role: 'Programmer',
-      duration: 'Active / Current',
-      start_date: '2026-09-01',
-      status: 'Active',
-      type: 'Industry',
-      is_current: true,
-      highlights: 'Developing scalable web systems, internal enterprise applications, and modern interactive modules.',
-      deliverables: [
-        'Mengembangkan dan memelihara fitur web aplikasi skala enterprise.',
-        'Membangun modul frontend interaktif yang responsif dan terintegrasi dengan RESTful API backend.',
-        'Mengoptimalkan arsitektur antarmuka dan alur navigasi aplikasi internal perusahaan.'
-      ],
-      technologies: ['React', 'Next.js', 'TypeScript', 'TailwindCSS', 'PostgreSQL', 'Git'],
-      order_index: 1
-    },
-    {
-      company: 'PT Sundaya',
-      role: 'Frontend Developer Intern',
-      duration: 'Aug 2024 – Nov 2024',
-      start_date: '2024-08-01',
-      status: 'Completed',
-      type: 'Internship',
-      is_current: false,
-      highlights: 'Membangun antarmuka web monitoring solar energy, dashboard IoT perangkat energi, dan refactoring modul antarmuka pengguna.',
-      deliverables: [
-        'Merancang dan mengimplementasikan dashboard visualisasi telemetri solar energy secara real-time.',
-        'Melakukan slicing UI/UX desain Figma ke komponen web responsif performa tinggi.',
-        'Mengintegrasikan WebSocket dan REST API untuk pembacaan status baterai dan output inverter.'
-      ],
-      technologies: ['React.js', 'JavaScript', 'TailwindCSS', 'REST APIs', 'IoT Telemetry'],
-      order_index: 2
-    }
-  ];
+  // Clear existing projects to avoid duplicate slugs
+  await supabase.from('projects').delete().neq('id', '00000000-0000-0000-0000-000000000000');
 
-  for (const exp of experiences) {
-    const { error } = await supabase.from('experiences').insert(exp);
-    if (error) console.error('Error inserting experience:', exp.company, error.message);
-    else console.log('✓ Experience inserted:', exp.company);
-  }
-
-  // 2. Projects
   const projects = [
     {
-      title: 'SMMS - Social Media Monitoring System (Skripsi 2026)',
-      slug: 'smms-system',
-      subtitle: 'Sistem Analisis Sentimen Pilkada Jabar 2024 Multi-Model AI (IndoBERT, RoBERTa, LSTM)',
-      category: 'machine-learning',
-      description: 'Penelitian skripsi komprehensif yang menganalisis sentimen publik media sosial (X/Twitter) terkait Pilkada Jawa Barat 2024 dengan perbandingan akurasi model deep learning & transformer.',
-      summary: 'Penelitian skripsi komprehensif analisis sentimen publik media sosial Pilkada Jabar 2024 dengan perbandingan akurasi IndoBERT, RoBERTa, dan LSTM.',
-      tags: ['Python', 'IndoBERT', 'RoBERTa', 'LSTM', 'Flask', 'Next.js', 'NLP', 'PyTorch'],
+      title: 'Smart Material Management System (SMMS)',
+      slug: 'smart-material-management-system',
+      subtitle: 'Lead Full-Stack Developer',
+      category: 'fullstack',
+      summary:
+        'Aplikasi web pergudangan full-stack terintegrasi dengan 9 modul operasional, otentikasi RBAC 5 role, dan notifikasi real-time Socket.IO.',
+      description: `## Ringkasan Proyek
+Proyek Skripsi 2026 yang dikembangkan untuk PT. Sundaya Indonesia bekerja sama dengan Telkom University. Sistem ini mendigitalisasi seluruh alur kerja permintaan material (*material request*), persetujuan multi-level (*multi-tier approval*), pemantauan stok pergudangan (*stock monitoring*), dan pengadaan (*procurement*) yang sebelumnya dikelola secara manual berbasis spreadsheet.
+
+## Masalah & Kebutuhan Bisnis
+- Pencatatan stok material di berbagai site distribusi masih manual sehingga sering terjadi inkonsistensi data barang masuk dan keluar.
+- Alur persetujuan (*approval*) permintaan material memakan waktu lama karena tidak tersedianya sistem notifikasi instan lintas hierarki manajemen.
+- Ketiadaan audit trail transparan untuk setiap perpindahan material antar gudang.
+
+## Solusi Arsitektur
+- **9 Modul Terintegrasi**: Mengelola siklus material dari request awal, verifikasi teknis, approval bertingkat, hingga update kartu stok gudang.
+- **5 Tingkat Hak Akses (RBAC)**: Pembagian akses tegas antara Admin, NOC, Operations Manager, General Manager, dan Tim Gudang.
+- **Notifikasi Real-Time Socket.IO**: Sinkronisasi instan saat status request disetujui atau ditolak tanpa perlu refresh halaman.
+- **Containerized Deployment**: Pengemasan seluruh service menggunakan Docker untuk konsistensi di environment staging dan production.
+
+## Fitur Utama
+- **Real-Time Stock Monitoring**: Dashboard interaktif yang menampilkan ketersediaan komponen inverter, baterai solar, dan aksesoris secara langsung.
+- **Multi-Level Approval Pipeline**: Alur delegasi approval terstruktur dengan tracking timestamp dan identitas penyetujui.
+- **Automated Audit Logging**: Riwayat lengkap seluruh tindakan inventaris untuk kebutuhan compliance perusahaan.`,
+      thumbnail_url: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1200&auto=format&fit=crop',
+      tags: ['React.js', 'Node.js', 'Express.js', 'MySQL', 'Socket.IO', 'Docker', 'JWT', 'Tailwind CSS'],
+      demo_url: 'https://github.com/raakaprx/warehouse-sundaya-v2',
+      github_url: 'https://github.com/raakaprx/warehouse-sundaya-v2',
       featured: true,
-      demo_url: 'https://github.com/raakaprx',
-      github_url: 'https://github.com/raakaprx',
-      metrics: [
-        { label: 'Data Tweet', value: '10.000+' },
-        { label: 'IndoBERT Acc', value: '88.4%' },
-        { label: 'RoBERTa Acc', value: '86.1%' },
-        { label: 'LSTM Acc', value: '82.7%' }
-      ],
       order_index: 1,
-      featured_span: 'lg:col-span-8'
+      metrics: [
+        { label: 'Modul', value: '9 Modul Terpadu' },
+        { label: 'RBAC', value: '5 User Roles' },
+        { label: 'Socket', value: 'Real-Time Telemetry' },
+        { label: 'Deploy', value: 'Docker Container' }
+      ]
     },
     {
-      title: 'Plastani - Marketplace Pertanian & Daur Ulang',
-      slug: 'plastani-app',
-      subtitle: 'Platform E-Commerce Agrikultur Berkelanjutan & Ekosistem Pupuk Organik',
+      title: 'Plastani',
+      slug: 'plastani-umkm-ecommerce',
+      subtitle: 'Full-Stack Laravel Developer',
       category: 'laravel',
-      description: 'Platform e-commerce inovatif yang memberdayakan petani lokal memasarkan hasil panen langsung ke konsumen, terintegrasi dengan modul edukasi daur ulang sampah organik & plastik pertanian.',
-      summary: 'Platform e-commerce agrikultur berkelanjutan menghubungkan petani langsung ke konsumen dengan integrasi sistem daur ulang.',
-      tags: ['Laravel', 'PHP', 'MySQL', 'Bootstrap', 'Midtrans Payment', 'JavaScript'],
+      summary:
+        'Platform e-commerce agrikultur untuk UMKM dan petani lokal dengan katalog produk terorganisir, integrasi order WhatsApp, dan analitik penjualan.',
+      description: `## Ringkasan Proyek
+Plastani merupakan platform e-commerce digital yang dirancang untuk memberdayakan UMKM dan kelompok tani lokal agar dapat memasarkan produk hasil panen dan olahan pertanian secara mandiri ke konsumen luas.
+
+## Masalah & Kebutuhan
+- Rantai pasok konvensional yang panjang sering memotong margin keuntungan petani lokal.
+- Pembeli di daerah rural lebih nyaman melakukan konfirmasi pesanan secara personal melalui pesan instan daripada alur checkout yang rumit.
+
+## Solusi & Arsitektur
+- Dibangun menggunakan framework **Laravel MVC** dengan performa render cepat berbasis Blade dan Tailwind CSS.
+- Integrasi **WhatsApp Direct Order Link** yang secara otomatis mengonversi keranjang belanja menjadi pesan terstruktur berisi daftar produk, kuantitas, dan total harga.
+- Panel admin mandiri untuk memantau performa penjualan, menambahkan artikel panduan bertani, dan mengelola stok produk.
+
+## Fitur Utama
+- **Katalog Produk Dinamis**: Filter kategori produk pertanian, harga, dan ketersediaan stok real-time.
+- **Seamless WhatsApp Checkout**: Kemudahan transaksi langsung ke kontak WhatsApp resmi petani atau admin.
+- **Admin Analytics Dashboard**: Rekapitulasi transaksi, performa katalog terlaris, dan manajemen inventaris.`,
+      thumbnail_url: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?q=80&w=1200&auto=format&fit=crop',
+      tags: ['PHP', 'Laravel', 'MySQL', 'Eloquent ORM', 'Blade', 'Tailwind CSS', 'Laravel Auth'],
+      demo_url: 'https://github.com/raakaprx/plastani-ecommerce',
+      github_url: 'https://github.com/raakaprx/plastani-ecommerce',
       featured: true,
-      demo_url: 'https://github.com/raakaprx',
-      github_url: 'https://github.com/raakaprx',
-      metrics: [
-        { label: 'Arsitektur', value: 'MVC Laravel' },
-        { label: 'Payment', value: 'Midtrans Snap' },
-        { label: 'User Roles', value: 'Petani & Buyer' }
-      ],
       order_index: 2,
-      featured_span: 'lg:col-span-4'
+      metrics: [
+        { label: 'Target', value: 'Petani & UMKM' },
+        { label: 'Checkout', value: 'WhatsApp Gateway' },
+        { label: 'Admin', value: 'Analytics Report' },
+        { label: 'Security', value: 'Laravel RBAC' }
+      ]
     },
     {
-      title: 'JajanSepy - Platform Belanja Kuliner & UMKM',
-      slug: 'jajansepy-app',
-      subtitle: 'Aplikasi Web Order & Delivery Makanan Lokal UMKM Cepat Saji',
-      category: 'fullstack',
-      description: 'Aplikasi pemesanan makanan online yang dirancang khusus untuk mendigitalkan pedagang kaki lima dan UMKM kuliner lokal dengan pelacakan pesanan dan kalkulasi ongkos kirim dinamis.',
-      summary: 'Aplikasi pemesanan kuliner online untuk UMKM dengan live ordering dan kalkulasi ongkir.',
-      tags: ['Next.js', 'React', 'TailwindCSS', 'Node.js', 'PostgreSQL', 'Prisma'],
+      title: 'JajanSepy',
+      slug: 'jajansepy-single-brand',
+      subtitle: 'Full-Stack Laravel Developer',
+      category: 'laravel',
+      summary:
+        'Web store single-brand UMKM kuliner dengan integrasi komunikasi WhatsApp Admin dan manajemen inventaris stok terpadu.',
+      description: `## Ringkasan Proyek
+Platform penjualan online yang dikembangkan khusus untuk lini produk single-brand UMKM kuliner. Mengutamakan kemudahan navigasi bagi pelanggan dan pengelolaan stok yang efisien bagi pemilik usaha.
+
+## Solusi Teknis
+- Arsitektur berbasis Laravel dengan sistem inventory tracking otomatis.
+- Format checkout yang ringkas dan memicu pembuatan order payload ke WhatsApp Admin secara instan.
+- Tampilan responsif dengan visualisasi produk beresolusi tinggi untuk memaksimalkan daya tarik pelanggan.`,
+      thumbnail_url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1200&auto=format&fit=crop',
+      tags: ['PHP', 'Laravel', 'MySQL', 'Eloquent ORM', 'Blade', 'JavaScript', 'WhatsApp Admin API'],
+      demo_url: 'https://github.com/raakaprx/jajansepy-ecommerce',
+      github_url: 'https://github.com/raakaprx/jajansepy-ecommerce',
       featured: true,
-      demo_url: 'https://github.com/raakaprx',
-      github_url: 'https://github.com/raakaprx',
-      metrics: [
-        { label: 'Stack', value: 'Fullstack TS' },
-        { label: 'Latency', value: '<150ms' }
-      ],
       order_index: 3,
-      featured_span: 'lg:col-span-4'
+      metrics: [
+        { label: 'Model', value: 'Single Brand' },
+        { label: 'Order', value: 'WhatsApp API' },
+        { label: 'Inventory', value: 'Live Stock Tracking' }
+      ]
     },
     {
-      title: 'Renbook - Perpustakaan & Manajemen Reservasi Buku',
-      slug: 'renbook-app',
-      subtitle: 'Sistem Informasi Manajemen Katalog & Peminjaman Buku Digital',
-      category: 'fullstack',
-      description: 'Sistem otomasi manajemen perpustakaan modern dengan fitur scan barcode buku, manajemen denda keterlambatan otomatis, dan portal pencarian judul terindeks cepat.',
-      summary: 'Sistem otomasi perpustakaan dengan manajemen denda otomatis dan pencarian buku terindeks.',
-      tags: ['Laravel', 'MySQL', 'TailwindCSS', 'Alpine.js', 'REST API'],
+      title: 'Renbook',
+      slug: 'renbook-online-rental',
+      subtitle: 'Project Lead & Full-Stack Developer',
+      category: 'laravel',
+      summary:
+        'Sistem informasi peminjaman dan rental buku online dengan pemodelan 4 diagram UML, manajemen denda, dan pelacakan status sewa.',
+      description: `## Ringkasan Proyek
+Memimpin perancangan dan implementasi platform sewa buku online dari tahap pemodelan kebutuhan sistem hingga siap digunakan. Mendukung katalog 25+ buku, pembatasan kuota peminjaman per akun, dan kalkulasi denda otomatis.
+
+## Pemodelan Rekayasa Perangkat Lunak
+- Menggunakan 4 diagram UML: Use Case Diagram, Activity Diagram, Sequence Diagram, dan Class Diagram.
+- Arsitektur modular memisahkan business logic sewa dengan sistem pelaporan admin.
+
+## Fitur Utama
+- **Katalog & Status Eksemplar**: Menampilkan stok ketersediaan eksemplar buku secara real-time.
+- **Rental Life-Cycle**: Pencatatan tanggal pinjam, batas waktu pengembalian, dan histori peminjam.
+- **Overdue Tracking**: Peringatan otomatis untuk buku yang melewati tanggal jatuh tempo.`,
+      thumbnail_url: 'https://images.unsplash.com/photo-1507842229451-79b1be8d62a2?q=80&w=1200&auto=format&fit=crop',
+      tags: ['PHP', 'Laravel', 'MySQL', 'Eloquent ORM', 'Blade', 'Bootstrap', 'Laravel Auth'],
+      demo_url: 'https://github.com/raakaprx/renbook-platform',
+      github_url: 'https://github.com/raakaprx/renbook-platform',
       featured: true,
-      demo_url: 'https://github.com/raakaprx',
-      github_url: 'https://github.com/raakaprx',
-      metrics: [
-        { label: 'Sirkulasi', value: 'Otomatis' },
-        { label: 'Katalog', value: 'ISBN Indexed' }
-      ],
       order_index: 4,
-      featured_span: 'lg:col-span-4'
+      metrics: [
+        { label: 'Katalog', value: '25+ Judul Buku' },
+        { label: 'UML Models', value: '4 Diagram Types' },
+        { label: 'Tracking', value: 'Overdue System' }
+      ]
     },
     {
-      title: 'Midtrans Payment Integration Microservice',
-      slug: 'midtrans-service',
-      subtitle: 'Layanan Gateway Transaksi Aman dengan Webhook Auto-Verification',
+      title: 'Midtrans Payment Gateway Integration',
+      slug: 'midtrans-payment-integration',
+      subtitle: 'Backend & Systems Engineer',
       category: 'fullstack',
-      description: 'Modul arsitektur backend payment gateway mandiri yang mengelola siklus pembayaran mulai dari pembuatan Snap Token, notifikasi HTTP Webhook asinkron, hingga update status pesanan.',
-      summary: 'Microservice payment gateway Midtrans dengan verifikasi webhook asinkron dan idempotency key.',
-      tags: ['Node.js', 'Express', 'Midtrans Snap API', 'Webhooks', 'Security SHA512'],
+      summary:
+        'Microservice pembayaran digital dengan verifikasi signature kriptografis SHA-512, webhook callback asinkron, dan transaction audit log.',
+      description: `## Ringkasan Proyek
+Implementasi modul pembayaran digital menyeluruh menggunakan Midtrans API. Menjamin integritas data transaksi keuangan dengan validasi signature kriptografis SHA-512 dan audit logging komprehensif.
+
+## Arsitektur Keamanan Transaksi
+- **Snap Token Generation**: Token pembayaran dibuat secara aman di server tanpa mengekspos server-key ke frontend.
+- **Asynchronous Webhook Callback**: Menerima HTTP POST notification dari Midtrans dan memverifikasi kesesuaian signature key sebelum mengubah status settlement.
+- **Idempotent Handling**: Mencegah duplikasi kredit atau pengiriman barang ganda saat callback diterima berulang kali.`,
+      thumbnail_url: 'https://images.unsplash.com/photo-1556742049-0a67e5572293?q=80&w=1200&auto=format&fit=crop',
+      tags: ['PHP', 'Laravel', 'Midtrans', 'MySQL', 'RESTful APIs', 'JWT', 'Security SHA-512'],
+      demo_url: 'https://github.com/raakaprx/midtrans-laravel-integration',
+      github_url: 'https://github.com/raakaprx/midtrans-laravel-integration',
       featured: false,
-      demo_url: 'https://github.com/raakaprx',
-      github_url: 'https://github.com/raakaprx',
-      metrics: [
-        { label: 'Security', value: 'SHA512 Signature' },
-        { label: 'Reliability', value: 'Auto-Retry' }
-      ],
       order_index: 5,
-      featured_span: 'lg:col-span-4'
+      metrics: [
+        { label: 'Security', value: 'SHA-512 Hash' },
+        { label: 'Audit', value: '100% Logged' },
+        { label: 'Channels', value: 'Multi Payment' }
+      ]
     },
     {
       title: 'Vehicle Price Prediction Model',
-      slug: 'vehicle-prediction',
-      subtitle: 'Model Regresi Machine Learning Estimasi Nilai Pasar Kendaraan Bekas',
+      slug: 'vehicle-price-prediction-model',
+      subtitle: 'Machine Learning Engineer',
       category: 'machine-learning',
-      description: 'Model machine learning yang dilatih dengan regresi ensemble Random Forest & XGBoost untuk memprediksi harga wajar mobil/motor bekas berdasarkan tahun produksi, jarak tempuh, dan kondisi mesin.',
-      summary: 'Model regresi ensemble Random Forest dan XGBoost untuk estimasi nilai pasar kendaraan bekas.',
-      tags: ['Python', 'Scikit-Learn', 'Pandas', 'Random Forest', 'XGBoost', 'Flask API'],
+      summary:
+        'Model regresi machine learning berbasis Python dengan akurasi 87% untuk estimasi harga kendaraan berdasarkan spesifikasi teknis dan kondisi.',
+      description: `## Ringkasan Proyek
+Pengembangan model estimasi harga wajar kendaraan menggunakan teknik machine learning regresi. Model ini mencapai akurasi sebesar 87% dalam memprediksi nilai pasar berdasarkan kombinasi parameter teknis dan historis.
+
+## Alur Data Science Pipeline
+1. **Exploratory Data Analysis (EDA)**: Analisis distribusi harga, korelasi fitur mesin dan usia kendaraan, serta deteksi nilai pencilan (*outlier*).
+2. **Data Preprocessing & Cleaning**: Penanganan nilai kosong (*missing values*) dan standarisasi format data.
+3. **Feature Scaling**: Penerapan StandardScaler untuk fitur numerik serta One-Hot Encoding untuk fitur kategori (*brand* dan tipe transmisi).
+4. **Model Training & Evaluation**: Pelatihan algoritma Linear Regression yang divalidasi menggunakan k-fold cross-validation.`,
+      thumbnail_url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1200&auto=format&fit=crop',
+      tags: ['Python', 'Pandas', 'NumPy', 'Scikit-Learn', 'Matplotlib', 'Seaborn'],
+      demo_url: 'https://github.com/raakaprx/vehicle-price-prediction',
+      github_url: 'https://github.com/raakaprx/vehicle-price-prediction',
       featured: false,
-      demo_url: 'https://github.com/raakaprx',
-      github_url: 'https://github.com/raakaprx',
-      metrics: [
-        { label: 'Algorithm', value: 'XGBoost' },
-        { label: 'R2 Score', value: '0.91' }
-      ],
       order_index: 6,
-      featured_span: 'lg:col-span-4'
+      metrics: [
+        { label: 'Accuracy', value: '87% Score' },
+        { label: 'Model', value: 'Linear Regression' },
+        { label: 'Validation', value: 'Cross-Validation' }
+      ]
     }
   ];
 
   for (const proj of projects) {
     const { error } = await supabase.from('projects').insert(proj);
-    if (error) console.error('Error inserting project:', proj.title, error.message);
-    else console.log('✓ Project inserted:', proj.title);
-  }
-
-  // 3. Certificates
-  const certificates = [
-    {
-      title: 'Certified Web Developer (CWDev)',
-      issuer: 'Badan Nasional Sertifikasi Profesi (BNSP)',
-      date: '2024',
-      issue_date: '2024-01-01',
-      credential_id: 'BNSP-CWDEV-2024',
-      credential_url: 'https://bnsp.go.id',
-      image_url: '',
-      skills_verified: [
-        'Web Application Development',
-        'Database Design & SQL Optimization',
-        'Secure RESTful API Architecture',
-        'Frontend Implementation & UI Standards'
-      ],
-      order_index: 1
+    if (error) {
+      console.error('Error inserting project:', proj.title, error.message);
+    } else {
+      console.log('✓ Project seeded with Rich Markdown & V2 data:', proj.title);
     }
-  ];
-
-  for (const cert of certificates) {
-    const { error } = await supabase.from('certificates').insert(cert);
-    if (error) console.error('Error inserting certificate:', cert.title, error.message);
-    else console.log('✓ Certificate inserted:', cert.title);
   }
 
-  // 4. Tech Stacks
-  const techStacks = [
-    { name: 'Next.js 15 (App Router)', category: 'Frontend Development', proficiency: 'Advanced', order_index: 1 },
-    { name: 'React 19', category: 'Frontend Development', proficiency: 'Advanced', order_index: 2 },
-    { name: 'TypeScript', category: 'Frontend Development', proficiency: 'Advanced', order_index: 3 },
-    { name: 'TailwindCSS', category: 'Frontend Development', proficiency: 'Advanced', order_index: 4 },
-    { name: 'Vue.js', category: 'Frontend Development', proficiency: 'Proficient', order_index: 5 },
-    { name: 'Node.js & Express', category: 'Backend & Systems', proficiency: 'Advanced', order_index: 6 },
-    { name: 'Laravel (PHP)', category: 'Backend & Systems', proficiency: 'Advanced', order_index: 7 },
-    { name: 'Go (Golang)', category: 'Backend & Systems', proficiency: 'Proficient', order_index: 8 },
-    { name: 'PostgreSQL', category: 'Databases & Storage', proficiency: 'Advanced', order_index: 9 },
-    { name: 'Supabase', category: 'Databases & Storage', proficiency: 'Advanced', order_index: 10 },
-    { name: 'MySQL', category: 'Databases & Storage', proficiency: 'Advanced', order_index: 11 },
-    { name: 'Python (PyTorch / Scikit-Learn)', category: 'AI / Data Science & Tools', proficiency: 'Advanced', order_index: 12 },
-    { name: 'Docker & Git', category: 'AI / Data Science & Tools', proficiency: 'Advanced', order_index: 13 },
-  ];
-
-  for (const tech of techStacks) {
-    const { error } = await supabase.from('tech_stacks').insert(tech);
-    if (error) console.error('Error inserting tech stack:', tech.name, error.message);
-    else console.log('✓ Tech stack inserted:', tech.name);
-  }
-
-  console.log('\nSeeding completed successfully!');
+  console.log('\n--- Seeding Completed Successfully! ---');
 }
 
 seed();
