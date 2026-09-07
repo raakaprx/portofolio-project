@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowUp, ShieldCheck } from "lucide-react";
-import { Github, Linkedin, GmailLogo, RakaLogo } from "@/components/icons";
+import { Github, Linkedin, GmailLogo, WhatsappLogo, RakaLogo } from "@/components/icons";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -48,6 +48,15 @@ export default function Footer() {
             aria-label="LinkedIn"
           >
             <Linkedin className="w-3.5 h-3.5" />
+          </a>
+          <a
+            href="https://wa.me/6285156000636?text=Halo%20Raka%2C%20saya%20tertarik%20dengan%20portofolio%20anda"
+            target="_blank"
+            rel="noreferrer"
+            className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors shadow-2xs"
+            aria-label="WhatsApp"
+          >
+            <WhatsappLogo className="w-3.5 h-3.5" />
           </a>
           <a
             href="mailto:rakapradana.work@gmail.com"

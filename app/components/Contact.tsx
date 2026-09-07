@@ -41,7 +41,7 @@ export default function Contact() {
     {
       label: "WhatsApp",
       handle: "+62 851-5600-0636",
-      href: "https://wa.me/6285156000636",
+      href: "https://wa.me/6285156000636?text=Halo%20Raka%2C%20saya%20tertarik%20dengan%20portofolio%20anda",
       icon: WhatsappLogo,
       detail: "Instant messaging for project inquiries",
     },

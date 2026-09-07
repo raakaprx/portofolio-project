@@ -9,7 +9,7 @@ import {
   Briefcase,
   Layers,
 } from "lucide-react";
-import { Github, Linkedin, GmailLogo } from "@/components/icons";
+import { Github, Linkedin, GmailLogo, WhatsappLogo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 
@@ -166,6 +166,17 @@ export default function Hero() {
                   aria-label="LinkedIn Profile"
                 >
                   <Linkedin className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://wa.me/6285156000636?text=Halo%20Raka%2C%20saya%20tertarik%20dengan%20portofolio%20anda"
+                  target="_blank"
+                  rel="noreferrer"
+                  data-track-event="contact_click"
+                  data-track-target="WhatsApp Hero"
+                  className="p-3 rounded-full border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-950/60 text-zinc-700 dark:text-zinc-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors shadow-2xs"
+                  aria-label="Chat on WhatsApp"
+                >
+                  <WhatsappLogo className="w-4 h-4" />
                 </a>
                 <a
                   href="mailto:rakapradana.work@gmail.com"
