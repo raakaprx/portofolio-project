@@ -13,7 +13,7 @@ import {
   RefreshCw,
   Search,
 } from "lucide-react";
-import { Github } from "@/components/icons";
+import { Github, getTechLogo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_PROJECTS } from "@/lib/portfolio-defaults";
@@ -232,9 +232,12 @@ export default function AdminProjectsPage() {
                       {p.tags.slice(0, 5).map((t) => (
                         <span
                           key={t}
-                          className="px-2 py-0.5 rounded-md bg-zinc-950 border border-zinc-800 text-[10px] font-mono text-zinc-400"
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-950 border border-zinc-800 text-[10px] font-mono text-zinc-400"
                         >
-                          {t}
+                          <span className="shrink-0 flex items-center justify-center">
+                            {getTechLogo(t, "w-2.5 h-2.5")}
+                          </span>
+                          <span>{t}</span>
                         </span>
                       ))}
                       {p.tags.length > 5 && (

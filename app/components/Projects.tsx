@@ -194,13 +194,17 @@ export default function Projects({
                     {project.tech_stacks.slice(0, 3).map((tech) => (
                       <span
                         key={tech}
-                        className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-[10px] font-mono text-zinc-700 dark:text-zinc-300 truncate max-w-[90px]"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800/90 border border-zinc-200/60 dark:border-zinc-700/50 text-[10px] font-mono text-zinc-700 dark:text-zinc-300 truncate max-w-[105px]"
+                        title={tech}
                       >
-                        {tech}
+                        <span className="shrink-0 flex items-center justify-center">
+                          {getTechLogo(tech, "w-3 h-3")}
+                        </span>
+                        <span className="truncate">{tech}</span>
                       </span>
                     ))}
                     {project.tech_stacks.length > 3 && (
-                      <span className="text-[10px] font-mono text-zinc-500">
+                      <span className="text-[10px] font-mono text-zinc-500 shrink-0">
                         +{project.tech_stacks.length - 3}
                       </span>
                     )}
@@ -260,14 +264,16 @@ export default function Projects({
                     <h4 className="text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-2.5">
                       Technologies & Tools
                     </h4>
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-2">
                       {previewProject.tech_stacks.map((tech) => (
                         <span
                           key={tech}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-mono text-zinc-800 dark:text-zinc-200 font-medium"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-mono text-zinc-800 dark:text-zinc-200 font-medium hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
                         >
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                          {tech}
+                          <span className="shrink-0 flex items-center justify-center">
+                            {getTechLogo(tech, "w-4 h-4")}
+                          </span>
+                          <span>{tech}</span>
                         </span>
                       ))}
                     </div>

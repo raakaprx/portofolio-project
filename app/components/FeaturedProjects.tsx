@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ExternalLink, Sparkles } from "lucide-react";
+import { getTechLogo } from "@/components/icons";
 
 interface Project {
   title: string;
@@ -24,7 +25,7 @@ const FEATURED_PROJECTS: Project[] = [
       "Mengintegrasikan notifikasi real-time dan dashboard pemantauan menggunakan Socket.IO.",
       "Mengimplementasikan kontrol akses berbasis peran (RBAC) untuk 5 peran pengguna berbeda."
     ],
-    techStack: ["React.js", "Node.js", "Express.js", "MySQL", "Socket.IO", "Docker", "JWT"],
+    techStack: ["React.js", "Node.js", "Express.js", "MySQL", "Socket.IO", "Docker", "JWT", "JavaScript (ES6+)"],
     github: "https://github.com/raakaprx/warehouse-sundaya-v2/tree/main",
     demo: "https://github.com/raakaprx/warehouse-sundaya-v2/tree/main",
     featured: true,
@@ -63,7 +64,7 @@ const FEATURED_PROJECTS: Project[] = [
       "Mengintegrasikan komunikasi langsung melalui WhatsApp API untuk menghubungkan pembeli dan penjual secara seamless.",
       "Membangun sistem administrasi komprehensif untuk manajemen produk, kategori, artikel, dan analitik transaksi."
     ],
-    techStack: ["PHP", "Laravel", "MySQL", "Eloquent", "Bootstrap", "Laravel Auth"],
+    techStack: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "Tailwind CSS", "WhatsApp API", "Laravel Auth"],
     github: "https://github.com/raakaprx/plastani",
     demo: "https://github.com/raakaprx/plastani",
     featured: true,
@@ -165,9 +166,12 @@ export default function FeaturedProjects() {
                   {project.techStack.map((tech) => (
                     <span
                       key={tech}
-                      className="px-2.5 py-1 rounded-lg bg-zinc-950 border border-zinc-900 text-zinc-400 font-mono text-xs"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-950 border border-zinc-900 text-zinc-300 font-mono text-xs hover:border-zinc-800 transition-colors"
                     >
-                      {tech}
+                      <span className="shrink-0 flex items-center justify-center">
+                        {getTechLogo(tech, "w-3.5 h-3.5")}
+                      </span>
+                      <span>{tech}</span>
                     </span>
                   ))}
                 </div>

@@ -239,7 +239,7 @@ Proyek Skripsi 2026 yang dikembangkan untuk PT. Sundaya Indonesia bekerja sama d
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop"
     ],
-    tech_stacks: ["React.js", "Node.js", "Express.js", "MySQL", "Socket.IO", "Docker", "JWT", "Tailwind CSS"],
+    tech_stacks: ["React.js", "Node.js", "Express.js", "MySQL", "Socket.IO", "Docker", "JWT", "JavaScript (ES6+)", "HTML5", "CSS3", "RESTful APIs"],
     live_url: "https://github.com/raakaprx/warehouse-sundaya-v2",
     repo_url: "https://github.com/raakaprx/warehouse-sundaya-v2",
     is_featured: true,
@@ -250,7 +250,7 @@ Proyek Skripsi 2026 yang dikembangkan untuk PT. Sundaya Indonesia bekerja sama d
     description:
       "Merancang dan mengembangkan full-stack web system untuk digitisasi seluruh proses material request, approval, stock-monitoring, dan procurement workflows yang sebelumnya dikelola secara manual. Mengimplementasikan 9 modul terintegrasi dengan 5 level RBAC dan notifikasi real-time Socket.IO.",
     category: "fullstack",
-    techStack: ["React.js", "Node.js", "Express.js", "MySQL", "Socket.IO", "Docker", "JWT", "Tailwind CSS"],
+    techStack: ["React.js", "Node.js", "Express.js", "MySQL", "Socket.IO", "Docker", "JWT", "JavaScript (ES6+)", "HTML5", "CSS3", "RESTful APIs"],
     github: "https://github.com/raakaprx/warehouse-sundaya-v2",
     demo: "https://github.com/raakaprx/warehouse-sundaya-v2",
     thumbnailUrl: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1200&auto=format&fit=crop",
@@ -315,7 +315,7 @@ Plastani merupakan platform e-commerce digital yang dirancang untuk memberdayaka
       "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?q=80&w=1200&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1574943320219-553eb213f72d?q=80&w=1200&auto=format&fit=crop"
     ],
-    tech_stacks: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "Tailwind CSS", "Laravel Auth"],
+    tech_stacks: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "Tailwind CSS", "JavaScript", "HTML5", "CSS3", "WhatsApp API", "Laravel Auth"],
     live_url: "https://github.com/raakaprx/plastani-ecommerce",
     repo_url: "https://github.com/raakaprx/plastani-ecommerce",
     is_featured: true,
@@ -326,7 +326,7 @@ Plastani merupakan platform e-commerce digital yang dirancang untuk memberdayaka
     description:
       "Membangun platform e-commerce digital yang dirancang untuk membantu UMKM, khususnya petani dan produsen lokal, dalam menyalurkan produknya secara online dengan katalog terorganisir, pencarian efektif, integrasi WhatsApp order, serta sistem administrasi analitik transaksi.",
     category: "laravel",
-    techStack: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "Tailwind CSS", "Laravel Auth"],
+    techStack: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "Tailwind CSS", "JavaScript", "HTML5", "CSS3", "WhatsApp API", "Laravel Auth"],
     github: "https://github.com/raakaprx/plastani-ecommerce",
     demo: "https://github.com/raakaprx/plastani-ecommerce",
     thumbnailUrl: "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?q=80&w=1200&auto=format&fit=crop",
@@ -375,7 +375,7 @@ Platform penjualan online yang dikembangkan khusus untuk lini produk single-bran
     gallery_urls: [
       "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1200&auto=format&fit=crop"
     ],
-    tech_stacks: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "JavaScript", "WhatsApp Admin API"],
+    tech_stacks: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "JavaScript", "HTML5", "CSS3", "WhatsApp Admin API", "Laravel Auth"],
     live_url: "https://github.com/raakaprx/jajansepy-ecommerce",
     repo_url: "https://github.com/raakaprx/jajansepy-ecommerce",
     is_featured: true,
@@ -386,7 +386,7 @@ Platform penjualan online yang dikembangkan khusus untuk lini produk single-bran
     description:
       "Mengembangkan platform e-commerce khusus untuk penjualan produk single brand dengan sistem komunikasi terintegrasi ke WhatsApp Admin. Fokus pada kemudahan pengelolaan produk, manajemen inventory yang efisien, dan proses checkout yang streamlined.",
     category: "laravel",
-    techStack: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "JavaScript", "WhatsApp Admin API"],
+    techStack: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "JavaScript", "HTML5", "CSS3", "WhatsApp Admin API", "Laravel Auth"],
     github: "https://github.com/raakaprx/jajansepy-ecommerce",
     demo: "https://github.com/raakaprx/jajansepy-ecommerce",
     thumbnailUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1200&auto=format&fit=crop",
@@ -440,7 +440,7 @@ Memimpin perancangan dan implementasi platform sewa buku online dari tahap pemod
       "https://images.unsplash.com/photo-1507842229451-79b1be8d62a2?q=80&w=1200&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=1200&auto=format&fit=crop"
     ],
-    tech_stacks: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "Bootstrap", "Laravel Auth"],
+    tech_stacks: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "Bootstrap", "JavaScript", "HTML5", "CSS3", "Laravel Auth", "UML Modeling"],
     live_url: "https://github.com/raakaprx/renbook-platform",
     repo_url: "https://github.com/raakaprx/renbook-platform",
     is_featured: true,
@@ -451,7 +451,7 @@ Memimpin perancangan dan implementasi platform sewa buku online dari tahap pemod
     description:
       "Memimpin perancangan dan implementasi platform sewa buku online dengan analisis kebutuhan komprehensif menggunakan UML diagrams (Use Case, Activity, Sequence, Class). Mendukung 25+ koleksi buku, alur peminjaman user-friendly, dan tracking status sewa.",
     category: "laravel",
-    techStack: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "Bootstrap", "Laravel Auth"],
+    techStack: ["PHP", "Laravel", "MySQL", "Eloquent ORM", "Blade", "Bootstrap", "JavaScript", "HTML5", "CSS3", "Laravel Auth", "UML Modeling"],
     github: "https://github.com/raakaprx/renbook-platform",
     demo: "https://github.com/raakaprx/renbook-platform",
     thumbnailUrl: "https://images.unsplash.com/photo-1507842229451-79b1be8d62a2?q=80&w=1200&auto=format&fit=crop",
@@ -505,7 +505,7 @@ Implementasi modul pembayaran digital menyeluruh menggunakan Midtrans API. Menja
     gallery_urls: [
       "https://images.unsplash.com/photo-1556742049-0a67e5572293?q=80&w=1200&auto=format&fit=crop"
     ],
-    tech_stacks: ["PHP", "Laravel", "Midtrans", "MySQL", "RESTful APIs", "JWT", "Security SHA-512"],
+    tech_stacks: ["PHP", "Laravel", "Midtrans", "MySQL", "RESTful APIs", "Token-based Auth", "SHA-512 Encryption"],
     live_url: "https://github.com/raakaprx/midtrans-laravel-integration",
     repo_url: "https://github.com/raakaprx/midtrans-laravel-integration",
     is_featured: false,
@@ -516,7 +516,7 @@ Implementasi modul pembayaran digital menyeluruh menggunakan Midtrans API. Menja
     description:
       "Mengintegrasikan payment processing menggunakan Midtrans dengan implementasi callback handling aman, verifikasi signature kriptografis SHA-512, dan comprehensive transaction logging yang memenuhi standar audit.",
     category: "fullstack",
-    techStack: ["PHP", "Laravel", "Midtrans", "MySQL", "RESTful APIs", "JWT"],
+    techStack: ["PHP", "Laravel", "Midtrans", "MySQL", "RESTful APIs", "Token-based Auth", "SHA-512 Encryption"],
     github: "https://github.com/raakaprx/midtrans-laravel-integration",
     demo: "https://github.com/raakaprx/midtrans-laravel-integration",
     thumbnailUrl: "https://images.unsplash.com/photo-1556742049-0a67e5572293?q=80&w=1200&auto=format&fit=crop",
@@ -573,7 +573,7 @@ Pengembangan model estimasi harga wajar kendaraan menggunakan teknik machine lea
     gallery_urls: [
       "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1200&auto=format&fit=crop"
     ],
-    tech_stacks: ["Python", "Pandas", "NumPy", "Scikit-Learn", "Matplotlib", "Seaborn"],
+    tech_stacks: ["Python", "Scikit-Learn", "Pandas", "NumPy", "Matplotlib", "Linear Regression", "Cross-Validation"],
     live_url: "https://github.com/raakaprx/vehicle-price-prediction",
     repo_url: "https://github.com/raakaprx/vehicle-price-prediction",
     is_featured: false,
@@ -584,7 +584,7 @@ Pengembangan model estimasi harga wajar kendaraan menggunakan teknik machine lea
     description:
       "Membangun linear regression model menggunakan Python yang mencapai akurasi 87% dalam memprediksi harga kendaraan berdasarkan fitur-fitur spesifik. Meliputi exploratory data analysis (EDA), feature engineering, data scaling, dan cross-validation.",
     category: "machine-learning",
-    techStack: ["Python", "Pandas", "NumPy", "Scikit-Learn", "Matplotlib", "Seaborn"],
+    techStack: ["Python", "Scikit-Learn", "Pandas", "NumPy", "Matplotlib", "Linear Regression", "Cross-Validation"],
     github: "https://github.com/raakaprx/vehicle-price-prediction",
     demo: "https://github.com/raakaprx/vehicle-price-prediction",
     thumbnailUrl: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1200&auto=format&fit=crop",

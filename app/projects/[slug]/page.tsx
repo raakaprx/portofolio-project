@@ -198,10 +198,12 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 {project.tech_stacks.map((tech) => (
                   <span
                     key={tech}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/60 text-xs font-mono text-zinc-800 dark:text-zinc-200"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/60 text-xs font-mono text-zinc-800 dark:text-zinc-200 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    {tech}
+                    <span className="shrink-0 flex items-center justify-center">
+                      {getTechLogo(tech, "w-4 h-4")}
+                    </span>
+                    <span>{tech}</span>
                   </span>
                 ))}
               </div>

@@ -20,6 +20,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_TECH_GROUPS } from "@/lib/portfolio-defaults";
 import { getErrorMessage } from "@/lib/utils";
+import { getTechLogo } from "@/components/icons";
 import { toast } from "sonner";
 
 interface TechRecord {
@@ -213,8 +214,11 @@ export default function AdminTechStackPage() {
                     {items.map((it, idx) => (
                       <div
                         key={it.id || idx}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-mono group"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-mono group"
                       >
+                        <span className="shrink-0 flex items-center justify-center">
+                          {getTechLogo(it.name, "w-3.5 h-3.5")}
+                        </span>
                         <span className="text-zinc-200 font-medium">{it.name}</span>
                         <span
                           className={`text-[9px] px-1.5 py-0.5 rounded ${

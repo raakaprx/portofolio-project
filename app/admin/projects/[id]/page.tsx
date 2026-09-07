@@ -16,7 +16,7 @@ import {
   Eye,
   Edit3,
 } from "lucide-react";
-import { Github } from "@/components/icons";
+import { Github, getTechLogo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { MarkdownView } from "@/components/ui/markdown-view";
@@ -26,26 +26,36 @@ import { getErrorMessage } from "@/lib/utils";
 import { toast } from "sonner";
 
 const COMMON_TECH_STACKS = [
-  "React",
+  "React.js",
   "Next.js",
   "TypeScript",
-  "JavaScript",
+  "JavaScript (ES6+)",
   "Tailwind CSS",
+  "Bootstrap",
+  "HTML5",
+  "CSS3",
   "Node.js",
-  "Express",
+  "Express.js",
   "PHP",
   "Laravel",
-  "PostgreSQL",
+  "Eloquent ORM",
+  "Blade",
   "MySQL",
+  "PostgreSQL",
   "Supabase",
-  "Prisma ORM",
   "Docker",
+  "Socket.IO",
+  "JWT",
   "Python",
   "Scikit-Learn",
   "Pandas",
+  "NumPy",
+  "Matplotlib",
+  "Midtrans",
+  "RESTful APIs",
+  "WhatsApp API",
+  "Laravel Auth",
   "Git",
-  "Midtrans Payment Gateway",
-  "Socket.IO",
   "Redis",
 ];
 
@@ -588,14 +598,16 @@ export default function ProjectFormPage() {
                   onClick={() =>
                     selected ? handleRemoveTech(tech) : handleAddTech(tech)
                   }
-                  className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-colors cursor-pointer border ${
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors cursor-pointer border ${
                     selected
                       ? "bg-blue-600 text-white border-blue-500 font-semibold"
                       : "bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-white hover:border-zinc-700"
                   }`}
                 >
-                  {selected ? "✓ " : "+ "}
-                  {tech}
+                  <span className="shrink-0 flex items-center justify-center">
+                    {getTechLogo(tech, "w-3 h-3")}
+                  </span>
+                  <span>{selected ? "✓ " : "+ "}{tech}</span>
                 </button>
               );
             })}
@@ -632,13 +644,16 @@ export default function ProjectFormPage() {
             {techStacks.map((t) => (
               <span
                 key={t}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-800 border border-zinc-700 text-xs font-mono text-zinc-200"
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-zinc-800 border border-zinc-700 text-xs font-mono text-zinc-200"
               >
+                <span className="shrink-0 flex items-center justify-center">
+                  {getTechLogo(t, "w-3.5 h-3.5")}
+                </span>
                 <span>{t}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveTech(t)}
-                  className="hover:text-red-400 text-zinc-400 transition-colors"
+                  className="hover:text-red-400 text-zinc-400 transition-colors ml-1"
                 >
                   ×
                 </button>
