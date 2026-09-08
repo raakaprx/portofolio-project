@@ -6,7 +6,6 @@ import {
   DEFAULT_TECH_GROUPS,
   DEFAULT_PROFILE,
   parseAvatarUrl,
-  buildAvatarUrl,
   type ProjectItem,
   type ProjectMetric,
   type ArchitectureFlowStep,

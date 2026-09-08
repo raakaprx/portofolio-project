@@ -16,10 +16,6 @@ import {
   Layers,
   Database,
   Copy,
-  Move,
-  ZoomIn,
-  RotateCcw,
-  SlidersHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,40 +25,10 @@ import { Github, Linkedin, GmailLogo, WhatsappLogo } from "@/components/icons";
 import { createClient } from "@/lib/supabase/client";
 import {
   DEFAULT_PROFILE,
-  parseAvatarUrl,
-  buildAvatarUrl,
   type ProfileHighlightCard,
 } from "@/lib/portfolio-defaults";
 import { triggerRevalidation } from "@/lib/revalidate";
 import { toast } from "sonner";
-
-function parseAvatarPosition(posStr?: string): { x: number; y: number } {
-  if (!posStr) return { x: 50, y: 20 };
-  const parts = posStr.trim().split(/\s+/);
-  let x = 50;
-  let y = 20;
-
-  if (parts.length >= 2) {
-    if (parts[0] === "center") x = 50;
-    else if (parts[0] === "left") x = 0;
-    else if (parts[0] === "right") x = 100;
-    else if (parts[0].endsWith("%")) x = parseFloat(parts[0]) || 50;
-
-    if (parts[1] === "center") y = 50;
-    else if (parts[1] === "top") y = 0;
-    else if (parts[1] === "bottom") y = 100;
-    else if (parts[1].endsWith("%")) y = parseFloat(parts[1]) || 20;
-  } else if (parts.length === 1) {
-    if (parts[0] === "center") { x = 50; y = 50; }
-    else if (parts[0] === "top") { x = 50; y = 0; }
-    else if (parts[0] === "bottom") { x = 50; y = 100; }
-    else if (parts[0].endsWith("%")) { x = 50; y = parseFloat(parts[0]) || 20; }
-  }
-  return {
-    x: Math.min(100, Math.max(0, Math.round(x))),
-    y: Math.min(100, Math.max(0, Math.round(y))),
-  };
-}
 
 export default function AdminProfilePage() {
   const [loading, setLoading] = useState(true);
@@ -74,11 +40,6 @@ export default function AdminProfilePage() {
   const [role, setRole] = useState(DEFAULT_PROFILE.role);
   const [tagline, setTagline] = useState(DEFAULT_PROFILE.tagline);
   const [avatarUrl, setAvatarUrl] = useState(DEFAULT_PROFILE.avatar_url);
-  const [avatarPosX, setAvatarPosX] = useState(50);
-  const [avatarPosY, setAvatarPosY] = useState(20);
-  const [avatarScale, setAvatarScale] = useState(115);
-  const [avatarOffsetY, setAvatarOffsetY] = useState(10);
-  const [avatarOffsetX, setAvatarOffsetX] = useState(0);
   const [statusBadge, setStatusBadge] = useState(DEFAULT_PROFILE.status_badge);
   const [isAvailable, setIsAvailable] = useState(DEFAULT_PROFILE.is_available);
 
@@ -101,9 +62,6 @@ export default function AdminProfilePage() {
     DEFAULT_PROFILE.highlights
   );
 
-  // Indikator apakah tabel Supabase memiliki kolom dedicated avatar_offset_y/avatar_position
-  const [hasAvatarColumns, setHasAvatarColumns] = useState<boolean>(false);
-
   const fetchProfile = async () => {
     setLoading(true);
     setTableMissing(false);
@@ -123,33 +81,11 @@ export default function AdminProfilePage() {
       }
 
       if (data) {
-        if ("avatar_offset_y" in data || "avatar_position" in data) {
-          setHasAvatarColumns(true);
-        }
-
         setName(data.name || DEFAULT_PROFILE.name);
         setRole(data.role || DEFAULT_PROFILE.role);
         setTagline(data.tagline || DEFAULT_PROFILE.tagline);
-        const avatarParsed = parseAvatarUrl(data.avatar_url);
-        setAvatarUrl(avatarParsed.cleanUrl || DEFAULT_PROFILE.avatar_url);
-
-        const pos = parseAvatarPosition(data.avatar_position || avatarParsed.position || DEFAULT_PROFILE.avatar_position);
-        setAvatarPosX(pos.x);
-        setAvatarPosY(pos.y);
-        setAvatarScale(
-          typeof data.avatar_scale === "number"
-            ? data.avatar_scale
-            : (avatarParsed.scale ?? DEFAULT_PROFILE.avatar_scale ?? 115)
-        );
-        setAvatarOffsetY(
-          typeof data.avatar_offset_y === "number"
-            ? data.avatar_offset_y
-            : (avatarParsed.offsetY ?? DEFAULT_PROFILE.avatar_offset_y ?? 10)
-        );
-        setAvatarOffsetX(
-          typeof data.avatar_offset_x === "number"
-            ? data.avatar_offset_x
-            : (avatarParsed.offsetX ?? DEFAULT_PROFILE.avatar_offset_x ?? 0)
+        setAvatarUrl(
+          (data.avatar_url ? data.avatar_url.split("?")[0] : "") || DEFAULT_PROFILE.avatar_url
         );
 
         setStatusBadge(data.status_badge || DEFAULT_PROFILE.status_badge);
@@ -210,20 +146,14 @@ export default function AdminProfilePage() {
     setSaving(true);
     try {
       const supabase = createClient();
-      const fullAvatarUrl = buildAvatarUrl(avatarUrl || DEFAULT_PROFILE.avatar_url, {
-        position: `${avatarPosX}% ${avatarPosY}%`,
-        scale: avatarScale,
-        offsetY: avatarOffsetY,
-        offsetX: avatarOffsetX,
-      });
+      const cleanAvatar = (avatarUrl || DEFAULT_PROFILE.avatar_url).split("?")[0].trim();
 
-      // Siapkan payload standar yang dijamin didukung tabel profile
       const payload: Record<string, unknown> = {
         id: "main",
         name: name.trim(),
         role: role.trim(),
         tagline: tagline.trim(),
-        avatar_url: fullAvatarUrl,
+        avatar_url: cleanAvatar,
         status_badge: statusBadge.trim(),
         is_available: isAvailable,
         cta_primary_text: ctaPrimaryText.trim(),
@@ -240,15 +170,7 @@ export default function AdminProfilePage() {
         updated_at: new Date().toISOString(),
       };
 
-      // Hanya kirim kolom dedicated jika kolom tersebut sudah ada di tabel Supabase
-      if (hasAvatarColumns) {
-        payload.avatar_position = `${avatarPosX}% ${avatarPosY}%`;
-        payload.avatar_scale = avatarScale;
-        payload.avatar_offset_y = avatarOffsetY;
-        payload.avatar_offset_x = avatarOffsetX;
-      }
-
-      let { error } = await supabase.from("profile").upsert(payload, {
+      const { error } = await supabase.from("profile").upsert(payload, {
         onConflict: "id",
       });
 
@@ -258,24 +180,12 @@ export default function AdminProfilePage() {
           toast.error("Tabel 'profile' belum dibuat di database Supabase.");
           return;
         }
-
-        // Schema fallback jika hasAvatarColumns sebelumnya true namun kolom belum ada
-        const fallbackPayload = { ...payload };
-        delete fallbackPayload.avatar_position;
-        delete fallbackPayload.avatar_scale;
-        delete fallbackPayload.avatar_offset_y;
-        delete fallbackPayload.avatar_offset_x;
-        const retryRes = await supabase.from("profile").upsert(fallbackPayload, { onConflict: "id" });
-        if (!retryRes.error) {
-          error = null;
-        } else {
-          throw retryRes.error;
-        }
+        throw error;
       }
 
       // Revalidate homepage cache
       await triggerRevalidation("/");
-      toast.success("Profil & posisi foto berhasil disimpan!");
+      toast.success("Profil berhasil disimpan!");
       setTableMissing(false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal menyimpan profil";
@@ -286,23 +196,13 @@ export default function AdminProfilePage() {
   };
 
   const copySqlMigration = () => {
-    const sql = `-- 1. Update kolom baru jika tabel public.profile sudah ada di Supabase
-ALTER TABLE IF EXISTS public.profile ADD COLUMN IF NOT EXISTS avatar_position TEXT DEFAULT 'center 20%';
-ALTER TABLE IF EXISTS public.profile ADD COLUMN IF NOT EXISTS avatar_scale INT DEFAULT 100;
-ALTER TABLE IF EXISTS public.profile ADD COLUMN IF NOT EXISTS avatar_offset_y INT DEFAULT 0;
-ALTER TABLE IF EXISTS public.profile ADD COLUMN IF NOT EXISTS avatar_offset_x INT DEFAULT 0;
-
--- 2. Buat tabel public.profile jika belum pernah dibuat sama sekali
+    const sql = `-- Buat tabel public.profile jika belum pernah dibuat sama sekali
 CREATE TABLE IF NOT EXISTS public.profile (
     id TEXT PRIMARY KEY DEFAULT 'main',
     name TEXT NOT NULL DEFAULT 'Muhammad Raka Pradana',
     role TEXT NOT NULL DEFAULT 'Full-Stack Web Developer',
     tagline TEXT NOT NULL DEFAULT 'Crafting scalable web architectures, robust transactional backends, and data-driven systems. Focused on clean system design, database query efficiency, and high-performance user experiences.',
     avatar_url TEXT NOT NULL DEFAULT '/profile-raka.jpg',
-    avatar_position TEXT DEFAULT 'center 20%',
-    avatar_scale INT DEFAULT 100,
-    avatar_offset_y INT DEFAULT 0,
-    avatar_offset_x INT DEFAULT 0,
     status_badge TEXT DEFAULT 'Available for Engineering Projects',
     is_available BOOLEAN DEFAULT true,
     cta_primary_text TEXT DEFAULT 'Explore Projects',
@@ -323,7 +223,7 @@ CREATE TABLE IF NOT EXISTS public.profile (
     updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 3. Aktifkan RLS dan perizinan akses aman
+-- Aktifkan RLS dan perizinan akses aman
 ALTER TABLE public.profile ENABLE ROW LEVEL SECURITY;
 GRANT SELECT ON TABLE public.profile TO anon;
 GRANT ALL ON TABLE public.profile TO authenticated;
@@ -334,7 +234,7 @@ CREATE POLICY "Anon read profile" ON public.profile FOR SELECT TO anon USING (tr
 DROP POLICY IF EXISTS "Authenticated manage profile" ON public.profile;
 CREATE POLICY "Authenticated manage profile" ON public.profile FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
--- 4. Reload cache schema PostgREST Supabase
+-- Reload cache schema PostgREST Supabase
 NOTIFY pgrst, 'reload schema';`;
 
     navigator.clipboard.writeText(sql);
@@ -504,11 +404,6 @@ NOTIFY pgrst, 'reload schema';`;
                   alt={name || "Avatar"}
                   fill
                   className="object-cover transition-transform duration-200"
-                  style={{
-                    objectPosition: `${avatarPosX}% ${avatarPosY}%`,
-                    transform: `translate(${avatarOffsetX}%, ${avatarOffsetY}%) scale(${avatarScale / 100})`,
-                    transformOrigin: "center center",
-                  }}
                   sizes="208px"
                 />
               </div>
@@ -548,10 +443,10 @@ NOTIFY pgrst, 'reload schema';`;
             <div>
               <h3 className="text-base font-mono font-bold text-white flex items-center gap-2">
                 <User className="w-4 h-4 text-blue-400" />
-                1. Foto Profil & Penyesuaian Tampilan
+                1. Foto Profil & Status
               </h3>
               <p className="text-xs text-zinc-400 mt-0.5 font-sans">
-                Unggah file gambar (format bebas JPG, PNG, WebP, SVG, GIF, AVIF, dll.) dan sesuaikan posisi fokus & zoom agar pas di avatar lingkaran.
+                Unggah foto profil Anda. Anda dapat langsung menggeser posisi wajah dan mengatur zoom di dalam lingkaran seperti di WhatsApp / LinkedIn.
               </p>
             </div>
           </div>
@@ -560,7 +455,7 @@ NOTIFY pgrst, 'reload schema';`;
             {/* Avatar Uploader */}
             <div className="md:col-span-5 space-y-2">
               <label className="text-xs font-mono text-zinc-300 font-semibold block">
-                Foto Profil (Format Bebas)
+                Foto Profil (Interactive Circular Crop)
               </label>
               <ImageUploader
                 value={avatarUrl}
@@ -568,14 +463,9 @@ NOTIFY pgrst, 'reload schema';`;
                 bucket="portfolio-assets"
                 folder="profile"
                 previewShape="circle"
-                imageStyle={{
-                  objectPosition: `${avatarPosX}% ${avatarPosY}%`,
-                  transform: `translate(${avatarOffsetX}%, ${avatarOffsetY}%) scale(${avatarScale / 100})`,
-                  transformOrigin: "center center",
-                }}
               />
-              <p className="text-[11px] text-zinc-500 font-mono text-center">
-                Maksimal 10MB. Otomatis terunggah ke Supabase Storage.
+              <p className="text-[11px] text-zinc-500 font-mono text-center sm:text-left">
+                Maksimal 15MB. Foto otomatis di-crop 1:1 dan disimpan dalam format WebP berkualitas tinggi.
               </p>
             </div>
 
@@ -607,225 +497,6 @@ NOTIFY pgrst, 'reload schema';`;
                 >
                   Aktifkan Indikator Ketersediaan Hijau (Live Ping Pulse)
                 </label>
-              </div>
-            </div>
-          </div>
-
-          {/* Interactive Photo Adjustment Panel */}
-          <div className="border-t border-zinc-800/80 pt-5 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4 text-emerald-400" />
-                <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-                  Pengatur Posisi & Skala Foto (Live Adjuster)
-                </h4>
-              </div>
-              <span className="text-[11px] font-mono text-zinc-400">
-                Geser Y: <strong className="text-emerald-400">{avatarOffsetY}%</strong> • Zoom: <strong className="text-blue-400">{avatarScale}%</strong> • Geser X: {avatarOffsetX}%
-              </span>
-            </div>
-
-            {/* Quick Presets */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-mono text-zinc-400 mr-1">Preset Cepat:</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setAvatarOffsetY(10);
-                  setAvatarScale(115);
-                  setAvatarOffsetX(0);
-                  setAvatarPosX(50);
-                  setAvatarPosY(20);
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors border flex items-center gap-1.5 cursor-pointer ${
-                  avatarOffsetY === 10 && avatarScale === 115
-                    ? "border-emerald-500 bg-emerald-500/20 text-emerald-300 font-semibold"
-                    : "border-zinc-800 bg-zinc-950 text-zinc-300 hover:bg-zinc-800"
-                }`}
-              >
-                🎯 Wajah Pas di Tengah (+10% Turun, Zoom 115%)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setAvatarOffsetY(16);
-                  setAvatarScale(120);
-                  setAvatarOffsetX(0);
-                  setAvatarPosX(50);
-                  setAvatarPosY(20);
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors border flex items-center gap-1.5 cursor-pointer ${
-                  avatarOffsetY === 16 && avatarScale === 120
-                    ? "border-emerald-500 bg-emerald-500/20 text-emerald-300 font-semibold"
-                    : "border-zinc-800 bg-zinc-950 text-zinc-300 hover:bg-zinc-800"
-                }`}
-              >
-                ⬇️ Lebih ke Bawah (+16% Turun, Zoom 120%)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setAvatarOffsetY(5);
-                  setAvatarScale(105);
-                  setAvatarOffsetX(0);
-                  setAvatarPosX(50);
-                  setAvatarPosY(20);
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors border flex items-center gap-1.5 cursor-pointer ${
-                  avatarOffsetY === 5 && avatarScale === 105
-                    ? "border-emerald-500 bg-emerald-500/20 text-emerald-300 font-semibold"
-                    : "border-zinc-800 bg-zinc-950 text-zinc-300 hover:bg-zinc-800"
-                }`}
-              >
-                👤 Sedikit ke Bawah (+5% Turun, Zoom 105%)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setAvatarOffsetY(0);
-                  setAvatarScale(100);
-                  setAvatarOffsetX(0);
-                  setAvatarPosX(50);
-                  setAvatarPosY(50);
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors border flex items-center gap-1.5 cursor-pointer ${
-                  avatarOffsetY === 0 && avatarScale === 100
-                    ? "border-blue-500 bg-blue-500/20 text-blue-300 font-semibold"
-                    : "border-zinc-800 bg-zinc-950 text-zinc-300 hover:bg-zinc-800"
-                }`}
-              >
-                ⚖️ Posisi Normal (0% Geser, 100%)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setAvatarOffsetY(0);
-                  setAvatarScale(100);
-                  setAvatarOffsetX(0);
-                  setAvatarPosX(50);
-                  setAvatarPosY(20);
-                }}
-                className="px-2.5 py-1.5 rounded-lg text-xs font-mono border border-zinc-800 bg-zinc-950 text-zinc-400 hover:text-white hover:bg-zinc-800 flex items-center gap-1 transition-colors cursor-pointer ml-auto"
-                title="Reset ke default"
-              >
-                <RotateCcw className="w-3 h-3" />
-                Reset
-              </button>
-            </div>
-
-            {/* Sliders and Interactive Circular Preview */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-5 p-4 rounded-xl border border-zinc-800 bg-zinc-950/60 items-center">
-              {/* Interactive Focal / Circular Avatar Preview */}
-              <div className="md:col-span-5 flex flex-col items-center gap-2">
-                <p className="text-[11px] font-mono text-zinc-400 text-center">
-                  Pratinjau Hasil Crop Lingkaran Avatar:
-                </p>
-                <div
-                  className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-full border-2 border-dashed border-emerald-500/80 overflow-hidden shadow-2xl bg-zinc-900"
-                >
-                  <Image
-                    src={avatarUrl || "/profile-raka.jpg"}
-                    alt="Avatar Live Preview"
-                    fill
-                    className="object-cover pointer-events-none transition-transform duration-200"
-                    style={{
-                      objectPosition: `${avatarPosX}% ${avatarPosY}%`,
-                      transform: `translate(${avatarOffsetX}%, ${avatarOffsetY}%) scale(${avatarScale / 100})`,
-                      transformOrigin: "center center",
-                    }}
-                    sizes="224px"
-                  />
-                  <div className="absolute bottom-2 left-4 right-4 bg-black/85 backdrop-blur-xs rounded-full px-2 py-0.5 text-[10px] font-mono text-zinc-200 text-center pointer-events-none border border-zinc-700/80 shadow-md">
-                    Geser Y: {avatarOffsetY > 0 ? `+${avatarOffsetY}%` : `${avatarOffsetY}%`} • Zoom: {avatarScale}%
-                  </div>
-                </div>
-                <p className="text-[10px] font-mono text-zinc-500 text-center">
-                  Geser slider di samping untuk melihat perubahan seketika.
-                </p>
-              </div>
-
-              {/* Sliders Column */}
-              <div className="md:col-span-7 space-y-4">
-                {/* Vertical Offset Slider (Y) - THIS IS THE CRITICAL CONTROLLER FOR MOVING FACE DOWN/UP */}
-                <div className="space-y-1.5 p-3.5 rounded-xl border border-emerald-800/40 bg-emerald-950/20">
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <label className="text-emerald-300 font-bold flex items-center gap-1.5">
-                      <Move className="w-4 h-4 text-emerald-400 rotate-90" />
-                      1. Geser Posisi Vertikal (Turun / Naik)
-                    </label>
-                    <span className="text-emerald-300 font-bold bg-emerald-900/60 px-2.5 py-0.5 rounded border border-emerald-700/60">
-                      {avatarOffsetY > 0 ? `+${avatarOffsetY}% (Turun ke Bawah)` : avatarOffsetY < 0 ? `${avatarOffsetY}% (Naik ke Atas)` : "0% (Netral)"}
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={-30}
-                    max={30}
-                    step={1}
-                    value={avatarOffsetY}
-                    onChange={(e) => setAvatarOffsetY(Number(e.target.value))}
-                    className="w-full h-2.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-                  />
-                  <div className="flex justify-between text-[10px] font-mono text-zinc-400">
-                    <span>-30% (Naik)</span>
-                    <span className="text-zinc-500">0% (Tengah)</span>
-                    <span className="text-emerald-400 font-bold">+30% (Turun) 👉 Geser ke kanan untuk turun</span>
-                  </div>
-                </div>
-
-                {/* Scale / Zoom Slider */}
-                <div className="space-y-1.5 p-3.5 rounded-xl border border-blue-900/30 bg-blue-950/10">
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <label className="text-blue-300 font-semibold flex items-center gap-1.5">
-                      <ZoomIn className="w-4 h-4 text-blue-400" />
-                      2. Skala & Zoom Foto
-                    </label>
-                    <span className="text-blue-400 font-bold bg-blue-950/80 px-2.5 py-0.5 rounded border border-blue-800/60">
-                      {avatarScale}% ({(avatarScale / 100).toFixed(2)}x)
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={80}
-                    max={180}
-                    step={2}
-                    value={avatarScale}
-                    onChange={(e) => setAvatarScale(Number(e.target.value))}
-                    className="w-full h-2.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                  />
-                  <div className="flex justify-between text-[10px] font-mono text-zinc-400">
-                    <span>80% (Kecil)</span>
-                    <span>100% (Normal)</span>
-                    <span className="text-blue-400">115% - 125% (Rekomendasi saat wajah diturunkan)</span>
-                  </div>
-                </div>
-
-                {/* Horizontal Offset Slider (X) */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <label className="text-zinc-300 font-semibold flex items-center gap-1.5">
-                      <Move className="w-3.5 h-3.5 text-zinc-400" />
-                      3. Geser Horizontal X (Kiri - Kanan)
-                    </label>
-                    <span className="text-zinc-300 font-bold bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800">
-                      {avatarOffsetX > 0 ? `+${avatarOffsetX}% (Kanan)` : avatarOffsetX < 0 ? `${avatarOffsetX}% (Kiri)` : "0% (Tengah)"}
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={-30}
-                    max={30}
-                    step={1}
-                    value={avatarOffsetX}
-                    onChange={(e) => setAvatarOffsetX(Number(e.target.value))}
-                    className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-zinc-400"
-                  />
-                  <div className="flex justify-between text-[10px] font-mono text-zinc-500">
-                    <span>-30% (Kiri)</span>
-                    <span>0% (Tengah)</span>
-                    <span>+30% (Kanan)</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

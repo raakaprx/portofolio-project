@@ -147,7 +147,7 @@ export default function AdminCertificatesPage() {
         ? `${certMonth}-01`
         : (finalDate.length === 4 ? `${finalDate}-01-01` : "2024-01-01");
 
-      const payload: Record<string, any> = {
+      const payload: Record<string, unknown> = {
         title: title.trim(),
         issuer: issuer.trim(),
         date: finalDate,

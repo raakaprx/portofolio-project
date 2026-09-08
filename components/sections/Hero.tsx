@@ -13,7 +13,7 @@ import {
 import { Github, Linkedin, GmailLogo, WhatsappLogo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
-import { DEFAULT_PROFILE, parseAvatarUrl, type ProfileData } from "@/lib/portfolio-defaults";
+import { DEFAULT_PROFILE, type ProfileData } from "@/lib/portfolio-defaults";
 
 export const CV_URL = "/cv.pdf";
 
@@ -23,12 +23,7 @@ interface HeroProps {
 
 export default function Hero({ initialProfile }: HeroProps) {
   const profile = initialProfile || DEFAULT_PROFILE;
-  const avatarParsed = parseAvatarUrl(profile.avatar_url);
-  const avatarSrc = avatarParsed.cleanUrl || "/profile-raka.jpg";
-  const avatarPosition = profile.avatar_position || avatarParsed.position || "center 20%";
-  const avatarScale = (profile.avatar_scale ?? avatarParsed.scale ?? 100) / 100;
-  const avatarOffsetY = profile.avatar_offset_y ?? avatarParsed.offsetY ?? 0;
-  const avatarOffsetX = profile.avatar_offset_x ?? avatarParsed.offsetX ?? 0;
+  const avatarSrc = profile.avatar_url?.split("?")[0] || "/profile-raka.jpg";
 
   const highlights =
     Array.isArray(profile.highlights) && profile.highlights.length > 0
@@ -63,15 +58,10 @@ export default function Hero({ initialProfile }: HeroProps) {
                 <Image
                   src={avatarSrc}
                   alt={profile.name}
-                  width={384}
-                  height={384}
+                  fill
                   priority
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  style={{
-                    objectPosition: avatarPosition,
-                    transform: `translate(${avatarOffsetX}%, ${avatarOffsetY}%) scale(${avatarScale})`,
-                    transformOrigin: "center center",
-                  }}
+                  sizes="384px"
                 />
               </div>
 
