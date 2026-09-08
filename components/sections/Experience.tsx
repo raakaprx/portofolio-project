@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
@@ -8,10 +9,19 @@ import {
   ChevronUp,
   CheckCircle2,
   Building2,
+  Maximize2,
+  Image as ImageIcon,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Tooltip,
   TooltipContent,
@@ -21,6 +31,7 @@ import {
 import { getTechLogo } from "@/components/icons";
 
 interface ExperienceItem {
+  id?: string;
   company: string;
   role: string;
   duration: string;
@@ -30,6 +41,7 @@ interface ExperienceItem {
   deliverables: string[];
   technologies: string[];
   metrics?: { label: string; value: string }[];
+  photos?: string[];
 }
 
 const EXPERIENCES: ExperienceItem[] = [
@@ -61,11 +73,15 @@ const EXPERIENCES: ExperienceItem[] = [
       { label: "Core Focus", value: "Full-Stack Architecture" },
       { label: "Stack", value: "TypeScript & Next.js" },
     ],
+    photos: [
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+    ],
   },
   {
-    company: "PT Sundaya Indonesia",
+    company: "PT. Sundaya",
     role: "Frontend Developer Intern",
-    duration: "Jan 2025 – Mar 2025",
+    duration: "Jan – Mar 2025",
     status: "Completed",
     type: "Internship",
     highlights:
@@ -90,8 +106,42 @@ const EXPERIENCES: ExperienceItem[] = [
       { label: "Error Reduction", value: "85% Manual Errors Cut" },
       { label: "Architecture", value: "Real-Time Sockets" },
     ],
+    photos: [
+      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=1200&auto=format&fit=crop",
+    ],
   },
 ];
+
+function renderTypeBadge(type: string) {
+  const normalized = (type || "").toLowerCase();
+  if (normalized === "internship") {
+    return (
+      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/15 text-amber-900 dark:text-amber-300 border border-amber-500/40 shadow-2xs">
+        Internship
+      </span>
+    );
+  }
+  if (normalized === "industry") {
+    return (
+      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-mono font-bold bg-blue-500/15 text-blue-900 dark:text-blue-300 border border-blue-500/40 shadow-2xs">
+        Industry
+      </span>
+    );
+  }
+  if (normalized === "organization") {
+    return (
+      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-mono font-bold bg-purple-500/15 text-purple-900 dark:text-purple-300 border border-purple-500/40 shadow-2xs">
+        Organization
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-mono font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-700 shadow-2xs">
+      {type}
+    </span>
+  );
+}
 
 export default function Experience({
   initialExperiences,
@@ -99,6 +149,11 @@ export default function Experience({
   initialExperiences?: ExperienceItem[];
 }) {
   const [expandedIndices, setExpandedIndices] = useState<number[]>([0]);
+  const [activeGallery, setActiveGallery] = useState<{
+    title: string;
+    photos: string[];
+    index: number;
+  } | null>(null);
 
   const toggleExpand = (index: number) => {
     setExpandedIndices((prev) =>
@@ -140,7 +195,7 @@ export default function Experience({
 
               return (
                 <motion.div
-                  key={exp.company}
+                  key={`${exp.company}-${index}`}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -166,9 +221,7 @@ export default function Experience({
                               Current Role ({exp.duration})
                             </span>
                           ) : (
-                            <Badge variant="secondary" className="font-mono text-zinc-800 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-850 border border-zinc-300 dark:border-zinc-700">
-                              {exp.type}
-                            </Badge>
+                            renderTypeBadge(exp.type)
                           )}
                           <Badge variant="outline" className="font-mono text-zinc-700 dark:text-zinc-400 hidden sm:inline-flex border-zinc-300 dark:border-zinc-800">
                             {exp.duration}
@@ -198,7 +251,7 @@ export default function Experience({
                       </p>
 
                       {/* Key Metrics Bento row */}
-                      {exp.metrics && (
+                      {exp.metrics && exp.metrics.length > 0 && (
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 p-4 rounded-xl bg-zinc-100/90 dark:bg-zinc-900/60 border border-zinc-300 dark:border-zinc-800/80 shadow-2xs">
                           {exp.metrics.map((m, i) => (
                             <div key={i}>
@@ -206,6 +259,52 @@ export default function Experience({
                               <p className="text-sm sm:text-base font-extrabold text-zinc-950 dark:text-zinc-100 mt-0.5">{m.value}</p>
                             </div>
                           ))}
+                        </div>
+                      )}
+
+                      {/* Photo Documentation Showcase */}
+                      {exp.photos && exp.photos.length > 0 && (
+                        <div className="mb-6 space-y-2.5 p-3.5 rounded-xl bg-zinc-50/80 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800/80">
+                          <div className="flex items-center justify-between text-xs font-mono">
+                            <span className="flex items-center gap-1.5 text-zinc-800 dark:text-zinc-200 font-bold uppercase tracking-wider">
+                              <ImageIcon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                              Dokumentasi Kegiatan & Sistem ({exp.photos.length})
+                            </span>
+                            <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">
+                              Klik foto untuk perbesar
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+                            {exp.photos.map((photoUrl, photoIdx) => (
+                              <button
+                                key={photoIdx}
+                                type="button"
+                                onClick={() =>
+                                  setActiveGallery({
+                                    title: `${exp.role} · ${exp.company}`,
+                                    photos: exp.photos || [],
+                                    index: photoIdx,
+                                  })
+                                }
+                                className="group relative aspect-video w-full rounded-lg overflow-hidden bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-200 cursor-pointer shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                title={`Lihat Foto ${photoIdx + 1} - ${exp.company}`}
+                              >
+                                <Image
+                                  src={photoUrl}
+                                  alt={`${exp.company} documentation photo ${photoIdx + 1}`}
+                                  fill
+                                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                                  <span className="p-1.5 rounded-lg bg-black/60 backdrop-blur-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Maximize2 className="w-3.5 h-3.5" />
+                                  </span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
                         </div>
                       )}
 
@@ -291,6 +390,83 @@ export default function Experience({
             })}
           </div>
         </div>
+
+        {/* Fullscreen Lightbox Modal */}
+        <Dialog
+          open={!!activeGallery}
+          onOpenChange={(open) => !open && setActiveGallery(null)}
+        >
+          <DialogContent className="max-w-4xl p-3 bg-black/95 border-zinc-800 text-white">
+            <DialogTitle className="text-sm font-mono text-zinc-300 px-2 pt-1 flex items-center justify-between">
+              <span className="truncate max-w-[75%]">{activeGallery?.title}</span>
+              {activeGallery && activeGallery.photos.length > 1 && (
+                <span className="text-xs text-zinc-400 font-mono">
+                  {activeGallery.index + 1} / {activeGallery.photos.length}
+                </span>
+              )}
+            </DialogTitle>
+
+            {activeGallery && activeGallery.photos[activeGallery.index] && (
+              <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-zinc-950 mt-2">
+                <Image
+                  src={activeGallery.photos[activeGallery.index]}
+                  alt={activeGallery.title}
+                  fill
+                  sizes="(max-width: 1280px) 100vw, 1024px"
+                  className="object-contain"
+                />
+
+                {activeGallery.photos.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveGallery((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                index:
+                                  prev.index === 0
+                                    ? prev.photos.length - 1
+                                    : prev.index - 1,
+                              }
+                            : null
+                        );
+                      }}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-black/70 hover:bg-black/90 backdrop-blur-md text-white transition-colors cursor-pointer"
+                      title="Sebelumnya"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveGallery((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                index:
+                                  prev.index === prev.photos.length - 1
+                                    ? 0
+                                    : prev.index + 1,
+                              }
+                            : null
+                        );
+                      }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-black/70 hover:bg-black/90 backdrop-blur-md text-white transition-colors cursor-pointer"
+                      title="Selanjutnya"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </section>
     </TooltipProvider>
   );

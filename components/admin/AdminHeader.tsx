@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Menu, RefreshCw, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { triggerRevalidation } from "@/lib/revalidate";
 import { toast } from "sonner";
 
 interface AdminHeaderProps {
@@ -20,12 +21,8 @@ export function AdminHeader({
   const handleRevalidate = async () => {
     setIsRevalidating(true);
     try {
-      const res = await fetch("/api/revalidate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ path: "/" }),
-      });
-      if (res.ok) {
+      const ok = await triggerRevalidation("/");
+      if (ok) {
         toast.success("Cache berhasil diperbarui!", {
           description: "Halaman landing page langsung menampilkan data terbaru.",
         });

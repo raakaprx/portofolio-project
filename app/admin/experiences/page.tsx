@@ -11,7 +11,9 @@ import {
   RefreshCw,
   Building2,
   Calendar,
+  Image as ImageIcon,
 } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,9 +22,11 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { MultiImageUploader } from "@/components/admin/MultiImageUploader";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_EXPERIENCES, type ExperienceItem } from "@/lib/portfolio-defaults";
 import { getErrorMessage } from "@/lib/utils";
+import { triggerRevalidation } from "@/lib/revalidate";
 import {
   formatMonthYear,
   calculateDuration,
@@ -51,6 +55,7 @@ export default function AdminExperiencesPage() {
   const [highlights, setHighlights] = useState("");
   const [deliverablesText, setDeliverablesText] = useState("");
   const [technologiesText, setTechnologiesText] = useState("");
+  const [photos, setPhotos] = useState<string[]>([]);
 
   const elapsed = calculateDuration(startMonth, isCurrent ? "" : endMonth, isCurrent);
 
@@ -79,6 +84,11 @@ export default function AdminExperiencesPage() {
             highlights: item.highlights || "",
             deliverables: item.deliverables || [],
             technologies: item.technologies || [],
+            photos: Array.isArray(item.photos)
+              ? item.photos
+              : Array.isArray(item.gallery_urls)
+              ? item.gallery_urls
+              : [],
           }))
         );
       }
@@ -132,6 +142,7 @@ export default function AdminExperiencesPage() {
     setHighlights("");
     setDeliverablesText("");
     setTechnologiesText("");
+    setPhotos([]);
     setDialogOpen(true);
   };
 
@@ -153,6 +164,7 @@ export default function AdminExperiencesPage() {
     setHighlights(exp.highlights);
     setDeliverablesText(exp.deliverables.join("\n"));
     setTechnologiesText(exp.technologies.join(", "));
+    setPhotos(exp.photos || []);
     setDialogOpen(true);
   };
 
@@ -179,7 +191,7 @@ export default function AdminExperiencesPage() {
         .map((s) => s.trim())
         .filter(Boolean);
 
-      const payload: Record<string, any> = {
+      const payload: Record<string, unknown> = {
         company: company.trim(),
         role: role.trim(),
         duration: finalDuration,
@@ -191,29 +203,43 @@ export default function AdminExperiencesPage() {
         highlights: highlights.trim(),
         deliverables,
         technologies,
+        photos,
       };
 
-      if (!editingId) {
-        // Create new
-        const { error } = await supabase.from("experiences").insert(payload);
-        if (error) throw error;
-        toast.success("Pengalaman kerja berhasil ditambahkan!");
-      } else {
-        // Update
-        const { data, error } = await supabase
-          .from("experiences")
-          .update(payload)
-          .eq("id", editingId)
-          .select();
-        if (error) throw error;
-        if (!data || data.length === 0) {
-          const { error: insertErr } = await supabase.from("experiences").insert(payload);
-          if (insertErr) throw insertErr;
+      const executeSave = async (payloadToUse: Record<string, unknown>) => {
+        if (!editingId) {
+          const { error } = await supabase.from("experiences").insert(payloadToUse);
+          if (error) throw error;
+          toast.success("Pengalaman kerja berhasil ditambahkan!");
+        } else {
+          const { data, error } = await supabase
+            .from("experiences")
+            .update(payloadToUse)
+            .eq("id", editingId)
+            .select();
+          if (error) throw error;
+          if (!data || data.length === 0) {
+            const { error: insertErr } = await supabase.from("experiences").insert(payloadToUse);
+            if (insertErr) throw insertErr;
+          }
+          toast.success("Pengalaman kerja berhasil diperbarui!");
         }
-        toast.success("Pengalaman kerja berhasil diperbarui!");
+      };
+
+      try {
+        await executeSave(payload);
+      } catch (saveErr: unknown) {
+        const errorMsg = saveErr instanceof Error ? saveErr.message : String(saveErr);
+        if (errorMsg.toLowerCase().includes("column") || errorMsg.toLowerCase().includes("photos")) {
+          const fallbackPayload = { ...payload };
+          delete fallbackPayload.photos;
+          await executeSave(fallbackPayload);
+        } else {
+          throw saveErr;
+        }
       }
 
-      await fetch("/api/revalidate", { method: "POST" });
+      await triggerRevalidation("/");
       setDialogOpen(false);
       fetchExperiences();
     } catch (err: unknown) {
@@ -234,7 +260,7 @@ export default function AdminExperiencesPage() {
       const { error } = await supabase.from("experiences").delete().eq("id", id);
       if (error) throw error;
       toast.success("Pengalaman kerja berhasil dihapus");
-      fetch("/api/revalidate", { method: "POST" });
+      await triggerRevalidation("/");
       fetchExperiences();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Gagal menghapus");
@@ -339,6 +365,32 @@ export default function AdminExperiencesPage() {
                           {t}
                         </span>
                       ))}
+                    </div>
+                  )}
+
+                  {/* Foto Dokumentasi Preview */}
+                  {exp.photos && exp.photos.length > 0 && (
+                    <div className="pt-2">
+                      <div className="flex items-center gap-1.5 mb-1.5 text-[11px] font-mono text-zinc-400">
+                        <ImageIcon className="w-3.5 h-3.5 text-blue-400" />
+                        <span>Dokumentasi Kegiatan ({exp.photos.length} foto):</span>
+                      </div>
+                      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                        {exp.photos.map((photoUrl, pIdx) => (
+                          <div
+                            key={pIdx}
+                            className="relative aspect-video w-20 rounded-lg overflow-hidden border border-zinc-800 bg-zinc-950 shrink-0"
+                          >
+                            <Image
+                              src={photoUrl}
+                              alt={`Dokumentasi ${exp.company} ${pIdx + 1}`}
+                              fill
+                              sizes="80px"
+                              className="object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -629,6 +681,22 @@ export default function AdminExperiencesPage() {
                 onChange={(e) => setTechnologiesText(e.target.value)}
                 placeholder="Next.js, TypeScript, PostgreSQL, Docker"
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-500"
+              />
+            </div>
+
+            {/* Foto Dokumentasi Pengalaman Kerja */}
+            <div className="space-y-1.5 pt-1">
+              <label className="text-xs font-mono font-medium text-zinc-300">
+                Foto Dokumentasi Kegiatan / Hasil Pekerjaan (Opsional)
+              </label>
+              <MultiImageUploader
+                values={photos}
+                onChange={setPhotos}
+                bucket="portfolio-assets"
+                folder="experiences"
+                maxFiles={8}
+                label="Upload Foto Dokumentasi Pengalaman"
+                helperText="Pilih atau seret foto dokumentasi magang, suasana kantor, presentasi, atau sertifikat (Maks. 5MB per file)"
               />
             </div>
 

@@ -1,4 +1,5 @@
 import * as React from "react";
+import Image from "next/image";
 import {
   SiReact,
   SiNextdotjs,
@@ -283,11 +284,12 @@ export function MidtransLogo({ className = "w-7 h-7", ...props }: React.SVGProps
 export function RakaLogo({ className = "w-8 h-8" }: { className?: string }) {
   return (
     <div className={`relative flex items-center justify-center shrink-0 ${className}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src="/logo.png"
         alt="R/ Logo"
-        className="w-full h-full object-contain invert dark:invert-0 transition-[filter] duration-200"
+        fill
+        sizes="32px"
+        className="object-contain invert dark:invert-0 transition-[filter] duration-200"
       />
     </div>
   );

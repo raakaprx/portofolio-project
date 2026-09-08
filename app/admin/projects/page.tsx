@@ -17,6 +17,7 @@ import { Github, getTechLogo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_PROJECTS } from "@/lib/portfolio-defaults";
+import { triggerRevalidation } from "@/lib/revalidate";
 import { toast } from "sonner";
 
 interface ProjectRecord {
@@ -27,15 +28,18 @@ interface ProjectRecord {
   role?: string;
   short_summary?: string;
   category?: string;
-  tags?: string[];
   tech_stacks?: string[];
-  featured?: boolean;
+  tags?: string[];
   is_featured?: boolean;
+  featured?: boolean;
+  live_url?: string;
   demo_url?: string;
+  repo_url?: string;
   github_url?: string;
   thumbnail_url?: string;
-  order_index?: number;
   display_order?: number;
+  order_index?: number;
+  created_at?: string;
 }
 
 export default function AdminProjectsPage() {
@@ -52,6 +56,7 @@ export default function AdminProjectsPage() {
       const { data, error } = await supabase
         .from("projects")
         .select("*")
+        .order("display_order", { ascending: true })
         .order("order_index", { ascending: true })
         .order("created_at", { ascending: false });
 
@@ -64,15 +69,39 @@ export default function AdminProjectsPage() {
           subtitle: p.subtitle || p.role,
           role: p.role,
           category: p.category || "fullstack",
+          tech_stacks: p.tech_stacks || p.techStack || [],
           tags: p.tech_stacks || p.techStack || [],
+          is_featured: p.is_featured ?? true,
           featured: p.is_featured ?? true,
+          live_url: p.live_url || p.demo,
           demo_url: p.live_url || p.demo,
+          repo_url: p.repo_url || p.github,
           github_url: p.repo_url || p.github,
+          display_order: p.display_order ?? idx + 1,
           order_index: p.display_order ?? idx + 1,
         }));
         setProjects(fallbackList);
       } else {
-        setProjects(data);
+        const normalizedList: ProjectRecord[] = data.map((p, idx) => ({
+          ...p,
+          is_featured: Boolean(p.is_featured ?? p.featured ?? false),
+          featured: Boolean(p.is_featured ?? p.featured ?? false),
+          live_url: p.live_url || p.demo_url || "",
+          demo_url: p.live_url || p.demo_url || "",
+          repo_url: p.repo_url || p.github_url || "",
+          github_url: p.repo_url || p.github_url || "",
+          tech_stacks:
+            Array.isArray(p.tech_stacks) && p.tech_stacks.length > 0
+              ? p.tech_stacks
+              : (Array.isArray(p.tags) ? p.tags : []),
+          tags:
+            Array.isArray(p.tech_stacks) && p.tech_stacks.length > 0
+              ? p.tech_stacks
+              : (Array.isArray(p.tags) ? p.tags : []),
+          display_order: Number(p.display_order ?? p.order_index ?? idx + 1),
+          order_index: Number(p.display_order ?? p.order_index ?? idx + 1),
+        }));
+        setProjects(normalizedList);
       }
     } catch {
       toast.error("Gagal memuat daftar project");
@@ -87,24 +116,27 @@ export default function AdminProjectsPage() {
   }, []);
 
   const handleToggleFeatured = async (p: ProjectRecord) => {
-    const updatedStatus = !p.featured;
+    const currentFeatured = Boolean(p.is_featured ?? p.featured ?? false);
+    const updatedStatus = !currentFeatured;
     try {
       const { error } = await supabase
         .from("projects")
-        .update({ featured: updatedStatus })
+        .update({ is_featured: updatedStatus, featured: updatedStatus })
         .eq("id", p.id);
 
       if (error) throw error;
 
       setProjects((prev) =>
         prev.map((item) =>
-          item.id === p.id ? { ...item, featured: updatedStatus } : item
+          item.id === p.id
+            ? { ...item, is_featured: updatedStatus, featured: updatedStatus }
+            : item
         )
       );
       toast.success(
         updatedStatus ? "Project ditandai Featured" : "Status Featured dicabut"
       );
-      fetch("/api/revalidate", { method: "POST" });
+      await triggerRevalidation("/");
     } catch {
       toast.error("Gagal mengubah status featured");
     }
@@ -120,7 +152,7 @@ export default function AdminProjectsPage() {
 
       setProjects((prev) => prev.filter((item) => item.id !== id));
       toast.success(`Project "${title}" berhasil dihapus`);
-      fetch("/api/revalidate", { method: "POST" });
+      await triggerRevalidation("/");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Gagal menghapus project");
     } finally {
@@ -213,7 +245,7 @@ export default function AdminProjectsPage() {
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-medium uppercase tracking-wider bg-zinc-800 text-zinc-300 border border-zinc-700">
                       {p.category}
                     </span>
-                    {p.featured && (
+                    {(p.is_featured ?? p.featured) && (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-amber-950/80 text-amber-300 border border-amber-700/60 flex items-center gap-1">
                         <Star className="w-3 h-3 fill-amber-300" />
                         <span>Featured</span>
@@ -227,22 +259,24 @@ export default function AdminProjectsPage() {
                     </p>
                   )}
 
-                  {p.tags && p.tags.length > 0 && (
+                  {((p.tech_stacks && p.tech_stacks.length > 0) || (p.tags && p.tags.length > 0)) && (
                     <div className="flex flex-wrap gap-1.5 pt-1">
-                      {p.tags.slice(0, 5).map((t) => (
-                        <span
-                          key={t}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-950 border border-zinc-800 text-[10px] font-mono text-zinc-400"
-                        >
-                          <span className="shrink-0 flex items-center justify-center">
-                            {getTechLogo(t, "w-2.5 h-2.5")}
+                      {(p.tech_stacks && p.tech_stacks.length > 0 ? p.tech_stacks : p.tags || [])
+                        .slice(0, 5)
+                        .map((t) => (
+                          <span
+                            key={t}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-950 border border-zinc-800 text-[10px] font-mono text-zinc-400"
+                          >
+                            <span className="shrink-0 flex items-center justify-center">
+                              {getTechLogo(t, "w-2.5 h-2.5")}
+                            </span>
+                            <span>{t}</span>
                           </span>
-                          <span>{t}</span>
-                        </span>
-                      ))}
-                      {p.tags.length > 5 && (
+                        ))}
+                      {((p.tech_stacks && p.tech_stacks.length > 0 ? p.tech_stacks.length : p.tags?.length || 0) > 5) && (
                         <span className="text-[10px] text-zinc-500 font-mono self-center">
-                          +{p.tags.length - 5} lainnya
+                          +{((p.tech_stacks && p.tech_stacks.length > 0 ? p.tech_stacks.length : p.tags?.length || 0) - 5)} lainnya
                         </span>
                       )}
                     </div>
@@ -251,9 +285,9 @@ export default function AdminProjectsPage() {
 
                 {/* Actions & Links */}
                 <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                  {p.demo_url && (
+                  {(p.live_url || p.demo_url) && (
                     <a
-                      href={p.demo_url}
+                      href={p.live_url || p.demo_url}
                       target="_blank"
                       rel="noreferrer"
                       className="p-2 rounded-xl bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors"
@@ -262,9 +296,9 @@ export default function AdminProjectsPage() {
                       <ExternalLink className="w-3.5 h-3.5" />
                     </a>
                   )}
-                  {p.github_url && (
+                  {(p.repo_url || p.github_url) && (
                     <a
-                      href={p.github_url}
+                      href={p.repo_url || p.github_url}
                       target="_blank"
                       rel="noreferrer"
                       className="p-2 rounded-xl bg-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-700 transition-colors"
@@ -277,11 +311,11 @@ export default function AdminProjectsPage() {
                   <button
                     onClick={() => handleToggleFeatured(p)}
                     className={`p-2 rounded-xl transition-colors cursor-pointer ${
-                      p.featured
+                      (p.is_featured ?? p.featured)
                         ? "bg-amber-950/60 text-amber-300 border border-amber-800/60"
                         : "bg-zinc-800 text-zinc-500 hover:text-amber-400 hover:bg-zinc-700"
                     }`}
-                    title={p.featured ? "Hapus dari Featured" : "Tandai Featured"}
+                    title={(p.is_featured ?? p.featured) ? "Hapus dari Featured" : "Tandai Featured"}
                   >
                     <Star className="w-3.5 h-3.5" />
                   </button>

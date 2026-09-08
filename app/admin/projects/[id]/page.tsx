@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   Save,
@@ -19,10 +20,12 @@ import {
 import { Github, getTechLogo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { MultiImageUploader } from "@/components/admin/MultiImageUploader";
 import { MarkdownView } from "@/components/ui/markdown-view";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_PROJECTS } from "@/lib/portfolio-defaults";
 import { getErrorMessage } from "@/lib/utils";
+import { triggerRevalidation } from "@/lib/revalidate";
 import { toast } from "sonner";
 
 const COMMON_TECH_STACKS = [
@@ -79,7 +82,6 @@ export default function ProjectFormPage() {
 
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
-  const [newGalleryInput, setNewGalleryInput] = useState("");
 
   const [techStacks, setTechStacks] = useState<string[]>([]);
   const [techInput, setTechInput] = useState("");
@@ -118,17 +120,6 @@ export default function ProjectFormPage() {
 
   const handleRemoveTech = (techToRemove: string) => {
     setTechStacks(techStacks.filter((t) => t !== techToRemove));
-  };
-
-  const handleAddGalleryUrl = () => {
-    if (!newGalleryInput.trim()) return;
-    setGalleryUrls([...galleryUrls, newGalleryInput.trim()]);
-    setNewGalleryInput("");
-    toast.success("Gambar galeri ditambahkan!");
-  };
-
-  const handleRemoveGalleryUrl = (index: number) => {
-    setGalleryUrls(galleryUrls.filter((_, i) => i !== index));
   };
 
   useEffect(() => {
@@ -206,7 +197,32 @@ export default function ProjectFormPage() {
 
     setSaving(true);
     try {
-      const fullPayload: Record<string, any> = {
+      type ProjectFormPayload = {
+        title: string;
+        slug: string;
+        role: string;
+        short_summary: string;
+        full_description: string;
+        thumbnail_url: string;
+        gallery_urls: string[];
+        tech_stacks: string[];
+        live_url: string;
+        repo_url: string;
+        is_featured: boolean;
+        display_order: number;
+        category: string;
+        // Dual-field compatibility with legacy database columns
+        summary?: string;
+        description?: string;
+        subtitle?: string;
+        tags?: string[];
+        demo_url?: string;
+        github_url?: string;
+        featured?: boolean;
+        order_index?: number;
+      };
+
+      const fullPayload: ProjectFormPayload = {
         title: title.trim(),
         slug: slug.trim(),
         role: role.trim(),
@@ -232,9 +248,19 @@ export default function ProjectFormPage() {
         order_index: Number(displayOrder),
       };
 
-      const fallbackPayload: Record<string, any> = {
+      const fallbackPayload: ProjectFormPayload = {
         title: title.trim(),
         slug: slug.trim(),
+        role: role.trim(),
+        short_summary: shortSummary.trim(),
+        full_description: fullDescription.trim(),
+        thumbnail_url: thumbnailUrl.trim(),
+        gallery_urls: galleryUrls,
+        tech_stacks: techStacks,
+        live_url: liveUrl.trim(),
+        repo_url: repoUrl.trim(),
+        is_featured: isFeatured,
+        display_order: Number(displayOrder),
         summary: shortSummary.trim(),
         description: fullDescription.trim() || shortSummary.trim(),
         subtitle: role.trim(),
@@ -242,12 +268,11 @@ export default function ProjectFormPage() {
         tags: techStacks,
         demo_url: liveUrl.trim(),
         github_url: repoUrl.trim(),
-        thumbnail_url: thumbnailUrl.trim(),
         featured: isFeatured,
         order_index: Number(displayOrder),
       };
 
-      const executeSave = async (payloadToUse: Record<string, any>) => {
+      const executeSave = async (payloadToUse: ProjectFormPayload) => {
         if (isNew) {
           const { error } = await supabase.from("projects").insert(payloadToUse);
           if (error) throw error;
@@ -269,10 +294,11 @@ export default function ProjectFormPage() {
 
       try {
         await executeSave(fullPayload);
-      } catch (saveErr: any) {
+      } catch (saveErr: unknown) {
+        const errorMsg = saveErr instanceof Error ? saveErr.message : String(saveErr);
         if (
-          saveErr?.message?.toLowerCase().includes("column") ||
-          saveErr?.message?.toLowerCase().includes("schema cache")
+          errorMsg.toLowerCase().includes("column") ||
+          errorMsg.toLowerCase().includes("schema cache")
         ) {
           await executeSave(fallbackPayload);
         } else {
@@ -281,15 +307,7 @@ export default function ProjectFormPage() {
       }
 
       // Revalidate public landing page and project page
-      try {
-        await fetch("/api/revalidate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ path: "/" }),
-        });
-      } catch {
-        // ignore
-      }
+      await triggerRevalidation("/");
 
       router.push("/admin/projects");
       router.refresh();
@@ -527,52 +545,15 @@ export default function ProjectFormPage() {
             <label className="text-xs font-mono font-medium text-zinc-300">
               Galeri Gambar Pendukung (Multiple Gallery Images)
             </label>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="url"
-                value={newGalleryInput}
-                onChange={(e) => setNewGalleryInput(e.target.value)}
-                placeholder="https://example.com/screenshot-2.png"
-                className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 font-mono"
-              />
-              <Button
-                type="button"
-                onClick={handleAddGalleryUrl}
-                size="sm"
-                className="rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-mono h-9 gap-1.5"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Tambah Foto</span>
-              </Button>
-            </div>
-
-            {/* Gallery Preview List */}
-            {galleryUrls.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                {galleryUrls.map((url, idx) => (
-                  <div
-                    key={idx}
-                    className="relative aspect-video rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 group"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={url}
-                      alt={`Gallery ${idx + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveGalleryUrl(idx)}
-                      className="absolute top-1.5 right-1.5 p-1 rounded-full bg-black/80 hover:bg-red-600 text-white transition-colors"
-                      title="Hapus foto ini"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+            <MultiImageUploader
+              values={galleryUrls}
+              onChange={setGalleryUrls}
+              bucket="portfolio-assets"
+              folder="projects"
+              maxFiles={12}
+              label="Upload Foto Galeri Proyek"
+              helperText="Pilih atau seret satu/beberapa file foto screenshot proyek (Maks. 5MB per file)"
+            />
           </div>
         </div>
 

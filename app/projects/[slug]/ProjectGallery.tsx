@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Maximize2, Image as ImageIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import {
@@ -40,16 +41,23 @@ export function ProjectGallery({ images, title }: ProjectGalleryProps) {
         className="group relative aspect-video w-full rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-xl cursor-zoom-in"
       >
         <AnimatePresence mode="wait">
-          <motion.img
+          <motion.div
             key={currentImage}
-            src={currentImage}
-            alt={`${title} - Screenshot ${activeIndex + 1}`}
             initial={{ opacity: 0.6, scale: 1.02 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0.6 }}
             transition={{ duration: 0.3 }}
-            className="w-full h-full object-cover object-center group-hover:scale-[1.01] transition-transform duration-500"
-          />
+            className="relative w-full h-full"
+          >
+            <Image
+              src={currentImage}
+              alt={`${title} - Screenshot ${activeIndex + 1}`}
+              fill
+              sizes="(max-width: 1024px) 100vw, 1024px"
+              priority={activeIndex === 0}
+              className="object-cover object-center group-hover:scale-[1.01] transition-transform duration-500"
+            />
+          </motion.div>
         </AnimatePresence>
 
         {/* Overlay Badges */}
@@ -111,11 +119,12 @@ export function ProjectGallery({ images, title }: ProjectGalleryProps) {
                   : "border-zinc-200 dark:border-zinc-800 opacity-60 hover:opacity-100"
               }`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={img}
                 alt={`Thumbnail ${idx + 1}`}
-                className="w-full h-full object-cover"
+                fill
+                sizes="112px"
+                className="object-cover"
               />
             </button>
           ))}
@@ -127,11 +136,12 @@ export function ProjectGallery({ images, title }: ProjectGalleryProps) {
         <DialogContent className="max-w-5xl p-2 bg-black/95 border-zinc-800">
           <DialogTitle className="sr-only">{title} Screenshot</DialogTitle>
           <div className="relative aspect-video w-full rounded-xl overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={currentImage}
               alt={title}
-              className="w-full h-full object-contain"
+              fill
+              sizes="(max-width: 1280px) 100vw, 1280px"
+              className="object-contain"
             />
           </div>
         </DialogContent>

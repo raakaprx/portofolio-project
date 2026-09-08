@@ -1,22 +1,26 @@
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import About from "./components/About";
-import Experience from "./components/Experience";
-import Projects from "./components/Projects";
-import TechStack from "./components/TechStack";
-import Certificates from "./components/Certificates";
-import Contact from "./components/Contact";
-import Footer from "./components/Footer";
-import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import Hero from "@/components/sections/Hero";
+import About from "@/components/sections/About";
+import Experience from "@/components/sections/Experience";
+import Projects from "@/components/sections/Projects";
+import TechStack from "@/components/sections/TechStack";
+import Certificates from "@/components/sections/Certificates";
+import Contact from "@/components/sections/Contact";
 import {
   getProjects,
   getExperiences,
   getCertificates,
   getTechStacks,
+  getProfile,
 } from "@/lib/portfolio-data";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function Home() {
-  const [projects, experiences, certificates, techGroups] = await Promise.all([
+  const [profile, projects, experiences, certificates, techGroups] = await Promise.all([
+    getProfile(),
     getProjects(),
     getExperiences(),
     getCertificates(),
@@ -25,9 +29,8 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-background text-foreground selection:bg-zinc-200 selection:text-zinc-950 dark:selection:bg-zinc-800 dark:selection:text-white transition-colors duration-300">
-      <AnalyticsTracker />
       <Navbar />
-      <Hero />
+      <Hero initialProfile={profile} />
       <About />
       <Experience initialExperiences={experiences} />
       <Projects initialProjects={projects} />

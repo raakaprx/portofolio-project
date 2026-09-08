@@ -1,9 +1,12 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import {
   DEFAULT_PROJECTS,
   DEFAULT_EXPERIENCES,
   DEFAULT_CERTIFICATES,
   DEFAULT_TECH_GROUPS,
+  DEFAULT_PROFILE,
+  parseAvatarUrl,
+  buildAvatarUrl,
   type ProjectItem,
   type ProjectMetric,
   type ArchitectureFlowStep,
@@ -13,6 +16,8 @@ import {
   type CertificateItem,
   type TechGroup,
   type TechItem,
+  type ProfileData,
+  type ProfileHighlightCard,
 } from "./portfolio-defaults";
 
 export * from "./portfolio-defaults";
@@ -21,7 +26,39 @@ export * from "./portfolio-defaults";
 // SERVER-SIDE DATA FETCHING WITH SAFE FALLBACK
 // ==========================================
 
-export function mapProjectRow(item: any, idx: number = 0): ProjectItem {
+export interface ProjectDatabaseRow {
+  id?: string;
+  slug?: string;
+  title?: string;
+  role?: string;
+  subtitle?: string;
+  short_summary?: string;
+  summary?: string;
+  description?: string;
+  full_description?: string;
+  category?: string;
+  thumbnail_url?: string;
+  image_url?: string;
+  gallery_urls?: string[];
+  tech_stacks?: string[];
+  tags?: string[];
+  live_url?: string;
+  demo_url?: string;
+  repo_url?: string;
+  github_url?: string;
+  is_featured?: boolean;
+  featured?: boolean;
+  display_order?: number;
+  order_index?: number;
+  metrics?: ProjectMetric[] | unknown;
+  featured_span?: string;
+  architecture_flow?: ArchitectureFlowStep[] | unknown;
+  database_schema?: DatabaseSchemaTable[] | unknown;
+  code_snippet?: CodeSnippet | unknown;
+  [key: string]: unknown;
+}
+
+export function mapProjectRow(item: ProjectDatabaseRow, idx: number = 0): ProjectItem {
   const fallbackItem = DEFAULT_PROJECTS.find(
     (p) => p.slug === item.slug || p.id === item.id || p.id === item.slug
   );
@@ -104,7 +141,7 @@ export function mapProjectRow(item: any, idx: number = 0): ProjectItem {
 
 export async function getProjects(): Promise<ProjectItem[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("projects")
       .select("*")
@@ -112,30 +149,40 @@ export async function getProjects(): Promise<ProjectItem[]> {
       .order("order_index", { ascending: true })
       .order("created_at", { ascending: false });
 
-    if (error || !data || data.length === 0) {
+    if (error) {
+      console.warn("[getProjects] Supabase returned an error, using default projects:", error.message);
       return DEFAULT_PROJECTS;
     }
 
-    return data.map((item, idx) => mapProjectRow(item, idx));
-  } catch {
+    if (!data || data.length === 0) {
+      return DEFAULT_PROJECTS;
+    }
+
+    return (data as ProjectDatabaseRow[]).map((item, idx) => mapProjectRow(item, idx));
+  } catch (err) {
+    console.error("[getProjects] Failed to fetch projects from database:", err);
     return DEFAULT_PROJECTS;
   }
 }
 
 export async function getProjectBySlug(slug: string): Promise<ProjectItem | null> {
   try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
-      .or(`slug.eq.${slug},id.eq.${slug}`)
-      .single();
+    const supabase = createPublicClient();
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(slug);
 
-    if (data && !error) {
-      return mapProjectRow(data, 0);
+    const query = supabase.from("projects").select("*");
+    const { data, error } = await (isUuid
+      ? query.or(`slug.eq.${slug},id.eq.${slug}`).maybeSingle()
+      : query.eq("slug", slug).maybeSingle()
+    );
+
+    if (error) {
+      console.warn(`[getProjectBySlug] Could not find project '${slug}' or query failed:`, error.message);
+    } else if (data) {
+      return mapProjectRow(data as ProjectDatabaseRow, 0);
     }
-  } catch {
-    // fallback below
+  } catch (err) {
+    console.error(`[getProjectBySlug] Unexpected error fetching project '${slug}':`, err);
   }
 
   // Fallback to static data
@@ -147,42 +194,76 @@ export async function getProjectBySlug(slug: string): Promise<ProjectItem | null
 
 export async function getExperiences(): Promise<ExperienceItem[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("experiences")
       .select("*")
       .order("order_index", { ascending: true });
 
-    if (error || !data || data.length === 0) {
+    if (error) {
+      console.warn("[getExperiences] Supabase query returned an error, using fallback:", error.message);
       return DEFAULT_EXPERIENCES;
     }
 
-    return data.map((item) => ({
-      id: item.id,
-      company: item.company,
-      role: item.role,
-      duration: item.duration,
-      status: item.status || "Active",
-      type: item.type || "Industry",
-      highlights: item.highlights || "",
-      deliverables: item.deliverables || [],
-      technologies: item.technologies || [],
-      metrics: (item.metrics as { label: string; value: string }[]) || [],
-    }));
-  } catch {
+    if (!data || data.length === 0) {
+      return DEFAULT_EXPERIENCES;
+    }
+
+    return data.map((item) => {
+      const fallbackItem = DEFAULT_EXPERIENCES.find(
+        (e) =>
+          (e.company.toLowerCase().includes("maxxima") &&
+            (item.company || "").toLowerCase().includes("maxxima")) ||
+          (e.company.toLowerCase().includes("sundaya") &&
+            (item.company || "").toLowerCase().includes("sundaya"))
+      );
+
+      const resolvedPhotos =
+        Array.isArray(item.photos) && item.photos.length > 0
+          ? item.photos
+          : Array.isArray(item.gallery_urls) && item.gallery_urls.length > 0
+          ? item.gallery_urls
+          : Array.isArray(item.photo_urls) && item.photo_urls.length > 0
+          ? item.photo_urls
+          : (fallbackItem?.photos || []);
+
+      return {
+        id: item.id,
+        company: item.company,
+        role: item.role,
+        duration: item.duration,
+        status: item.status || "Active",
+        type: item.type || "Industry",
+        highlights: item.highlights || "",
+        deliverables: item.deliverables || [],
+        technologies: item.technologies || [],
+        metrics:
+          (Array.isArray(item.metrics) && item.metrics.length > 0
+            ? (item.metrics as { label: string; value: string }[])
+            : fallbackItem?.metrics) || [],
+        photos: resolvedPhotos,
+      };
+    });
+  } catch (err) {
+    console.error("[getExperiences] Unexpected failure fetching experiences:", err);
     return DEFAULT_EXPERIENCES;
   }
 }
 
 export async function getCertificates(): Promise<CertificateItem[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("certificates")
       .select("*")
       .order("order_index", { ascending: true });
 
-    if (error || !data || data.length === 0) {
+    if (error) {
+      console.warn("[getCertificates] Supabase query returned an error, using fallback:", error.message);
+      return DEFAULT_CERTIFICATES;
+    }
+
+    if (!data || data.length === 0) {
       return DEFAULT_CERTIFICATES;
     }
 
@@ -196,20 +277,26 @@ export async function getCertificates(): Promise<CertificateItem[]> {
       imageUrl: item.image_url || undefined,
       skillsVerified: item.skills_verified || [],
     }));
-  } catch {
+  } catch (err) {
+    console.error("[getCertificates] Unexpected failure fetching certificates:", err);
     return DEFAULT_CERTIFICATES;
   }
 }
 
 export async function getTechStacks(): Promise<TechGroup[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("tech_stacks")
       .select("*")
       .order("order_index", { ascending: true });
 
-    if (error || !data || data.length === 0) {
+    if (error) {
+      console.warn("[getTechStacks] Supabase query returned an error, using fallback:", error.message);
+      return DEFAULT_TECH_GROUPS;
+    }
+
+    if (!data || data.length === 0) {
       return DEFAULT_TECH_GROUPS;
     }
 
@@ -229,7 +316,63 @@ export async function getTechStacks(): Promise<TechGroup[]> {
       category,
       items,
     }));
-  } catch {
+  } catch (err) {
+    console.error("[getTechStacks] Unexpected failure fetching tech stacks:", err);
     return DEFAULT_TECH_GROUPS;
+  }
+}
+
+export async function getProfile(): Promise<ProfileData> {
+  try {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("profile")
+      .select("*")
+      .maybeSingle();
+
+    if (error) {
+      console.warn("[getProfile] Supabase query returned an error, using fallback:", error.message);
+      return DEFAULT_PROFILE;
+    }
+
+    if (!data) {
+      return DEFAULT_PROFILE;
+    }
+
+    const avatarConfig = parseAvatarUrl(data.avatar_url);
+    const position = data.avatar_position || avatarConfig.position || DEFAULT_PROFILE.avatar_position || "center 20%";
+    const scale = typeof data.avatar_scale === "number" ? data.avatar_scale : (avatarConfig.scale ?? DEFAULT_PROFILE.avatar_scale ?? 100);
+    const offsetY = typeof data.avatar_offset_y === "number" ? data.avatar_offset_y : (avatarConfig.offsetY ?? DEFAULT_PROFILE.avatar_offset_y ?? 0);
+    const offsetX = typeof data.avatar_offset_x === "number" ? data.avatar_offset_x : (avatarConfig.offsetX ?? DEFAULT_PROFILE.avatar_offset_x ?? 0);
+
+    return {
+      id: data.id || DEFAULT_PROFILE.id,
+      name: data.name || DEFAULT_PROFILE.name,
+      role: data.role || DEFAULT_PROFILE.role,
+      tagline: data.tagline || DEFAULT_PROFILE.tagline,
+      avatar_url: data.avatar_url || DEFAULT_PROFILE.avatar_url,
+      avatar_position: position,
+      avatar_scale: scale,
+      avatar_offset_y: offsetY,
+      avatar_offset_x: offsetX,
+      status_badge: data.status_badge || DEFAULT_PROFILE.status_badge,
+      is_available: typeof data.is_available === "boolean" ? data.is_available : DEFAULT_PROFILE.is_available,
+      cta_primary_text: data.cta_primary_text || DEFAULT_PROFILE.cta_primary_text,
+      cta_primary_url: data.cta_primary_url || DEFAULT_PROFILE.cta_primary_url,
+      cta_cv_text: data.cta_cv_text || DEFAULT_PROFILE.cta_cv_text,
+      cta_cv_url: data.cta_cv_url || DEFAULT_PROFILE.cta_cv_url,
+      cta_contact_text: data.cta_contact_text || DEFAULT_PROFILE.cta_contact_text,
+      cta_contact_url: data.cta_contact_url || DEFAULT_PROFILE.cta_contact_url,
+      github_url: data.github_url || DEFAULT_PROFILE.github_url,
+      linkedin_url: data.linkedin_url || DEFAULT_PROFILE.linkedin_url,
+      whatsapp_url: data.whatsapp_url || DEFAULT_PROFILE.whatsapp_url,
+      email: data.email || DEFAULT_PROFILE.email,
+      highlights: Array.isArray(data.highlights) && data.highlights.length > 0
+        ? (data.highlights as ProfileHighlightCard[])
+        : DEFAULT_PROFILE.highlights,
+    };
+  } catch (err) {
+    console.error("[getProfile] Unexpected failure fetching profile:", err);
+    return DEFAULT_PROFILE;
   }
 }

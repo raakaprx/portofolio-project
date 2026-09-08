@@ -27,6 +27,7 @@ export default function AdminLayout({
   // Get dynamic title based on path
   const getPageTitle = () => {
     if (pathname === "/admin") return "Overview & Analytics";
+    if (pathname.startsWith("/admin/profile")) return "Profile & Hero Configuration";
     if (pathname.startsWith("/admin/projects")) return "Project Management";
     if (pathname.startsWith("/admin/experiences")) return "Experience Management";
     if (pathname.startsWith("/admin/certificates")) return "Certificate Credentials";

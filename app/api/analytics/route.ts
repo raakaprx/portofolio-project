@@ -1,6 +1,22 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+const ALLOWED_EVENT_TYPES = [
+  "page_view",
+  "cv_download",
+  "project_click",
+  "contact_click",
+] as const;
+
+type AllowedEventType = (typeof ALLOWED_EVENT_TYPES)[number];
+
+function isAllowedEventType(val: unknown): val is AllowedEventType {
+  return (
+    typeof val === "string" &&
+    (ALLOWED_EVENT_TYPES as readonly string[]).includes(val)
+  );
+}
+
 function detectDevice(userAgent: string): "Mobile" | "Tablet" | "Desktop" {
   const ua = userAgent.toLowerCase();
   if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
@@ -58,12 +74,25 @@ function getClientIp(request: NextRequest): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    let body: { eventType?: unknown; pagePath?: unknown; targetName?: unknown };
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Bad Request: Invalid JSON payload" },
+        { status: 400 }
+      );
+    }
+
     const { eventType, pagePath = "/", targetName = "" } = body;
 
-    if (!eventType) {
+    // Strict validation of eventType
+    if (!isAllowedEventType(eventType)) {
       return NextResponse.json(
-        { error: "Event type is required" },
+        {
+          error:
+            "Bad Request: eventType is required and must be one of: 'page_view', 'cv_download', 'project_click', 'contact_click'",
+        },
         { status: 400 }
       );
     }
@@ -88,39 +117,38 @@ export async function POST(request: NextRequest) {
     const formattedDevice = `${deviceType} • ${browser} on ${os}`;
     const formattedUserAgent = `[IP: ${clientIp}] ${userAgent}`.slice(0, 500);
 
-    const basePayload = {
+    const payload = {
       event_type: eventType,
-      page_path: pagePath,
-      target_name: targetName || "Page Interaction",
+      page_path: typeof pagePath === "string" ? pagePath : "/",
+      target_name: typeof targetName === "string" ? targetName : "Page Interaction",
       device_type: formattedDevice,
       referrer: cleanReferrer,
       user_agent: formattedUserAgent,
+      ip_address: clientIp,
     };
 
     const supabase = await createClient();
 
-    // 1. First attempt: try inserting with dedicated ip_address column
-    const { error: ipErr } = await supabase.from("analytics_events").insert({
-      ...basePayload,
-      ip_address: clientIp,
-    });
+    // Single validated insert into Supabase analytics_events
+    const { error: insertErr } = await supabase
+      .from("analytics_events")
+      .insert(payload);
 
-    // 2. If ip_address column does not exist yet in Supabase schema cache, fallback cleanly
-    if (ipErr) {
-      const { error: fallbackErr } = await supabase
-        .from("analytics_events")
-        .insert(basePayload);
-
-      if (fallbackErr) {
-        return NextResponse.json({ success: false, message: fallbackErr.message });
-      }
+    if (insertErr) {
+      return NextResponse.json(
+        { success: false, error: insertErr.message },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true }, { status: 201 });
   } catch (err) {
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : "Internal error" },
-      { status: 200 }
+      {
+        success: false,
+        error: err instanceof Error ? err.message : "Internal server error",
+      },
+      { status: 500 }
     );
   }
 }

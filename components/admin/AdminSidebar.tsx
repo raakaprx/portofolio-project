@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
+  User,
   FolderGit2,
   Briefcase,
   Award,
@@ -24,6 +25,7 @@ interface AdminSidebarProps {
 
 const NAV_LINKS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/profile", label: "Profile", icon: User },
   { href: "/admin/projects", label: "Projects", icon: FolderGit2 },
   { href: "/admin/experiences", label: "Experiences", icon: Briefcase },
   { href: "/admin/certificates", label: "Certificates", icon: Award },

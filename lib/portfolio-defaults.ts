@@ -62,6 +62,7 @@ export interface ExperienceItem {
   deliverables: string[];
   technologies: string[];
   metrics?: { label: string; value: string }[];
+  photos?: string[];
 }
 
 export interface CertificateItem {
@@ -84,6 +85,131 @@ export interface TechGroup {
   category: string;
   items: TechItem[];
 }
+
+export interface ProfileHighlightCard {
+  label: string;
+  title: string;
+  subtitle: string;
+  icon?: "briefcase" | "layers" | "database" | string;
+}
+
+export interface ProfileData {
+  id?: string;
+  name: string;
+  role: string;
+  tagline: string;
+  avatar_url: string;
+  avatar_position?: string;
+  avatar_scale?: number;
+  avatar_offset_y?: number;
+  avatar_offset_x?: number;
+  status_badge: string;
+  is_available: boolean;
+  cta_primary_text: string;
+  cta_primary_url: string;
+  cta_cv_text: string;
+  cta_cv_url: string;
+  cta_contact_text: string;
+  cta_contact_url: string;
+  github_url: string;
+  linkedin_url: string;
+  whatsapp_url: string;
+  email: string;
+  highlights: ProfileHighlightCard[];
+}
+
+export function parseAvatarUrl(url?: string): {
+  cleanUrl: string;
+  position?: string;
+  scale?: number;
+  offsetY?: number;
+  offsetX?: number;
+} {
+  const raw = url || "/profile-raka.jpg";
+  if (!raw.includes("?") && !raw.includes("#")) {
+    return { cleanUrl: raw };
+  }
+
+  try {
+    const [base, query] = raw.split(/[?#]/);
+    const params = new URLSearchParams(query);
+    const result: {
+      cleanUrl: string;
+      position?: string;
+      scale?: number;
+      offsetY?: number;
+      offsetX?: number;
+    } = { cleanUrl: base || "/profile-raka.jpg" };
+
+    if (params.has("pos")) result.position = params.get("pos") || undefined;
+    if (params.has("scale")) result.scale = Number(params.get("scale")) || undefined;
+    if (params.has("y")) result.offsetY = Number(params.get("y")) || undefined;
+    if (params.has("x")) result.offsetX = Number(params.get("x")) || undefined;
+    return result;
+  } catch {
+    return { cleanUrl: raw };
+  }
+}
+
+export function buildAvatarUrl(
+  baseCleanUrl: string,
+  config: { position?: string; scale?: number; offsetY?: number; offsetX?: number }
+): string {
+  const clean = (baseCleanUrl || "/profile-raka.jpg").split(/[?#]/)[0];
+  const params = new URLSearchParams();
+  if (config.position && config.position !== "center 20%") params.set("pos", config.position);
+  if (typeof config.scale === "number" && config.scale !== 100) params.set("scale", String(config.scale));
+  if (typeof config.offsetY === "number" && config.offsetY !== 0) params.set("y", String(config.offsetY));
+  if (typeof config.offsetX === "number" && config.offsetX !== 0) params.set("x", String(config.offsetX));
+
+  const qs = params.toString();
+  return qs ? `${clean}?${qs}` : clean;
+}
+
+export const DEFAULT_PROFILE: ProfileData = {
+  id: "main",
+  name: "Muhammad Raka Pradana",
+  role: "Full-Stack Web Developer",
+  tagline:
+    "Crafting scalable web architectures, robust transactional backends, and data-driven systems. Focused on clean system design, database query efficiency, and high-performance user experiences.",
+  avatar_url: "/profile-raka.jpg",
+  avatar_position: "center 20%",
+  avatar_scale: 100,
+  avatar_offset_y: 0,
+  avatar_offset_x: 0,
+  status_badge: "Available for Engineering Projects",
+  is_available: true,
+  cta_primary_text: "Explore Projects",
+  cta_primary_url: "#projects",
+  cta_cv_text: "Download CV",
+  cta_cv_url: "/cv.pdf",
+  cta_contact_text: "Contact Me",
+  cta_contact_url: "#contact",
+  github_url: "https://github.com/raakaprx",
+  linkedin_url: "https://linkedin.com/in/rakaprx",
+  whatsapp_url: "https://wa.me/6285156000636",
+  email: "rakapradana.work@gmail.com",
+  highlights: [
+    {
+      label: "CURRENT ROLE",
+      title: "Web Developer",
+      subtitle: "PT Maxxima Innovative Engineering",
+      icon: "briefcase",
+    },
+    {
+      label: "CORE SPECIALTIES",
+      title: "Laravel & Next.js",
+      subtitle: "REST APIs & ML Pipelines",
+      icon: "layers",
+    },
+    {
+      label: "DATABASE FOCUS",
+      title: "PostgreSQL & MySQL",
+      subtitle: "ACID & Index Tuning",
+      icon: "database",
+    },
+  ],
+};
 
 export const DEFAULT_EXPERIENCES: ExperienceItem[] = [
   {
@@ -114,6 +240,10 @@ export const DEFAULT_EXPERIENCES: ExperienceItem[] = [
       { label: "Fokus Inti", value: "Sistem Web & Database" },
       { label: "Core Stack", value: "Next.js & PostgreSQL" },
     ],
+    photos: [
+      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+    ],
   },
   {
     company: "PT. Sundaya",
@@ -141,6 +271,10 @@ export const DEFAULT_EXPERIENCES: ExperienceItem[] = [
       { label: "Pengguna Aktif", value: "50+ Concurrent Users" },
       { label: "Performa", value: "Lazy Loading & Code Splitting" },
       { label: "Tracking", value: "Real-Time Inventory" },
+    ],
+    photos: [
+      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=1200&auto=format&fit=crop",
     ],
   },
 ];

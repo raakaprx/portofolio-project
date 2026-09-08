@@ -21,6 +21,7 @@ import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_TECH_GROUPS } from "@/lib/portfolio-defaults";
 import { getErrorMessage } from "@/lib/utils";
 import { getTechLogo } from "@/components/icons";
+import { triggerRevalidation } from "@/lib/revalidate";
 import { toast } from "sonner";
 
 interface TechRecord {
@@ -108,7 +109,7 @@ export default function AdminTechStackPage() {
       if (error) throw error;
 
       toast.success(`Teknologi "${name}" berhasil ditambahkan!`);
-      await fetch("/api/revalidate", { method: "POST" });
+      await triggerRevalidation("/");
       setName("");
       setDialogOpen(false);
       fetchTechStack();
@@ -130,7 +131,7 @@ export default function AdminTechStackPage() {
       const { error } = await supabase.from("tech_stacks").delete().eq("id", id);
       if (error) throw error;
       toast.success(`"${techName}" berhasil dihapus`);
-      fetch("/api/revalidate", { method: "POST" });
+      await triggerRevalidation("/");
       fetchTechStack();
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, "Gagal menghapus teknologi"));

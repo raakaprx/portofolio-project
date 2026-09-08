@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Metadata } from "next";
 import {
   ArrowLeft,
@@ -14,14 +15,28 @@ import {
 import { Github, getTechLogo } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import Navbar from "@/app/components/Navbar";
-import Footer from "@/app/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { MarkdownView } from "@/components/ui/markdown-view";
 import { getProjectBySlug, getProjects } from "@/lib/portfolio-data";
 import { ProjectGallery } from "./ProjectGallery";
 
+export const revalidate = 3600;
+
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateStaticParams() {
+  try {
+    const projects = await getProjects();
+    return projects.map((project) => ({
+      slug: project.slug || project.id,
+    }));
+  } catch (error) {
+    console.error("[generateStaticParams] Failed to generate static params:", error);
+    return [];
+  }
 }
 
 export async function generateMetadata({
@@ -261,12 +276,13 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                   href={`/projects/${p.slug || p.id}`}
                   className="group rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-4 hover:border-zinc-400 dark:hover:border-zinc-600 transition-all hover:shadow-md"
                 >
-                  <div className="aspect-video w-full rounded-lg overflow-hidden bg-zinc-950 mb-3 border border-zinc-100 dark:border-zinc-800/60">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                  <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-zinc-950 mb-3 border border-zinc-100 dark:border-zinc-800/60">
+                    <Image
                       src={p.thumbnail_url}
                       alt={p.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                   <span className="text-[10px] font-mono text-blue-500 uppercase font-semibold">

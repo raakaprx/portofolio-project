@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -37,26 +38,28 @@ export default function Projects({
   const [searchQuery, setSearchQuery] = useState("");
   const [previewProject, setPreviewProject] = useState<ProjectItem | null>(null);
 
-  const projects = useMemo(() => {
-    return initialProjects;
-  }, [initialProjects]);
-
   const filteredProjects = useMemo(() => {
-    return projects.filter((p) => {
+    return initialProjects.filter((p) => {
       const matchTab =
         activeTab === "all" ||
         (activeTab === "machine-learning" &&
           (p.category === "machine-learning" ||
-            p.role.toLowerCase().includes("machine learning") ||
-            p.title.toLowerCase().includes("prediction") ||
-            p.title.toLowerCase().includes("model"))) ||
+            p.tech_stacks.some((t) =>
+              ["python", "machine learning", "tensorflow", "pytorch", "scikit-learn", "ai", "pandas", "numpy"].some((ml) =>
+                t.toLowerCase().includes(ml)
+              )
+            ))) ||
         (activeTab === "laravel" &&
           (p.category === "laravel" ||
             p.tech_stacks.some((t) => t.toLowerCase().includes("laravel")))) ||
         (activeTab === "fullstack" &&
           (p.category === "fullstack" ||
-            p.role.toLowerCase().includes("full-stack") ||
-            p.role.toLowerCase().includes("full stack")));
+            p.category === "all" ||
+            p.tech_stacks.some((t) =>
+              ["next.js", "react", "fullstack", "full-stack"].some((fs) =>
+                t.toLowerCase().includes(fs)
+              )
+            )));
 
       const matchSearch =
         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -66,7 +69,7 @@ export default function Projects({
 
       return matchTab && matchSearch;
     });
-  }, [projects, activeTab, searchQuery]);
+  }, [initialProjects, activeTab, searchQuery]);
 
   return (
     <section id="projects" className="py-24 bg-background relative transition-colors duration-300">
@@ -150,12 +153,12 @@ export default function Projects({
                 <div>
                   {/* Thumbnail Image Container */}
                   <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-zinc-950 mb-4 border border-zinc-100 dark:border-zinc-800/60">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={project.thumbnail_url}
                       alt={project.title}
-                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
-                      loading="lazy"
+                      fill
+                      className="object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md text-[11px] font-mono font-medium text-zinc-900 dark:text-zinc-100 shadow-md">
@@ -239,11 +242,12 @@ export default function Projects({
               <div className="flex flex-col">
                 {/* Modal Banner Image */}
                 <div className="relative aspect-video w-full overflow-hidden bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={previewProject.thumbnail_url}
                     alt={previewProject.title}
-                    className="w-full h-full object-cover object-center"
+                    fill
+                    className="object-cover object-center"
+                    sizes="(max-width: 768px) 100vw, 672px"
                   />
                   <div className="absolute top-3 left-3">
                     <Badge className="bg-black/70 backdrop-blur-md text-white border-zinc-700 font-mono text-xs">

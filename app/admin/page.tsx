@@ -50,15 +50,40 @@ export default function AdminDashboardPage() {
   const fetchDashboardData = async (isManualRefresh = false) => {
     if (isManualRefresh) setLoading(true);
     try {
-      // 1. Fetch recent events
-      const { data: events, error } = await supabase
-        .from("analytics_events")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(50);
+      // Execute aggregate count queries in parallel directly against Postgres
+      const [viewsRes, cvRes, projectClicksRes, contactClicksRes, recentRes, projectClicksDataRes] =
+        await Promise.all([
+          supabase
+            .from("analytics_events")
+            .select("*", { count: "exact", head: true })
+            .eq("event_type", "page_view"),
+          supabase
+            .from("analytics_events")
+            .select("*", { count: "exact", head: true })
+            .eq("event_type", "cv_download"),
+          supabase
+            .from("analytics_events")
+            .select("*", { count: "exact", head: true })
+            .eq("event_type", "project_click"),
+          supabase
+            .from("analytics_events")
+            .select("*", { count: "exact", head: true })
+            .eq("event_type", "contact_click"),
+          supabase
+            .from("analytics_events")
+            .select("id, event_type, target_name, device_type, created_at")
+            .order("created_at", { ascending: false })
+            .limit(15),
+          supabase
+            .from("analytics_events")
+            .select("target_name")
+            .eq("event_type", "project_click")
+            .limit(200),
+        ]);
 
-      if (error || !events) {
-        // Fallback placeholder demo metrics if table not yet migrated
+      // If all queries failed (e.g. database table not created yet), provide demo fallback
+      const hasError = viewsRes.error && recentRes.error;
+      if (hasError) {
         setData({
           totalViews: 128,
           totalCvDownloads: 24,
@@ -89,23 +114,14 @@ export default function AdminDashboardPage() {
         return;
       }
 
-      // Compute statistics
-      let views = 0;
-      let cv = 0;
-      let projects = 0;
-      let contacts = 0;
+      // Compute top projects from recent project click events
       const projectCounts: Record<string, number> = {};
-
-      events.forEach((ev) => {
-        if (ev.event_type === "page_view") views++;
-        if (ev.event_type === "cv_download") cv++;
-        if (ev.event_type === "project_click") {
-          projects++;
-          const projName = ev.target_name || "Unknown Project";
+      if (projectClicksDataRes.data) {
+        projectClicksDataRes.data.forEach((item) => {
+          const projName = item.target_name || "Unknown Project";
           projectCounts[projName] = (projectCounts[projName] || 0) + 1;
-        }
-        if (ev.event_type === "contact_click") contacts++;
-      });
+        });
+      }
 
       const sortedProjects = Object.entries(projectCounts)
         .map(([name, count]) => ({ name, count }))
@@ -113,15 +129,15 @@ export default function AdminDashboardPage() {
         .slice(0, 5);
 
       setData({
-        totalViews: views,
-        totalCvDownloads: cv,
-        totalProjectClicks: projects,
-        totalContactClicks: contacts,
-        recentEvents: events.slice(0, 10),
+        totalViews: viewsRes.count ?? 0,
+        totalCvDownloads: cvRes.count ?? 0,
+        totalProjectClicks: projectClicksRes.count ?? 0,
+        totalContactClicks: contactClicksRes.count ?? 0,
+        recentEvents: (recentRes.data as AnalyticsSummary["recentEvents"]) || [],
         topProjects: sortedProjects,
       });
     } catch {
-      // Ignored
+      // Fallback cleanly on network failure
     } finally {
       setLoading(false);
     }

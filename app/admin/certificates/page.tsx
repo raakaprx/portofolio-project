@@ -24,6 +24,7 @@ import { ImageUploader } from "@/components/admin/ImageUploader";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_CERTIFICATES, type CertificateItem } from "@/lib/portfolio-defaults";
 import { getErrorMessage } from "@/lib/utils";
+import { triggerRevalidation } from "@/lib/revalidate";
 import {
   formatCertificateDate,
   parseDurationString,
@@ -175,7 +176,7 @@ export default function AdminCertificatesPage() {
         toast.success("Sertifikat berhasil diperbarui!");
       }
 
-      await fetch("/api/revalidate", { method: "POST" });
+      await triggerRevalidation("/");
       setDialogOpen(false);
       fetchCertificates();
     } catch (err: unknown) {
@@ -199,7 +200,7 @@ export default function AdminCertificatesPage() {
         .eq("id", id);
       if (error) throw error;
       toast.success("Sertifikat berhasil dihapus");
-      fetch("/api/revalidate", { method: "POST" });
+      await triggerRevalidation("/");
       fetchCertificates();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Gagal menghapus");
