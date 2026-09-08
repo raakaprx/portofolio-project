@@ -3,21 +3,18 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowLeft,
   Save,
   Loader2,
   Plus,
-  Trash2,
   Image as ImageIcon,
-  Link as LinkIcon,
   Sparkles,
   ExternalLink,
   Eye,
   Edit3,
 } from "lucide-react";
-import { Github, getTechLogo } from "@/components/icons";
+import { getTechLogo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { MultiImageUploader } from "@/components/admin/MultiImageUploader";
@@ -27,6 +24,38 @@ import { DEFAULT_PROJECTS } from "@/lib/portfolio-defaults";
 import { getErrorMessage } from "@/lib/utils";
 import { triggerRevalidation } from "@/lib/revalidate";
 import { toast } from "sonner";
+
+interface ProjectFormData {
+  title: string;
+  slug: string;
+  role: string;
+  category: string;
+  short_summary: string;
+  full_description: string;
+  thumbnail_url: string;
+  gallery_urls: string[];
+  tech_stacks: string[];
+  live_url: string;
+  repo_url: string;
+  is_featured: boolean;
+  display_order: number;
+}
+
+const initialFormData: ProjectFormData = {
+  title: "",
+  slug: "",
+  role: "Full-stack Developer",
+  category: "fullstack",
+  short_summary: "",
+  full_description: "",
+  thumbnail_url: "",
+  gallery_urls: [],
+  tech_stacks: [],
+  live_url: "",
+  repo_url: "",
+  is_featured: false,
+  display_order: 1,
+};
 
 const COMMON_TECH_STACKS = [
   "React.js",
@@ -71,27 +100,19 @@ export default function ProjectFormPage() {
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
 
-  // Form states
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
-  const [role, setRole] = useState("Full-stack Developer");
-  const [category, setCategory] = useState("fullstack");
-  const [shortSummary, setShortSummary] = useState("");
-  const [fullDescription, setFullDescription] = useState("");
+  // Consolidated Project Form Data State
+  const [formData, setFormData] = useState<ProjectFormData>(initialFormData);
   const [markdownTab, setMarkdownTab] = useState<"edit" | "preview">("edit");
-
-  const [thumbnailUrl, setThumbnailUrl] = useState("");
-  const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
-
-  const [techStacks, setTechStacks] = useState<string[]>([]);
   const [techInput, setTechInput] = useState("");
 
-  const [liveUrl, setLiveUrl] = useState("");
-  const [repoUrl, setRepoUrl] = useState("");
-  const [isFeatured, setIsFeatured] = useState(false);
-  const [displayOrder, setDisplayOrder] = useState(1);
-
   const supabase = createClient();
+
+  const setFormField = <K extends keyof ProjectFormData>(
+    field: K,
+    value: ProjectFormData[K]
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const generateSlug = (text: string) => {
     return text
@@ -103,23 +124,27 @@ export default function ProjectFormPage() {
   };
 
   const handleTitleChange = (val: string) => {
-    setTitle(val);
-    if (isNew) {
-      setSlug(generateSlug(val));
-    }
+    setFormData((prev) => ({
+      ...prev,
+      title: val,
+      ...(isNew ? { slug: generateSlug(val) } : {}),
+    }));
   };
 
   const handleAddTech = (tech: string) => {
     const trimmed = tech.trim();
     if (!trimmed) return;
-    if (!techStacks.includes(trimmed)) {
-      setTechStacks([...techStacks, trimmed]);
+    if (!formData.tech_stacks.includes(trimmed)) {
+      setFormField("tech_stacks", [...formData.tech_stacks, trimmed]);
     }
     setTechInput("");
   };
 
   const handleRemoveTech = (techToRemove: string) => {
-    setTechStacks(techStacks.filter((t) => t !== techToRemove));
+    setFormField(
+      "tech_stacks",
+      formData.tech_stacks.filter((t) => t !== techToRemove)
+    );
   };
 
   useEffect(() => {
@@ -135,42 +160,50 @@ export default function ProjectFormPage() {
           .single();
 
         if (data && !error) {
-          setTitle(data.title || "");
-          setSlug(data.slug || "");
-          setRole(data.role || data.subtitle || "Full-stack Developer");
-          setCategory(data.category || "fullstack");
-          setShortSummary(data.short_summary || data.summary || (data.description ? data.description.slice(0, 180) : ""));
-          setFullDescription(data.full_description || data.description || "");
-          setThumbnailUrl(data.thumbnail_url || data.image_url || "");
-          setGalleryUrls(Array.isArray(data.gallery_urls) ? data.gallery_urls : []);
-          setTechStacks(
-            Array.isArray(data.tech_stacks) && data.tech_stacks.length > 0
-              ? data.tech_stacks
-              : (Array.isArray(data.tags) ? data.tags : [])
-          );
-          setLiveUrl(data.live_url || data.demo_url || "");
-          setRepoUrl(data.repo_url || data.github_url || "");
-          setIsFeatured(Boolean(data.is_featured ?? data.featured));
-          setDisplayOrder(Number(data.display_order ?? data.order_index ?? 1));
+          setFormData({
+            title: data.title || "",
+            slug: data.slug || "",
+            role: data.role || data.subtitle || "Full-stack Developer",
+            category: data.category || "fullstack",
+            short_summary:
+              data.short_summary ||
+              data.summary ||
+              (data.description ? data.description.slice(0, 180) : ""),
+            full_description: data.full_description || data.description || "",
+            thumbnail_url: data.thumbnail_url || data.image_url || "",
+            gallery_urls: Array.isArray(data.gallery_urls) ? data.gallery_urls : [],
+            tech_stacks:
+              Array.isArray(data.tech_stacks) && data.tech_stacks.length > 0
+                ? data.tech_stacks
+                : Array.isArray(data.tags)
+                ? data.tags
+                : [],
+            live_url: data.live_url || data.demo_url || "",
+            repo_url: data.repo_url || data.github_url || "",
+            is_featured: Boolean(data.is_featured ?? data.featured),
+            display_order: Number(data.display_order ?? data.order_index ?? 1),
+          });
         } else {
           // Fallback to static data
           const fallback = DEFAULT_PROJECTS.find(
             (p) => p.id === projectId || p.slug === projectId
           );
           if (fallback) {
-            setTitle(fallback.title);
-            setSlug(fallback.slug || fallback.id);
-            setRole(fallback.role);
-            setCategory(fallback.category || "fullstack");
-            setShortSummary(fallback.short_summary);
-            setFullDescription(fallback.full_description);
-            setThumbnailUrl(fallback.thumbnail_url);
-            setGalleryUrls(fallback.gallery_urls || []);
-            setTechStacks(fallback.tech_stacks || fallback.techStack || []);
-            setLiveUrl(fallback.live_url || fallback.demo || "");
-            setRepoUrl(fallback.repo_url || fallback.github || "");
-            setIsFeatured(fallback.is_featured);
-            setDisplayOrder(fallback.display_order);
+            setFormData({
+              title: fallback.title,
+              slug: fallback.slug || fallback.id,
+              role: fallback.role,
+              category: fallback.category || "fullstack",
+              short_summary: fallback.short_summary,
+              full_description: fallback.full_description,
+              thumbnail_url: fallback.thumbnail_url,
+              gallery_urls: fallback.gallery_urls || [],
+              tech_stacks: fallback.tech_stacks || fallback.techStack || [],
+              live_url: fallback.live_url || fallback.demo || "",
+              repo_url: fallback.repo_url || fallback.github || "",
+              is_featured: fallback.is_featured,
+              display_order: fallback.display_order,
+            });
           }
         }
       } catch {
@@ -186,11 +219,11 @@ export default function ProjectFormPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !slug.trim()) {
+    if (!formData.title.trim() || !formData.slug.trim()) {
       toast.error("Judul dan Slug wajib diisi");
       return;
     }
-    if (!shortSummary.trim()) {
+    if (!formData.short_summary.trim()) {
       toast.error("Ringkasan Singkat (Short Summary) wajib diisi");
       return;
     }
@@ -223,53 +256,53 @@ export default function ProjectFormPage() {
       };
 
       const fullPayload: ProjectFormPayload = {
-        title: title.trim(),
-        slug: slug.trim(),
-        role: role.trim(),
-        short_summary: shortSummary.trim(),
-        full_description: fullDescription.trim(),
-        thumbnail_url: thumbnailUrl.trim(),
-        gallery_urls: galleryUrls,
-        tech_stacks: techStacks,
-        live_url: liveUrl.trim(),
-        repo_url: repoUrl.trim(),
-        is_featured: isFeatured,
-        display_order: Number(displayOrder),
+        title: formData.title.trim(),
+        slug: formData.slug.trim(),
+        role: formData.role.trim(),
+        short_summary: formData.short_summary.trim(),
+        full_description: formData.full_description.trim(),
+        thumbnail_url: formData.thumbnail_url.trim(),
+        gallery_urls: formData.gallery_urls,
+        tech_stacks: formData.tech_stacks,
+        live_url: formData.live_url.trim(),
+        repo_url: formData.repo_url.trim(),
+        is_featured: formData.is_featured,
+        display_order: Number(formData.display_order),
 
         // Dual-field compatibility with existing database columns
-        summary: shortSummary.trim(),
-        description: fullDescription.trim() || shortSummary.trim(),
-        subtitle: role.trim(),
-        category,
-        tags: techStacks,
-        demo_url: liveUrl.trim(),
-        github_url: repoUrl.trim(),
-        featured: isFeatured,
-        order_index: Number(displayOrder),
+        summary: formData.short_summary.trim(),
+        description: formData.full_description.trim() || formData.short_summary.trim(),
+        subtitle: formData.role.trim(),
+        category: formData.category,
+        tags: formData.tech_stacks,
+        demo_url: formData.live_url.trim(),
+        github_url: formData.repo_url.trim(),
+        featured: formData.is_featured,
+        order_index: Number(formData.display_order),
       };
 
       const fallbackPayload: ProjectFormPayload = {
-        title: title.trim(),
-        slug: slug.trim(),
-        role: role.trim(),
-        short_summary: shortSummary.trim(),
-        full_description: fullDescription.trim(),
-        thumbnail_url: thumbnailUrl.trim(),
-        gallery_urls: galleryUrls,
-        tech_stacks: techStacks,
-        live_url: liveUrl.trim(),
-        repo_url: repoUrl.trim(),
-        is_featured: isFeatured,
-        display_order: Number(displayOrder),
-        summary: shortSummary.trim(),
-        description: fullDescription.trim() || shortSummary.trim(),
-        subtitle: role.trim(),
-        category,
-        tags: techStacks,
-        demo_url: liveUrl.trim(),
-        github_url: repoUrl.trim(),
-        featured: isFeatured,
-        order_index: Number(displayOrder),
+        title: formData.title.trim(),
+        slug: formData.slug.trim(),
+        role: formData.role.trim(),
+        short_summary: formData.short_summary.trim(),
+        full_description: formData.full_description.trim(),
+        thumbnail_url: formData.thumbnail_url.trim(),
+        gallery_urls: formData.gallery_urls,
+        tech_stacks: formData.tech_stacks,
+        live_url: formData.live_url.trim(),
+        repo_url: formData.repo_url.trim(),
+        is_featured: formData.is_featured,
+        display_order: Number(formData.display_order),
+        summary: formData.short_summary.trim(),
+        description: formData.full_description.trim() || formData.short_summary.trim(),
+        subtitle: formData.role.trim(),
+        category: formData.category,
+        tags: formData.tech_stacks,
+        demo_url: formData.live_url.trim(),
+        github_url: formData.repo_url.trim(),
+        featured: formData.is_featured,
+        order_index: Number(formData.display_order),
       };
 
       const executeSave = async (payloadToUse: ProjectFormPayload) => {
@@ -339,9 +372,9 @@ export default function ProjectFormPage() {
           <span>Kembali ke Daftar Project</span>
         </Link>
         <div className="flex items-center gap-2">
-          {!isNew && slug && (
+          {!isNew && formData.slug && (
             <Link
-              href={`/projects/${slug}`}
+              href={`/projects/${formData.slug}`}
               target="_blank"
               className="inline-flex items-center gap-1 text-xs font-mono text-blue-400 hover:underline"
             >
@@ -350,7 +383,7 @@ export default function ProjectFormPage() {
             </Link>
           )}
           <span className="text-xs font-mono text-zinc-500">
-            {isNew ? "Mode: Tambah Project Baru" : `Editing: ${slug}`}
+            {isNew ? "Mode: Tambah Project Baru" : `Editing: ${formData.slug}`}
           </span>
         </div>
       </div>
@@ -374,7 +407,7 @@ export default function ProjectFormPage() {
               </label>
               <input
                 type="text"
-                value={title}
+                value={formData.title}
                 onChange={(e) => handleTitleChange(e.target.value)}
                 placeholder="Contoh: Smart Material Management System (SMMS)"
                 required
@@ -388,14 +421,14 @@ export default function ProjectFormPage() {
               </label>
               <input
                 type="text"
-                value={slug}
-                onChange={(e) => setSlug(generateSlug(e.target.value))}
+                value={formData.slug}
+                onChange={(e) => setFormField("slug", generateSlug(e.target.value))}
                 placeholder="smart-material-management-system"
                 required
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-zinc-300 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 font-mono"
               />
               <p className="text-[11px] text-zinc-500 font-mono">
-                Akan diakses melalui /projects/{slug || "slug-anda"}
+                Akan diakses melalui /projects/{formData.slug || "slug-anda"}
               </p>
             </div>
 
@@ -405,8 +438,8 @@ export default function ProjectFormPage() {
               </label>
               <input
                 type="text"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
+                value={formData.role}
+                onChange={(e) => setFormField("role", e.target.value)}
                 placeholder="Contoh: Lead Full-Stack Developer"
                 required
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500"
@@ -423,20 +456,20 @@ export default function ProjectFormPage() {
             </label>
             <span
               className={`text-xs font-mono ${
-                shortSummary.length > 200
+                formData.short_summary.length > 200
                   ? "text-red-400 font-bold"
-                  : shortSummary.length >= 150
+                  : formData.short_summary.length >= 150
                   ? "text-emerald-400 font-medium"
                   : "text-zinc-500"
               }`}
             >
-              {shortSummary.length} / 200 karakter (Rekomendasi: 150–200)
+              {formData.short_summary.length} / 200 karakter (Rekomendasi: 150–200)
             </span>
           </div>
           <textarea
             rows={3}
-            value={shortSummary}
-            onChange={(e) => setShortSummary(e.target.value)}
+            value={formData.short_summary}
+            onChange={(e) => setFormField("short_summary", e.target.value)}
             placeholder="Tulis ringkasan 1-2 kalimat padat yang menjelaskan nilai inti dan arsitektur proyek untuk kartu showcase..."
             required
             className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 leading-relaxed font-sans"
@@ -490,8 +523,8 @@ export default function ProjectFormPage() {
             <div className="space-y-2">
               <textarea
                 rows={12}
-                value={fullDescription}
-                onChange={(e) => setFullDescription(e.target.value)}
+                value={formData.full_description}
+                onChange={(e) => setFormField("full_description", e.target.value)}
                 placeholder="## Ringkasan Proyek&#10;Jelaskan gambaran umum proyek...&#10;&#10;## Masalah & Solusi&#10;- Permasalahan yang dihadapi...&#10;- Solusi rekayasa perangkat lunak...&#10;&#10;## Fitur Utama & Arsitektur&#10;Detail modul teknis..."
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-xs sm:text-sm font-mono text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 leading-relaxed"
               />
@@ -505,8 +538,8 @@ export default function ProjectFormPage() {
             </div>
           ) : (
             <div className="p-6 rounded-xl bg-zinc-950 border border-zinc-800 min-h-[250px]">
-              {fullDescription ? (
-                <MarkdownView content={fullDescription} />
+              {formData.full_description ? (
+                <MarkdownView content={formData.full_description} />
               ) : (
                 <p className="text-xs font-mono text-zinc-500 italic">
                   Belum ada konten deskripsi untuk dipratinjau.
@@ -534,8 +567,8 @@ export default function ProjectFormPage() {
               Gambar Thumbnail Utama <span className="text-red-400">*</span>
             </label>
             <ImageUploader
-              value={thumbnailUrl}
-              onChange={setThumbnailUrl}
+              value={formData.thumbnail_url}
+              onChange={(url) => setFormField("thumbnail_url", url)}
               folder="projects"
             />
           </div>
@@ -546,8 +579,8 @@ export default function ProjectFormPage() {
               Galeri Gambar Pendukung (Multiple Gallery Images)
             </label>
             <MultiImageUploader
-              values={galleryUrls}
-              onChange={setGalleryUrls}
+              values={formData.gallery_urls}
+              onChange={(urls) => setFormField("gallery_urls", urls)}
               bucket="portfolio-assets"
               folder="projects"
               maxFiles={12}
@@ -571,7 +604,7 @@ export default function ProjectFormPage() {
           {/* Quick-add Pills */}
           <div className="flex flex-wrap gap-1.5">
             {COMMON_TECH_STACKS.map((tech) => {
-              const selected = techStacks.includes(tech);
+              const selected = formData.tech_stacks.includes(tech);
               return (
                 <button
                   key={tech}
@@ -622,7 +655,7 @@ export default function ProjectFormPage() {
 
           {/* Selected Tags Display */}
           <div className="flex flex-wrap gap-2 pt-1">
-            {techStacks.map((t) => (
+            {formData.tech_stacks.map((t) => (
               <span
                 key={t}
                 className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-zinc-800 border border-zinc-700 text-xs font-mono text-zinc-200"
@@ -651,8 +684,8 @@ export default function ProjectFormPage() {
             </label>
             <input
               type="url"
-              value={liveUrl}
-              onChange={(e) => setLiveUrl(e.target.value)}
+              value={formData.live_url}
+              onChange={(e) => setFormField("live_url", e.target.value)}
               placeholder="https://myproject.com"
               className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 font-mono"
             />
@@ -664,8 +697,8 @@ export default function ProjectFormPage() {
             </label>
             <input
               type="url"
-              value={repoUrl}
-              onChange={(e) => setRepoUrl(e.target.value)}
+              value={formData.repo_url}
+              onChange={(e) => setFormField("repo_url", e.target.value)}
               placeholder="https://github.com/raakaprx/my-repo"
               className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 font-mono"
             />
@@ -678,8 +711,8 @@ export default function ProjectFormPage() {
             <input
               type="number"
               min={1}
-              value={displayOrder}
-              onChange={(e) => setDisplayOrder(Number(e.target.value))}
+              value={formData.display_order}
+              onChange={(e) => setFormField("display_order", Number(e.target.value))}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 font-mono"
             />
           </div>
@@ -689,8 +722,8 @@ export default function ProjectFormPage() {
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                checked={isFeatured}
-                onChange={(e) => setIsFeatured(e.target.checked)}
+                checked={formData.is_featured}
+                onChange={(e) => setFormField("is_featured", e.target.checked)}
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>

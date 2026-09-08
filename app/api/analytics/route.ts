@@ -72,6 +72,23 @@ function getClientIp(request: NextRequest): string {
   return ip;
 }
 
+function anonymizeIp(ip: string): string {
+  if (!ip || ip === "127.0.0.1 (Local)") return "127.0.0.1";
+  // Jika IPv4, kosongkan oktet terakhir (contoh: 192.168.1.123 -> 192.168.1.0)
+  if (ip.includes(".")) {
+    const parts = ip.split(".");
+    if (parts.length === 4) {
+      return `${parts[0]}.${parts[1]}.${parts[2]}.0`;
+    }
+  }
+  // Jika IPv6, ambil prefix saja
+  if (ip.includes(":")) {
+    const parts = ip.split(":");
+    return parts.slice(0, 3).join(":") + "::";
+  }
+  return "0.0.0.0";
+}
+
 export async function POST(request: NextRequest) {
   try {
     let body: { eventType?: unknown; pagePath?: unknown; targetName?: unknown };
@@ -98,6 +115,7 @@ export async function POST(request: NextRequest) {
     }
 
     const clientIp = getClientIp(request);
+    const anonymizedIp = anonymizeIp(clientIp);
     const userAgent = request.headers.get("user-agent") || "";
     const rawReferrer = request.headers.get("referer") || "";
     const deviceType = detectDevice(userAgent);
@@ -115,7 +133,7 @@ export async function POST(request: NextRequest) {
     }
 
     const formattedDevice = `${deviceType} • ${browser} on ${os}`;
-    const formattedUserAgent = `[IP: ${clientIp}] ${userAgent}`.slice(0, 500);
+    const formattedUserAgent = `[IP: ${anonymizedIp}] ${userAgent}`.slice(0, 500);
 
     const payload = {
       event_type: eventType,
@@ -124,7 +142,7 @@ export async function POST(request: NextRequest) {
       device_type: formattedDevice,
       referrer: cleanReferrer,
       user_agent: formattedUserAgent,
-      ip_address: clientIp,
+      ip_address: anonymizedIp,
     };
 
     const supabase = await createClient();

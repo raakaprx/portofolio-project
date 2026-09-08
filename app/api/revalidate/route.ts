@@ -8,7 +8,9 @@ export async function POST(request: NextRequest) {
     const tokenFromQuery = request.nextUrl.searchParams.get("secret");
     const providedToken = tokenFromHeader || tokenFromQuery;
 
-    const expectedSecret = process.env.REVALIDATION_SECRET;
+    const expectedSecret =
+      process.env.REVALIDATION_SECRET ||
+      process.env.NEXT_PUBLIC_REVALIDATION_SECRET;
 
     if (!expectedSecret || !providedToken || providedToken !== expectedSecret) {
       return NextResponse.json(
