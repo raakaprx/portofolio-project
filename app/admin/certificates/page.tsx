@@ -76,8 +76,8 @@ export default function AdminCertificatesPage() {
           }))
         );
       }
-    } catch {
-      toast.error("Gagal memuat sertifikat");
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, "Gagal memuat sertifikat"));
     } finally {
       setLoading(false);
     }
@@ -158,22 +158,42 @@ export default function AdminCertificatesPage() {
         skills_verified: skillsVerified,
       };
 
-      if (!editingId) {
-        const { error } = await supabase.from("certificates").insert(payload);
-        if (error) throw error;
-        toast.success("Sertifikat berhasil ditambahkan!");
-      } else {
-        const { data, error } = await supabase
-          .from("certificates")
-          .update(payload)
-          .eq("id", editingId)
-          .select();
-        if (error) throw error;
-        if (!data || data.length === 0) {
-          const { error: insertErr } = await supabase.from("certificates").insert(payload);
-          if (insertErr) throw insertErr;
+      const executeSave = async (payloadToUse: Record<string, unknown>) => {
+        if (!editingId) {
+          const { error } = await supabase.from("certificates").insert(payloadToUse);
+          if (error) throw error;
+          toast.success("Sertifikat berhasil ditambahkan!");
+        } else {
+          const { data, error } = await supabase
+            .from("certificates")
+            .update(payloadToUse)
+            .eq("id", editingId)
+            .select();
+          if (error) throw error;
+          if (!data || data.length === 0) {
+            const { error: insertErr } = await supabase.from("certificates").insert(payloadToUse);
+            if (insertErr) throw insertErr;
+          }
+          toast.success("Sertifikat berhasil diperbarui!");
         }
-        toast.success("Sertifikat berhasil diperbarui!");
+      };
+
+      try {
+        await executeSave(payload);
+      } catch (saveErr: unknown) {
+        const errorMsg = getErrorMessage(saveErr).toLowerCase();
+        if (errorMsg.includes("column") || errorMsg.includes("schema cache")) {
+          console.warn("[Certificates] Kolom tambahan belum ada di Supabase, menyimpan payload minimal...");
+          const fallbackPayload: Record<string, unknown> = {
+            title: title.trim(),
+            issuer: issuer.trim(),
+            date: finalDate,
+          };
+          await executeSave(fallbackPayload);
+          toast.warning("Tersimpan dengan penyesuaian kolom karena skema database belum sepenuhnya sinkron.");
+        } else {
+          throw saveErr;
+        }
       }
 
       await triggerRevalidation("/");
@@ -203,7 +223,7 @@ export default function AdminCertificatesPage() {
       await triggerRevalidation("/");
       fetchCertificates();
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : "Gagal menghapus");
+      toast.error(getErrorMessage(err, "Gagal menghapus sertifikat"));
     }
   };
 

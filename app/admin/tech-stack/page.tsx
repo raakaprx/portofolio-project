@@ -77,8 +77,8 @@ export default function AdminTechStackPage() {
           }))
         );
       }
-    } catch {
-      toast.error("Gagal memuat tech stack");
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, "Gagal memuat tech stack"));
     } finally {
       setLoading(false);
     }

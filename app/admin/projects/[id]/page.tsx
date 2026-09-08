@@ -206,8 +206,8 @@ export default function ProjectFormPage() {
             });
           }
         }
-      } catch {
-        toast.error("Gagal mengambil data project");
+      } catch (err: unknown) {
+        toast.error(getErrorMessage(err, "Gagal mengambil data project"));
       } finally {
         setLoading(false);
       }
@@ -281,29 +281,6 @@ export default function ProjectFormPage() {
         order_index: Number(formData.display_order),
       };
 
-      const fallbackPayload: ProjectFormPayload = {
-        title: formData.title.trim(),
-        slug: formData.slug.trim(),
-        role: formData.role.trim(),
-        short_summary: formData.short_summary.trim(),
-        full_description: formData.full_description.trim(),
-        thumbnail_url: formData.thumbnail_url.trim(),
-        gallery_urls: formData.gallery_urls,
-        tech_stacks: formData.tech_stacks,
-        live_url: formData.live_url.trim(),
-        repo_url: formData.repo_url.trim(),
-        is_featured: formData.is_featured,
-        display_order: Number(formData.display_order),
-        summary: formData.short_summary.trim(),
-        description: formData.full_description.trim() || formData.short_summary.trim(),
-        subtitle: formData.role.trim(),
-        category: formData.category,
-        tags: formData.tech_stacks,
-        demo_url: formData.live_url.trim(),
-        github_url: formData.repo_url.trim(),
-        featured: formData.is_featured,
-        order_index: Number(formData.display_order),
-      };
 
       const executeSave = async (payloadToUse: ProjectFormPayload) => {
         if (isNew) {
@@ -328,12 +305,37 @@ export default function ProjectFormPage() {
       try {
         await executeSave(fullPayload);
       } catch (saveErr: unknown) {
-        const errorMsg = saveErr instanceof Error ? saveErr.message : String(saveErr);
+        const errorMsg = getErrorMessage(saveErr).toLowerCase();
         if (
-          errorMsg.toLowerCase().includes("column") ||
-          errorMsg.toLowerCase().includes("schema cache")
+          errorMsg.includes("column") ||
+          errorMsg.includes("schema cache")
         ) {
-          await executeSave(fallbackPayload);
+          console.warn("[Projects] Kolom baru belum ada di Supabase, menyimpan dengan payload kompatibilitas...");
+          const legacyPayload: ProjectFormPayload = {
+            title: formData.title.trim(),
+            slug: formData.slug.trim(),
+            role: formData.role.trim(),
+            short_summary: formData.short_summary.trim(),
+            full_description: formData.full_description.trim(),
+            thumbnail_url: formData.thumbnail_url.trim(),
+            gallery_urls: [],
+            tech_stacks: formData.tech_stacks,
+            live_url: formData.live_url.trim(),
+            repo_url: formData.repo_url.trim(),
+            is_featured: formData.is_featured,
+            display_order: Number(formData.display_order),
+            summary: formData.short_summary.trim(),
+            description: formData.full_description.trim() || formData.short_summary.trim(),
+            subtitle: formData.role.trim(),
+            category: formData.category,
+            tags: formData.tech_stacks,
+            demo_url: formData.live_url.trim(),
+            github_url: formData.repo_url.trim(),
+            featured: formData.is_featured,
+            order_index: Number(formData.display_order),
+          };
+          await executeSave(legacyPayload);
+          toast.warning("Tersimpan dengan mode kompatibilitas skema database.");
         } else {
           throw saveErr;
         }

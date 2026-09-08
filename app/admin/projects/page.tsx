@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_PROJECTS } from "@/lib/portfolio-defaults";
 import { triggerRevalidation } from "@/lib/revalidate";
+import { getErrorMessage } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface ProjectRecord {
@@ -103,8 +104,8 @@ export default function AdminProjectsPage() {
         }));
         setProjects(normalizedList);
       }
-    } catch {
-      toast.error("Gagal memuat daftar project");
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, "Gagal memuat daftar project"));
     } finally {
       setLoading(false);
     }
@@ -137,8 +138,8 @@ export default function AdminProjectsPage() {
         updatedStatus ? "Project ditandai Featured" : "Status Featured dicabut"
       );
       await triggerRevalidation("/");
-    } catch {
-      toast.error("Gagal mengubah status featured");
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, "Gagal mengubah status featured"));
     }
   };
 
@@ -154,7 +155,7 @@ export default function AdminProjectsPage() {
       toast.success(`Project "${title}" berhasil dihapus`);
       await triggerRevalidation("/");
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : "Gagal menghapus project");
+      toast.error(getErrorMessage(err, "Gagal menghapus project"));
     } finally {
       setDeletingId(null);
     }

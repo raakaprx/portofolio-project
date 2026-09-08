@@ -28,6 +28,7 @@ import {
   type ProfileHighlightCard,
 } from "@/lib/portfolio-defaults";
 import { triggerRevalidation } from "@/lib/revalidate";
+import { getErrorMessage } from "@/lib/utils";
 import { toast } from "sonner";
 
 export default function AdminProfilePage() {
@@ -188,8 +189,7 @@ export default function AdminProfilePage() {
       toast.success("Profil berhasil disimpan!");
       setTableMissing(false);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menyimpan profil";
-      toast.error("Gagal simpan: " + msg);
+      toast.error(getErrorMessage(err, "Gagal menyimpan profil"));
     } finally {
       setSaving(false);
     }

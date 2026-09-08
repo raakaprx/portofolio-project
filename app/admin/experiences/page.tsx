@@ -92,8 +92,8 @@ export default function AdminExperiencesPage() {
           }))
         );
       }
-    } catch {
-      toast.error("Gagal memuat riwayat pengalaman");
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, "Gagal memuat riwayat pengalaman"));
     } finally {
       setLoading(false);
     }
@@ -229,11 +229,17 @@ export default function AdminExperiencesPage() {
       try {
         await executeSave(payload);
       } catch (saveErr: unknown) {
-        const errorMsg = saveErr instanceof Error ? saveErr.message : String(saveErr);
-        if (errorMsg.toLowerCase().includes("column") || errorMsg.toLowerCase().includes("photos")) {
+        const errorMsg = getErrorMessage(saveErr).toLowerCase();
+        if (
+          errorMsg.includes("photos") ||
+          errorMsg.includes("column") ||
+          errorMsg.includes("schema cache")
+        ) {
+          console.warn("[Experiences] Kolom 'photos' belum ada di database Supabase, menyimpan tanpa photos...");
           const fallbackPayload = { ...payload };
           delete fallbackPayload.photos;
           await executeSave(fallbackPayload);
+          toast.warning("Tersimpan tanpa foto dokumentasi karena kolom 'photos' belum dimigrasi di Supabase.");
         } else {
           throw saveErr;
         }
@@ -263,7 +269,7 @@ export default function AdminExperiencesPage() {
       await triggerRevalidation("/");
       fetchExperiences();
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : "Gagal menghapus");
+      toast.error(getErrorMessage(err, "Gagal menghapus pengalaman"));
     }
   };
 

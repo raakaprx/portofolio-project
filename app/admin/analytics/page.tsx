@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { StatsCard } from "@/components/admin/StatsCard";
 import { createClient } from "@/lib/supabase/client";
+import { getErrorMessage } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface AnalyticsEventRecord {
@@ -56,13 +57,13 @@ export default function AdminAnalyticsPage() {
         .limit(300);
 
       if (error) {
-        toast.error("Gagal memuat analitik: " + error.message);
+        toast.error(getErrorMessage(error, "Gagal memuat analitik"));
         setEvents([]);
       } else {
         setEvents(data || []);
       }
-    } catch {
-      toast.error("Terjadi kesalahan koneksi saat memuat analitik");
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, "Terjadi kesalahan koneksi saat memuat analitik"));
       setEvents([]);
     } finally {
       if (!silent) setLoading(false);
@@ -144,8 +145,8 @@ export default function AdminAnalyticsPage() {
       if (error) throw error;
       toast.success("Seluruh log analitik berhasil dikosongkan");
       setEvents([]);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Gagal membersihkan log");
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, "Gagal membersihkan log"));
     }
   };
 
