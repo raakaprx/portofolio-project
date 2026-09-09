@@ -12,8 +12,8 @@ export default function Footer() {
   };
 
   return (
-    <footer className="py-12 bg-background border-t border-zinc-300 dark:border-zinc-850 relative z-10 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-xs font-mono text-zinc-600 dark:text-zinc-400">
+    <footer className="py-12 bg-background border-t border-zinc-200 dark:border-zinc-800 relative z-10 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6 text-xs font-sans text-zinc-600 dark:text-zinc-400">
         {/* Left: Branding & Status */}
         <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
           <div className="flex items-center gap-2">

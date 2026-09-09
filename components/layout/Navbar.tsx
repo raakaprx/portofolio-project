@@ -74,9 +74,9 @@ export default function Navbar() {
               <a
                 key={item.href}
                 href={item.href}
-                className={`relative px-3.5 py-1.5 text-xs font-mono font-semibold rounded-full transition-colors duration-200 ${
+                className={`relative px-3.5 py-1.5 text-xs font-sans font-medium tracking-tight rounded-full transition-colors duration-200 ${
                   isActive
-                    ? "text-zinc-950 dark:text-white"
+                    ? "text-zinc-950 dark:text-white font-semibold"
                     : "text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white"
                 }`}
               >
@@ -137,7 +137,7 @@ export default function Navbar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-sm font-mono font-medium text-zinc-800 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white py-2 border-b border-zinc-200 dark:border-zinc-900 transition-colors"
+                className="text-sm font-sans font-medium text-zinc-800 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white py-2 border-b border-zinc-200 dark:border-zinc-900 transition-colors"
               >
                 {item.label}
               </a>

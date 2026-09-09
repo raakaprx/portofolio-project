@@ -84,7 +84,7 @@ export default function ProjectJourney() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4 }}
-                  className="w-full glass-card rounded-2xl p-6 md:p-8 border border-zinc-800/80 hover:border-zinc-700/80 transition-all duration-300 relative"
+                  className="w-full bg-white/90 dark:bg-zinc-950/80 rounded-2xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800/80 hover:border-zinc-300 dark:hover:border-zinc-700/80 transition-all duration-300 relative shadow-xs"
                 >
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-zinc-900 pb-4">
                     <div>

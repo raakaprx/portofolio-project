@@ -106,7 +106,7 @@ export default function Skills() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: groupIdx * 0.05 }}
-                className="glass-card rounded-2xl p-6 flex flex-col"
+                className="rounded-2xl p-6 flex flex-col border border-zinc-200 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-950/80 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700/80 transition-colors"
               >
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-2 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-400">

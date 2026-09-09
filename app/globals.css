@@ -3,11 +3,11 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f8fafc;
+  --background: #fafafa;
   --foreground: #09090b;
   
-  --muted: #f1f5f9;
-  --muted-foreground: #475569;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
   
   --popover: #ffffff;
   --popover-foreground: #09090b;
@@ -15,52 +15,52 @@
   --card: #ffffff;
   --card-foreground: #09090b;
   
-  --border: #cbd5e1;
-  --input: #cbd5e1;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
   
   --primary: #09090b;
-  --primary-foreground: #ffffff;
+  --primary-foreground: #fafafa;
   
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
   
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
   
   --destructive: #dc2626;
-  --destructive-foreground: #ffffff;
+  --destructive-foreground: #fafafa;
   
-  --ring: #0f172a;
+  --ring: #18181b;
   --radius: 0.75rem;
 }
 
 .dark {
   --background: #09090b;
-  --foreground: #f8fafc;
+  --foreground: #fafafa;
   
   --muted: #18181b;
-  --muted-foreground: #94a3b8;
+  --muted-foreground: #a1a1aa;
   
-  --popover: #111114;
-  --popover-foreground: #f8fafc;
+  --popover: #09090b;
+  --popover-foreground: #fafafa;
   
   --card: #111114;
-  --card-foreground: #f8fafc;
+  --card-foreground: #fafafa;
   
   --border: #27272a;
   --input: #27272a;
   
-  --primary: #ffffff;
+  --primary: #fafafa;
   --primary-foreground: #09090b;
   
   --secondary: #18181b;
-  --secondary-foreground: #f8fafc;
+  --secondary-foreground: #fafafa;
   
   --accent: #18181b;
-  --accent-foreground: #f8fafc;
+  --accent-foreground: #fafafa;
   
   --destructive: #7f1d1d;
-  --destructive-foreground: #f8fafc;
+  --destructive-foreground: #fafafa;
   
   --ring: #d4d4d8;
 }
@@ -127,57 +127,58 @@ body {
   background: var(--muted-foreground);
 }
 
-/* Glassmorphism utility classes with high contrast borders */
+/* Refined surface utility classes adhering to standard Zinc tokens */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid #cbd5e1;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
 .dark .glass-panel {
   background: rgba(17, 17, 20, 0.85);
-  border: 1px solid #27272a;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
 }
 
 .glass-card {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.08);
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .glass-card:hover {
-  border-color: #94a3b8;
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12);
+  border-color: #a1a1aa;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
 }
 
 .dark .glass-card {
   background: rgba(17, 17, 20, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid #27272a;
-  box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
 .dark .glass-card:hover {
   background: rgba(24, 24, 28, 0.85);
   border-color: #3f3f46;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.4);
 }
 
-/* Background mesh grid */
+/* Background subtle mesh grid */
 .grid-mesh {
   background-image: 
-    linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
 }
 
 .dark .grid-mesh {
   background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 48px 48px;
 }

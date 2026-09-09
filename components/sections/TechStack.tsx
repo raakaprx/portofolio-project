@@ -287,7 +287,7 @@ export default function TechStack({
           <div className="flex flex-col items-center text-center mb-14">
             <Badge
               variant="outline"
-              className="mb-3 px-3.5 py-1 font-mono text-zinc-800 dark:text-zinc-300 border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xs"
+              className="mb-3 px-3.5 py-1 font-sans text-xs font-semibold text-zinc-800 dark:text-zinc-300 border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xs"
             >
               Technology Arsenal
             </Badge>
@@ -297,18 +297,6 @@ export default function TechStack({
             <p className="text-zinc-600 dark:text-zinc-400 text-sm max-w-md mt-3 font-normal">
               Standardized industry tooling utilized across production web platforms and data pipelines.
             </p>
-
-            {/* Subtle Proficiency Legend */}
-            <div className="flex items-center gap-4 mt-5 text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20" />
-                Advanced Proficiency
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-zinc-400 dark:bg-zinc-600" />
-                Proficient / Working Knowledge
-              </span>
-            </div>
           </div>
 
           {/* Categorized Data-Dense Interactive Chips Grid */}
@@ -327,45 +315,42 @@ export default function TechStack({
               >
                 {/* Category Header */}
                 <div className="flex items-center justify-between mb-5">
-                  <h3 className="text-xs font-mono font-bold text-zinc-900 dark:text-zinc-200 uppercase tracking-wider flex items-center gap-2">
+                  <h3 className="text-xs font-sans font-bold text-zinc-900 dark:text-zinc-200 uppercase tracking-wider flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     {group.category}
                   </h3>
-                  <span className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500">
+                  <span className="text-[11px] font-sans text-zinc-400 dark:text-zinc-500 font-medium">
                     {group.items.length} tools
                   </span>
                 </div>
 
-                {/* Sleek Logo Badges Grid (Logo-Only Without Text) */}
-                <div className="flex flex-wrap items-center gap-3">
+                {/* Data-Dense Labeled Pills / Chips Grid */}
+                <div className="flex flex-wrap items-center gap-2.5">
                   {group.items.map((item) => (
                     <Tooltip key={item.name}>
                       <TooltipTrigger asChild>
-                        <button
-                          type="button"
+                        <div
+                          tabIndex={0}
+                          role="button"
                           aria-label={`${item.name} (${item.proficiency})`}
-                          className="group relative p-3 sm:p-3.5 rounded-xl bg-zinc-100/90 dark:bg-zinc-900/80 border border-zinc-200/90 dark:border-zinc-800/80 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-200/60 dark:hover:bg-zinc-850/80 hover:-translate-y-0.5 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-2xs hover:shadow-xs flex items-center justify-center cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:focus:ring-zinc-600"
+                          className="group inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-50/90 dark:bg-zinc-900/70 border border-zinc-200/90 dark:border-zinc-800/80 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-100/90 dark:hover:bg-zinc-800/80 hover:-translate-y-0.5 transition-all duration-150 shadow-2xs cursor-default select-none focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:focus:ring-zinc-600"
                         >
-                          {/* Subtle proficiency dot indicator in corner */}
-                          <span
-                            className={cn(
-                              "absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full transition-opacity",
-                              item.proficiency === "Advanced"
-                                ? "bg-emerald-500 ring-1 ring-emerald-500/20"
-                                : "bg-zinc-400/60 dark:bg-zinc-600/60"
+                          {/* Brand / Tool Icon */}
+                          <div className="w-4 h-4 flex items-center justify-center shrink-0">
+                            {getTechLogo(item.name, "w-4 h-4 object-contain") || (
+                              <TechIcon name={item.name} iconClassName="w-4 h-4" />
                             )}
-                            aria-hidden="true"
-                          />
-
-                          {/* Centered Brand / Tool Logo */}
-                          <div className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center shrink-0">
-                            {getTechLogo(item.name, "w-full h-full object-contain")}
                           </div>
-                        </button>
+
+                          {/* Canonical Technology Name */}
+                          <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200 tracking-tight">
+                            {item.name}
+                          </span>
+                        </div>
                       </TooltipTrigger>
                       <TooltipContent
                         side="top"
-                        className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-2.5 py-1.5 shadow-lg font-mono text-xs text-zinc-900 dark:text-zinc-100"
+                        className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-2.5 py-1.5 shadow-lg text-xs font-sans text-zinc-900 dark:text-zinc-100"
                       >
                         <div className="flex items-center gap-2">
                           <span className="font-semibold">{item.name}</span>

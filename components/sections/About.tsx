@@ -14,7 +14,7 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={naturalTransition}
-            className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 font-mono text-xs font-semibold text-zinc-800 dark:text-zinc-300 uppercase tracking-widest mb-3 shadow-2xs"
+            className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 font-sans text-xs font-semibold text-zinc-800 dark:text-zinc-300 uppercase tracking-wider mb-3 shadow-2xs"
           >
             About Me
           </motion.div>
@@ -36,7 +36,7 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={naturalTransition}
-            className="lg:col-span-8 rounded-2xl p-8 flex flex-col justify-between border border-zinc-200 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-950/80 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700/80 transition-colors"
+            className="lg:col-span-8 rounded-2xl p-7 sm:p-8 flex flex-col justify-between border border-zinc-200 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-950/80 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700/80 transition-colors"
           >
             <div>
               <h3 className="text-xl font-bold text-zinc-950 dark:text-white mb-4 flex items-center gap-2.5">
@@ -44,50 +44,53 @@ export default function About() {
                 My Journey
               </h3>
               <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mb-6 font-normal">
-                I am a passionate Full-Stack Web Developer and an Informatics student at Telkom University. My journey in technology is driven by a deep curiosity for system design and a focus on developing scalable frontend and backend web applications. I enjoy building efficient systems, integrating AI solutions, and constantly adapting to cutting-edge technologies.
+                I am a passionate Full-Stack Web Developer and an Information Systems student (S1 Sistem Informasi) at Telkom University. My journey in technology is driven by a deep curiosity for system design and a focus on developing scalable frontend and backend web applications. I enjoy building efficient systems, integrating AI solutions, and constantly adapting to cutting-edge technologies.
               </p>
               <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
                 With academic training in Software Engineering, Database Systems, OOP, and System Analysis & Design, I prioritize structural reliability, clean code, and intuitive user experiences.
               </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 mt-8 pt-8 border-t border-zinc-200 dark:border-zinc-850">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800">
               <div>
                 <p className="text-3xl font-extrabold text-zinc-950 dark:text-white">3+</p>
-                <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase font-semibold mt-1">Years of Learning</p>
+                <p className="text-xs font-sans text-zinc-500 dark:text-zinc-400 uppercase font-semibold tracking-wider mt-1">Years Experience</p>
               </div>
               <div>
-                <p className="text-3xl font-extrabold text-zinc-950 dark:text-white">6+</p>
-                <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase font-semibold mt-1">Projects Built</p>
+                <p className="text-3xl font-extrabold text-zinc-950 dark:text-white">10+</p>
+                <p className="text-xs font-sans text-zinc-500 dark:text-zinc-400 uppercase font-semibold tracking-wider mt-1">Built Projects</p>
               </div>
               <div>
-                <p className="text-3xl font-extrabold text-zinc-950 dark:text-white">100%</p>
-                <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400 uppercase font-semibold mt-1">Commitment</p>
+                <p className="text-3xl font-extrabold text-zinc-950 dark:text-white">3.75</p>
+                <p className="text-xs font-sans text-zinc-500 dark:text-zinc-400 uppercase font-semibold tracking-wider mt-1">Academic GPA</p>
               </div>
             </div>
           </motion.div>
 
           {/* Side Info Cards */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
+          <div className="lg:col-span-4 flex flex-col gap-4">
             {/* Education Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ ...naturalTransition, delay: 0.1 }}
-              className="rounded-2xl p-6 flex-1 flex flex-col gap-4 border border-zinc-200 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-950/80 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700/80 transition-colors"
+              className="rounded-2xl p-5 flex-1 flex flex-col justify-center gap-2.5 border border-zinc-200 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-950/80 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700/80 transition-colors"
             >
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 shadow-2xs">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 shadow-2xs">
                   <BookOpen className="w-4 h-4" />
                 </div>
-                <h4 className="font-bold text-zinc-950 dark:text-white">Education</h4>
+                <h4 className="font-bold text-sm text-zinc-950 dark:text-white">Education</h4>
               </div>
               <div>
                 <p className="font-bold text-sm text-zinc-950 dark:text-zinc-200">S1 Sistem Informasi</p>
                 <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5 font-medium">Telkom University</p>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1 font-mono font-semibold">GPA: 3.75 / 4.00</p>
-                <p className="text-xs font-mono text-zinc-400 dark:text-zinc-500 mt-2">2022 – 2026</p>
+                <div className="flex items-center gap-3 mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                  <span className="font-semibold text-zinc-700 dark:text-zinc-300 font-mono">GPA: 3.75 / 4.00</span>
+                  <span>•</span>
+                  <span className="font-mono">2022 – 2026</span>
+                </div>
               </div>
             </motion.div>
 
@@ -97,16 +100,16 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ ...naturalTransition, delay: 0.18 }}
-              className="rounded-2xl p-6 flex-1 flex flex-col gap-4 border border-zinc-200 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-950/80 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700/80 transition-colors"
+              className="rounded-2xl p-5 flex-1 flex flex-col justify-center gap-2.5 border border-zinc-200 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-950/80 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700/80 transition-colors"
             >
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 shadow-2xs">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 shadow-2xs">
                   <Target className="w-4 h-4" />
                 </div>
-                <h4 className="font-bold text-zinc-950 dark:text-white">Career Objective</h4>
+                <h4 className="font-bold text-sm text-zinc-950 dark:text-white">Career Objective</h4>
               </div>
-              <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
-                To work as a Full Stack Web Developer, leveraging my experience in developing responsive web systems and robust RESTful backends to solve real-world industry challenges.
+              <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
+                To engineer scalable full-stack web architectures, optimizing data-intensive backends, and delivering frictionless user interfaces for real-world enterprise applications.
               </p>
             </motion.div>
 
@@ -116,15 +119,15 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ ...naturalTransition, delay: 0.24 }}
-              className="rounded-2xl p-6 flex-1 flex flex-col gap-4 border border-zinc-200 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-950/80 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700/80 transition-colors"
+              className="rounded-2xl p-5 flex-1 flex flex-col justify-center gap-2.5 border border-zinc-200 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-950/80 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700/80 transition-colors"
             >
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 shadow-2xs">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 shadow-2xs">
                   <Trophy className="w-4 h-4" />
                 </div>
-                <h4 className="font-bold text-zinc-950 dark:text-white">Current Focus</h4>
+                <h4 className="font-bold text-sm text-zinc-950 dark:text-white">Current Focus</h4>
               </div>
-              <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
+              <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
                 Focusing on full-stack web architectures, optimizing database performance, and integrating secure payment processing and AI technologies.
               </p>
             </motion.div>

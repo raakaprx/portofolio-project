@@ -202,7 +202,7 @@ export default function FeaturedProjects() {
               <div className={`lg:col-span-6 h-64 sm:h-80 ${
                 index % 2 === 1 ? "lg:order-1" : ""
               }`}>
-                <div className="w-full h-full glass-panel border border-zinc-800/80 rounded-2xl p-4 flex items-center justify-center relative overflow-hidden group">
+                <div className="w-full h-full bg-white/80 dark:bg-zinc-950/80 border border-zinc-200 dark:border-zinc-800/80 rounded-2xl p-4 flex items-center justify-center relative overflow-hidden group shadow-xs">
                   <div className="absolute inset-0 bg-gradient-to-tr from-zinc-950/20 via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
                   {/* Decorative mesh/radial glow on background */}
