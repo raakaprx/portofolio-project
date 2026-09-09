@@ -12,6 +12,8 @@ import {
   Building2,
   Calendar,
   Image as ImageIcon,
+  Database,
+  Copy,
 } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -84,11 +86,16 @@ export default function AdminExperiencesPage() {
             highlights: item.highlights || "",
             deliverables: item.deliverables || [],
             technologies: item.technologies || [],
-            photos: Array.isArray(item.photos)
-              ? item.photos
-              : Array.isArray(item.gallery_urls)
-              ? item.gallery_urls
-              : [],
+            photos:
+              Array.isArray(item.photos) && item.photos.length > 0
+                ? item.photos
+                : Array.isArray(item.gallery_urls) && item.gallery_urls.length > 0
+                ? item.gallery_urls
+                : Array.isArray(item.metrics)
+                ? ((item.metrics as Array<{ type?: string; photos?: string[] }>).find(
+                    (m) => m?.type === "photo_gallery"
+                  )?.photos || [])
+                : [],
           }))
         );
       }
@@ -235,11 +242,26 @@ export default function AdminExperiencesPage() {
           errorMsg.includes("column") ||
           errorMsg.includes("schema cache")
         ) {
-          console.warn("[Experiences] Kolom 'photos' belum ada di database Supabase, menyimpan tanpa photos...");
+          console.warn("[Experiences] Kolom 'photos' belum ada di database Supabase, mencoba menyimpan dengan fallback metadata...");
           const fallbackPayload = { ...payload };
           delete fallbackPayload.photos;
-          await executeSave(fallbackPayload);
-          toast.warning("Tersimpan tanpa foto dokumentasi karena kolom 'photos' belum dimigrasi di Supabase.");
+
+          // Cadangkan foto ke dalam field metrics jsonb jika user mengunggah foto
+          if (photos.length > 0) {
+            fallbackPayload.metrics = [{ type: "photo_gallery", photos }];
+          }
+
+          try {
+            await executeSave(fallbackPayload);
+            toast.warning(
+              "Foto tersimpan di cadangan sementara! Klik tombol 'Salin SQL Migrasi' di atas lalu jalankan di Supabase agar kolom 'photos' aktif permanen."
+            );
+          } catch {
+            // Jika metrics juga tidak ada, simpan tanpa photos sama sekali
+            delete fallbackPayload.metrics;
+            await executeSave(fallbackPayload);
+            toast.warning("Tersimpan tanpa foto karena kolom 'photos' belum dimigrasi di Supabase.");
+          }
         } else {
           throw saveErr;
         }
@@ -253,6 +275,22 @@ export default function AdminExperiencesPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const copySqlMigration = () => {
+    const sql = `-- ==============================================================================
+-- AKTIFKAN KOLOM PHOTOS & RELOAD SCHEMA CACHE POSTGREST
+-- Jalankan di SQL Editor Supabase:
+-- https://supabase.com/dashboard/project/nnmcwzillidcsnwuiodl/sql/new
+-- ==============================================================================
+
+ALTER TABLE public.experiences ADD COLUMN IF NOT EXISTS photos TEXT[] DEFAULT '{}';
+NOTIFY pgrst, 'reload schema';`;
+
+    navigator.clipboard.writeText(sql);
+    toast.success("Script SQL berhasil disalin ke clipboard!", {
+      description: "Buka SQL Editor di dashboard Supabase Anda, tempelkan (Ctrl+V), lalu klik RUN.",
+    });
   };
 
   const handleDelete = async (id?: string, compName?: string) => {
@@ -287,7 +325,18 @@ export default function AdminExperiencesPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            onClick={copySqlMigration}
+            variant="outline"
+            size="sm"
+            className="rounded-xl border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 text-xs font-mono h-9 gap-1.5"
+            title="Salin skrip SQL untuk menambahkan kolom photos ke database Supabase"
+          >
+            <Database className="w-3.5 h-3.5 text-amber-400" />
+            <span>Salin SQL Migrasi</span>
+          </Button>
+
           <Button
             onClick={() => fetchExperiences(true)}
             variant="outline"
@@ -692,9 +741,20 @@ export default function AdminExperiencesPage() {
 
             {/* Foto Dokumentasi Pengalaman Kerja */}
             <div className="space-y-1.5 pt-1">
-              <label className="text-xs font-mono font-medium text-zinc-300">
-                Foto Dokumentasi Kegiatan / Hasil Pekerjaan (Opsional)
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-mono font-medium text-zinc-300">
+                  Foto Dokumentasi Kegiatan / Hasil Pekerjaan (Opsional)
+                </label>
+                <button
+                  type="button"
+                  onClick={copySqlMigration}
+                  className="text-[10px] font-mono text-amber-400 hover:text-amber-300 flex items-center gap-1 transition-colors underline"
+                  title="Salin skrip SQL untuk mengaktifkan kolom photos di database Supabase"
+                >
+                  <Copy className="w-3 h-3" />
+                  <span>Salin SQL Supabase jika foto belum tersimpan</span>
+                </button>
+              </div>
               <MultiImageUploader
                 values={photos}
                 onChange={setPhotos}
