@@ -326,6 +326,7 @@ export const DEFAULT_TECH_GROUPS: TechGroup[] = [
       { name: "MySQL", proficiency: "Advanced" },
       { name: "Prisma ORM", proficiency: "Advanced" },
       { name: "Redis", proficiency: "Proficient" },
+      { name: "Neon DB", proficiency: "Proficient" },
     ],
   },
   {
@@ -337,6 +338,10 @@ export const DEFAULT_TECH_GROUPS: TechGroup[] = [
       { name: "Docker", proficiency: "Proficient" },
       { name: "Git", proficiency: "Advanced" },
       { name: "GitHub", proficiency: "Advanced" },
+      { name: "Midtrans Payment Gateway", proficiency: "Advanced" },
+      { name: "DOKU Payment", proficiency: "Proficient" },
+      { name: "Laragon", proficiency: "Advanced" },
+      { name: "Antigravity IDE", proficiency: "Advanced" },
     ],
   },
 ];

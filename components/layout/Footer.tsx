@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUp, ShieldCheck } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { Github, Linkedin, GmailLogo, WhatsappLogo, RakaLogo } from "@/components/icons";
 
 export default function Footer() {
@@ -18,9 +18,6 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
           <div className="flex items-center gap-2">
             <RakaLogo className="w-5 h-5" />
-            <span className="text-zinc-950 dark:text-zinc-200 font-bold tracking-wider">
-              MUHAMMAD RAKA PRADANA
-            </span>
           </div>
           <span className="hidden sm:inline text-zinc-400 dark:text-zinc-700">•</span>
           <span className="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-400 font-medium">
@@ -67,20 +64,19 @@ export default function Footer() {
           </a>
         </div>
 
-        {/* Right: Copyright & Admin Portal Link & Back to Top */}
+        {/* Right: Copyright & Discreet Admin Link & Back to Top */}
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <span className="text-zinc-600 dark:text-zinc-400">
-            &copy; {currentYear} • Built with Next.js & Tailwind
+            &copy; {currentYear}
           </span>
           <span className="text-zinc-300 dark:text-zinc-700 hidden sm:inline">•</span>
           <Link
             href="/admin"
-            className="flex items-center gap-1.5 text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-200 transition-colors font-mono text-xs"
-            title="Buka CMS Dashboard Admin"
+            className="text-zinc-400 hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400 text-[11px] font-mono transition-colors"
+            title="Masuk ke CMS Dashboard Admin"
             id="footer-admin-link"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-purple-500" />
-            <span>Admin CMS</span>
+            ꗞ
           </Link>
           <button
             onClick={scrollToTop}
@@ -93,5 +89,6 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+
   );
 }

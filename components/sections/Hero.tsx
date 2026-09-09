@@ -14,6 +14,7 @@ import { Github, Linkedin, GmailLogo, WhatsappLogo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { DEFAULT_PROFILE, type ProfileData } from "@/lib/portfolio-defaults";
+import { naturalTransition } from "@/lib/motion";
 
 export const CV_URL = "/cv.pdf";
 
@@ -77,16 +78,13 @@ export default function Hero({ initialProfile }: HeroProps) {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="inline-flex items-center self-center lg:self-start gap-2 px-3.5 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/80 shadow-xs mb-5"
+              transition={naturalTransition}
+              className="inline-flex items-center self-center lg:self-start gap-2.5 px-3.5 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/80 shadow-2xs mb-5"
             >
               {profile.is_available && (
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                </span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20 shrink-0" />
               )}
-              <span className="text-xs font-mono font-semibold text-zinc-900 dark:text-zinc-200">
+              <span className="text-xs font-sans font-medium text-zinc-800 dark:text-zinc-200">
                 {profile.status_badge}
               </span>
             </motion.div>
@@ -95,13 +93,13 @@ export default function Hero({ initialProfile }: HeroProps) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+              transition={{ ...naturalTransition, delay: 0.08 }}
             >
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-tight mb-3">
                 {profile.name}
               </h1>
               <div className="flex items-center justify-center lg:justify-start gap-2.5 text-zinc-800 dark:text-zinc-300 mb-5 font-semibold text-lg sm:text-xl">
-                <Code2 className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
+                <Code2 className="w-5 h-5 text-zinc-600 dark:text-zinc-400 shrink-0" />
                 <span>{profile.role}</span>
               </div>
             </motion.div>
@@ -110,7 +108,7 @@ export default function Hero({ initialProfile }: HeroProps) {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.15 }}
+              transition={{ ...naturalTransition, delay: 0.14 }}
               className="text-base sm:text-lg text-zinc-700 dark:text-zinc-300 max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed font-normal"
             >
               {profile.tagline}
@@ -120,7 +118,7 @@ export default function Hero({ initialProfile }: HeroProps) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              transition={{ ...naturalTransition, delay: 0.2 }}
               className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 w-full sm:w-auto mb-10"
             >
               <Button
@@ -218,18 +216,18 @@ export default function Hero({ initialProfile }: HeroProps) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25 }}
+              transition={{ ...naturalTransition, delay: 0.26 }}
               className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 max-w-xl mx-auto lg:mx-0 w-full text-left"
             >
               {highlights.map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800/90 bg-white dark:bg-zinc-900/60 shadow-xs"
+                  className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800/90 bg-white dark:bg-zinc-900/60 shadow-2xs"
                 >
                   <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 mb-1 font-mono text-[11px] font-semibold uppercase">
-                    {idx === 0 && <Briefcase className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />}
-                    {idx === 1 && <Layers className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />}
-                    {idx === 2 && <Database className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />}
+                    {idx === 0 && <Briefcase className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />}
+                    {idx === 1 && <Layers className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />}
+                    {idx === 2 && <Database className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />}
                     <span>{item.label}</span>
                   </div>
                   <p className="text-xs sm:text-sm font-bold text-zinc-950 dark:text-white leading-snug">

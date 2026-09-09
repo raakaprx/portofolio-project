@@ -40,6 +40,11 @@ import {
   SiShadcnui,
   SiXampp,
   SiStreamlit,
+  SiVuedotjs,
+  SiSvelte,
+  SiAngular,
+  SiGo,
+  SiGitlab,
 } from "react-icons/si";
 import { FaLinkedin } from "react-icons/fa6";
 import { TbApi } from "react-icons/tb";
@@ -59,6 +64,8 @@ import {
   Binary,
   Cpu,
 } from "lucide-react";
+import { TechIcon } from "@/components/ui/tech-icon";
+export { TechIcon };
 
 // Social Icons
 export function Github({ className = "w-5 h-5", ...props }: React.ComponentProps<typeof SiGithub>) {
@@ -110,6 +117,18 @@ export function CssLogo({ className = "w-7 h-7", ...props }: React.ComponentProp
   return <SiCss className={`${className} text-[#1572B6]`} {...props} />;
 }
 
+export function VueLogo({ className = "w-7 h-7", ...props }: React.ComponentProps<typeof SiVuedotjs>) {
+  return <SiVuedotjs className={`${className} text-[#4FC08D]`} {...props} />;
+}
+
+export function SvelteLogo({ className = "w-7 h-7", ...props }: React.ComponentProps<typeof SiSvelte>) {
+  return <SiSvelte className={`${className} text-[#FF3E00]`} {...props} />;
+}
+
+export function AngularLogo({ className = "w-7 h-7", ...props }: React.ComponentProps<typeof SiAngular>) {
+  return <SiAngular className={`${className} text-[#DD0031]`} {...props} />;
+}
+
 // Backend & Fullstack
 export function LaravelLogo({ className = "w-7 h-7", ...props }: React.ComponentProps<typeof SiLaravel>) {
   return <SiLaravel className={`${className} text-[#FF2D20]`} {...props} />;
@@ -129,6 +148,14 @@ export function ExpressLogo({ className = "w-7 h-7", ...props }: React.Component
 
 export function PythonLogo({ className = "w-7 h-7", ...props }: React.ComponentProps<typeof SiPython>) {
   return <SiPython className={`${className} text-[#3776AB]`} {...props} />;
+}
+
+export function GoLogo({ className = "w-7 h-7", ...props }: React.ComponentProps<typeof SiGo>) {
+  return <SiGo className={`${className} text-[#00ADD8]`} {...props} />;
+}
+
+export function GitlabLogo({ className = "w-7 h-7", ...props }: React.ComponentProps<typeof SiGitlab>) {
+  return <SiGitlab className={`${className} text-[#FC6D26]`} {...props} />;
 }
 
 // AI, ML & Data Science
@@ -219,8 +246,28 @@ export function VscodeLogo({ className = "w-7 h-7", ...props }: React.ComponentP
   return <VscVscode className={`${className} text-[#007ACC]`} {...props} />;
 }
 
-export function GoogleColabLogo({ className = "w-7 h-7", ...props }: React.ComponentProps<typeof SiGooglecolab>) {
-  return <SiGooglecolab className={`${className} text-[#F9AB00]`} {...props} />;
+export function GoogleColabLogo({ className = "w-7 h-7", ...props }: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      {...props}
+    >
+      <title>Google Colaboratory</title>
+      {/* Left Golden Yellow Loop */}
+      <path
+        d="M7.07 4.9855a7.033 7.033 0 0 0-4.8878 1.9316l2.3911 2.3911a3.6434 3.6434 0 0 1 5.0227.1271l1.7341-2.9737-.0997-.0802A7.033 7.033 0 0 0 7.07 4.9855zM1.932 7.1674a7.033 7.033 0 0 0-.002 9.6816l2.397-2.397a3.6434 3.6434 0 0 1-.004-4.8916zM9.596 14.5909c-1.38 1.3816-3.5863 1.411-5.0168.1134l-2.397 2.395c2.4693 2.3328 6.263 2.5753 9.0072.5455l.1368-.1115z"
+        fill="#F9AB00"
+      />
+      {/* Right Deep Orange Loop */}
+      <path
+        d="M16.9414 4.9757a7.033 7.033 0 0 0-4.9308 2.0646 7.033 7.033 0 0 0-.1232 9.8068l2.395-2.395a3.6455 3.6455 0 0 1 5.1497-5.1478l2.397-2.3989a7.033 7.033 0 0 0-4.8877-1.9297zM22.0793 7.1576l-2.3892 2.3911a3.6455 3.6455 0 0 1-5.1497 5.1497l-2.4067 2.4068a7.0362 7.0362 0 0 0 9.9456-9.9476z"
+        fill="#E8710A"
+      />
+    </svg>
+  );
 }
 
 export function LinuxLogo({ className = "w-7 h-7", ...props }: React.ComponentProps<typeof SiLinux>) {
@@ -256,28 +303,28 @@ export function StreamlitLogo({ className = "w-7 h-7", ...props }: React.Compone
 }
 
 // Payment Gateway: Midtrans
-export function MidtransLogo({ className = "w-7 h-7", ...props }: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      viewBox="0 0 100 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      {...props}
-    >
-      <title>Midtrans Payment Gateway</title>
-      <rect x="16" y="24" width="14" height="52" rx="7" fill="#002B49" className="fill-[#002B49] dark:fill-[#00AEFF]" />
-      <path
-        d="M23 31L53 71C54.8 73.4 58.5 73.4 60.3 71L90 31"
-        stroke="#0084C7"
-        strokeWidth="14"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="stroke-[#0084C7] dark:stroke-[#38BDF8]"
-      />
-      <rect x="70" y="24" width="14" height="52" rx="7" fill="#00AEFF" className="fill-[#0070BA] dark:fill-[#00C2FF]" />
-    </svg>
-  );
+export function MidtransLogo({ className = "w-7 h-7" }: { className?: string }) {
+  return <img src="/icons/midtrans.png" alt="Midtrans" className={`${className} object-contain`} />;
+}
+
+// Payment Gateway: DOKU
+export function DokuLogo({ className = "w-7 h-7" }: { className?: string }) {
+  return <img src="/icons/doku.png" alt="DOKU" className={`${className} object-contain`} />;
+}
+
+// Neon Database
+export function NeonLogo({ className = "w-7 h-7" }: { className?: string }) {
+  return <img src="/icons/neon.png" alt="Neon DB" className={`${className} object-contain`} />;
+}
+
+// Laragon
+export function LaragonLogo({ className = "w-7 h-7" }: { className?: string }) {
+  return <img src="/icons/laragon.png" alt="Laragon" className={`${className} object-contain`} />;
+}
+
+// Antigravity IDE
+export function AntigravityLogo({ className = "w-7 h-7" }: { className?: string }) {
+  return <img src="/icons/antigravity.png" alt="Antigravity IDE" className={`${className} object-contain`} />;
 }
 
 // Site Logo
@@ -299,11 +346,20 @@ export function RakaLogo({ className = "w-8 h-8" }: { className?: string }) {
 export function getTechLogo(name: string, className = "w-5 h-5"): React.ReactNode {
   const normalized = name.toLowerCase().trim();
 
-  // Payment & APIs
+  // 1. Specific Framework & Tool Logos with Priority
+  if (normalized.includes("laragon")) return <LaragonLogo className={className} />;
+  if (normalized.includes("colab")) return <GoogleColabLogo className={className} />;
+  if (normalized.includes("antigravity")) return <AntigravityLogo className={className} />;
   if (normalized.includes("midtrans")) return <MidtransLogo className={className} />;
-  if (normalized.includes("doku") || normalized.includes("payment")) return <MidtransLogo className={className} />;
+  if (normalized.includes("doku")) return <DokuLogo className={className} />;
+  if (normalized.includes("neon")) return <NeonLogo className={className} />;
 
-  // Frameworks & Web
+  // 2. Git & Version Control (GitLab & GitHub before Git)
+  if (normalized.includes("gitlab")) return <GitlabLogo className={className} />;
+  if (normalized.includes("github")) return <Github className={className} />;
+  if (normalized.includes("git")) return <GitLogo className={className} />;
+
+  // 3. Frameworks & Web
   if (normalized.includes("react")) return <ReactLogo className={className} />;
   if (normalized.includes("next")) return <NextjsLogo className={className} />;
   if (normalized.includes("typescript") || normalized === "ts") return <TypescriptLogo className={className} />;
@@ -313,6 +369,9 @@ export function getTechLogo(name: string, className = "w-5 h-5"): React.ReactNod
   if (normalized.includes("bootstrap")) return <BootstrapLogo className={className} />;
   if (normalized.includes("flutter")) return <FlutterLogo className={className} />;
   if (normalized.includes("shadcn")) return <ShadcnLogo className={className} />;
+  if (normalized.includes("vue")) return <VueLogo className={className} />;
+  if (normalized.includes("svelte")) return <SvelteLogo className={className} />;
+  if (normalized.includes("angular")) return <AngularLogo className={className} />;
   if (normalized.includes("blade") || normalized.includes("eloquent") || normalized.includes("laravel"))
     return <LaravelLogo className={className} />;
   if (normalized.includes("php")) return <PhpLogo className={className} />;
@@ -321,7 +380,17 @@ export function getTechLogo(name: string, className = "w-5 h-5"): React.ReactNod
   if (normalized.includes("html")) return <HtmlLogo className={className} />;
   if (normalized.includes("css")) return <CssLogo className={className} />;
 
-  // Python, ML & Data Science
+  // 4. Go / Golang (Exact word match only, do not match 'laragon' or 'google')
+  const isGo =
+    normalized === "go" ||
+    normalized === "golang" ||
+    normalized.startsWith("go ") ||
+    normalized.endsWith(" go") ||
+    normalized.includes("golang") ||
+    normalized.includes("(golang)");
+  if (isGo) return <GoLogo className={className} />;
+
+  // 5. Python, ML & Data Science
   if (normalized.includes("python")) return <PythonLogo className={className} />;
   if (normalized.includes("scikit")) return <ScikitlearnLogo className={className} />;
   if (normalized.includes("pandas")) return <PandasLogo className={className} />;
@@ -340,15 +409,15 @@ export function getTechLogo(name: string, className = "w-5 h-5"): React.ReactNod
     return <CrossValLogo className={className} />;
   if (normalized.includes("streamlit")) return <StreamlitLogo className={className} />;
 
-  // Databases & Backend Services
-  if (normalized.includes("postgres") || normalized.includes("neon")) return <PostgresqlLogo className={className} />;
+  // 6. Databases & Backend Services
+  if (normalized.includes("postgres")) return <PostgresqlLogo className={className} />;
   if (normalized.includes("mysql")) return <MysqlLogo className={className} />;
   if (normalized.includes("supabase")) return <SupabaseLogo className={className} />;
   if (normalized.includes("redis")) return <RedisLogo className={className} />;
   if (normalized.includes("prisma")) return <PrismaLogo className={className} />;
   if (normalized.includes("socket")) return <SocketdotioLogo className={className} />;
 
-  // Auth, Security & Architecture
+  // 7. Auth, Security & Architecture
   if (
     normalized.includes("jwt") ||
     normalized.includes("token") ||
@@ -372,27 +441,24 @@ export function getTechLogo(name: string, className = "w-5 h-5"): React.ReactNod
   )
     return <UmlLogo className={className} />;
 
-  // DevOps & Tools
+  // 8. DevOps & Tools
   if (normalized.includes("docker") || normalized.includes("container")) return <DockerLogo className={className} />;
-  if (normalized.includes("git") && !normalized.includes("hub")) return <GitLogo className={className} />;
-  if (normalized.includes("github")) return <Github className={className} />;
   if (normalized.includes("whatsapp")) return <WhatsappLogo className={className} />;
   if (normalized.includes("postman")) return <PostmanLogo className={className} />;
   if (normalized.includes("figma")) return <FigmaLogo className={className} />;
   if (normalized.includes("vscode") || normalized.includes("vs code") || normalized.includes("visual studio"))
     return <VscodeLogo className={className} />;
-  if (normalized.includes("colab")) return <GoogleColabLogo className={className} />;
   if (normalized.includes("linux")) return <LinuxLogo className={className} />;
   if (normalized.includes("apache")) return <ApacheLogo className={className} />;
   if (normalized.includes("nginx")) return <NginxLogo className={className} />;
   if (normalized.includes("vercel")) return <VercelLogo className={className} />;
-  if (normalized.includes("xampp") || normalized.includes("laragon")) return <XamppLogo className={className} />;
+  if (normalized.includes("xampp")) return <XamppLogo className={className} />;
 
-  // APIs & Fallback
+  // 9. APIs & Fallback
   if (normalized.includes("rest") || normalized.includes("api")) return <RestApiLogo className={className} />;
 
-  // Fallback icon for any custom tag
-  return <Code2 className={`${className} text-blue-500`} />;
+  // Fallback icon for any custom tag: clean monogram badge (no ugly </> Code2)
+  return <TechIcon name={name} iconClassName={className} />;
 }
 
 // Reusable Tech Badge with Logo

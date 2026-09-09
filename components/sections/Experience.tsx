@@ -199,7 +199,7 @@ export default function Experience({
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1], delay: index * 0.08 }}
                 >
                   <Card
                     className={`overflow-hidden transition-all duration-300 bg-white dark:bg-zinc-950/80 ${
@@ -214,10 +214,7 @@ export default function Experience({
                         <div className="flex items-center gap-2">
                           {isCurrent ? (
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-emerald-100 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-400 shadow-2xs">
-                              <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
-                              </span>
+                              <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20 shrink-0" />
                               Current Role ({exp.duration})
                             </span>
                           ) : (
@@ -319,7 +316,7 @@ export default function Experience({
                               <TooltipTrigger asChild>
                                 <div
                                   aria-label={tech}
-                                  className="p-2 sm:p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 hover:border-zinc-500 dark:hover:border-zinc-500 hover:scale-110 transition-all duration-200 cursor-pointer shadow-xs flex items-center justify-center"
+                                  className="p-2 sm:p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 hover:-translate-y-0.5 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] cursor-pointer shadow-xs flex items-center justify-center"
                                 >
                                   {logo}
                                 </div>
