@@ -15,8 +15,9 @@ import {
   getProfile,
 } from "@/lib/portfolio-data";
 
-// Cache di Edge CDN selama 1 jam, di-revalidasi secara on-demand saat CMS update
-export const revalidate = 3600;
+// Selalu render data dinamis terbaru secara real-time dari database CMS
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function Home() {
   const [profile, projects, experiences, certificates, techGroups] = await Promise.all([

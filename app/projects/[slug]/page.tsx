@@ -15,13 +15,14 @@ import {
 import { Github, getTechLogo } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import Navbar from "@/components/layout/Navbar";
+import { ThemeToggle } from "@/components/theme-toggle";
 import Footer from "@/components/layout/Footer";
 import { MarkdownView } from "@/components/ui/markdown-view";
 import { getProjectBySlug, getProjects } from "@/lib/portfolio-data";
 import { ProjectGallery } from "./ProjectGallery";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
@@ -89,23 +90,27 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
   return (
     <main className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <Navbar />
-
-      <article className="pt-28 pb-24 max-w-5xl mx-auto px-6">
-        {/* Top Navigation / Breadcrumb */}
-        <div className="mb-8 flex items-center justify-between">
+      {/* Top Header: Clean bar with only Back button and ThemeToggle (No standard landing navbar) */}
+      <header className="sticky top-0 left-0 right-0 z-50 py-3.5 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-200/80 dark:border-zinc-800/80 transition-colors duration-300 shadow-2xs">
+        <div className="max-w-5xl mx-auto px-6 flex items-center justify-between">
           <Link
             href="/#projects"
-            className="inline-flex items-center gap-2 text-xs font-mono font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-colors group"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-300 dark:border-zinc-700 bg-zinc-100/80 dark:bg-zinc-900/80 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-xs font-mono font-semibold text-zinc-900 dark:text-zinc-100 transition-all group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span>Kembali ke Portfolio</span>
           </Link>
 
-          <span className="text-xs font-mono text-zinc-500">
-            Project Showcase
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="hidden sm:inline-block text-xs font-mono text-zinc-500">
+              Project Showcase
+            </span>
+            <ThemeToggle />
+          </div>
         </div>
+      </header>
+
+      <article className="pt-8 pb-24 max-w-5xl mx-auto px-6">
 
         {/* Header Title Section */}
         <header className="space-y-4 mb-10">

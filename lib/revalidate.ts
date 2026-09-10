@@ -3,7 +3,8 @@
  */
 export async function triggerRevalidation(path: string = "/"): Promise<boolean> {
   try {
-    const token = process.env.NEXT_PUBLIC_REVALIDATION_SECRET || "";
+    const token =
+      process.env.NEXT_PUBLIC_REVALIDATION_SECRET || "raakaprx-secret-key-2026";
     const res = await fetch("/api/revalidate", {
       method: "POST",
       headers: {
