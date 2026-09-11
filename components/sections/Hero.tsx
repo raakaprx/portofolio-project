@@ -77,7 +77,7 @@ export default function Hero({ initialProfile }: HeroProps) {
         </div>
         {/* Soft Vignette Gradients agar foto tampak berwibawa tanpa tenggelam */}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background/50" />
+        <div className="hidden sm:block absolute inset-0 bg-gradient-to-r from-background via-transparent to-background/50" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full relative z-10 flex-1 flex flex-col justify-between">
@@ -86,12 +86,12 @@ export default function Hero({ initialProfile }: HeroProps) {
         {/* EDITORIAL CONTENT STAGE: OVERVIEW (KIRI) & RAKA PRADANA / DISCIPLINES (KANAN) */}
         {/* ========================================================================= */}
         <div className="my-auto py-6 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
-          {/* Left Column: OVERVIEW & PHILOSOPHY */}
+          {/* Left Column: OVERVIEW & PHILOSOPHY (Desktop: Kiri / Mobile: Urutan Kedua) */}
           <motion.div
             initial={{ opacity: 0, x: -25 }}
             animate={{ opacity: 1, x: 0 }}
             transition={naturalTransition}
-            className="lg:col-span-6 space-y-5 text-left"
+            className="lg:col-span-6 space-y-4 sm:space-y-5 text-left order-2 lg:order-1"
           >
             {/* Editorial Clean Label */}
             <span className="font-mono text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest block">
@@ -117,12 +117,12 @@ export default function Hero({ initialProfile }: HeroProps) {
             </div>
           </motion.div>
 
-          {/* Right Column: Headline "RAKA PRADANA" & CORE DISCIPLINES & STACK */}
+          {/* Right Column: Headline "RAKA PRADANA" & CORE DISCIPLINES & STACK (Desktop: Kanan / Mobile: Tampil Pertama) */}
           <motion.div
             initial={{ opacity: 0, x: 25 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ ...naturalTransition, delay: 0.05 }}
-            className="lg:col-span-6 space-y-5 text-left lg:text-right"
+            className="lg:col-span-6 space-y-4 sm:space-y-5 text-left lg:text-right order-1 lg:order-2"
           >
             {/* Headline Name (Scale Down to Proportional & Elegant) */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black uppercase tracking-tight leading-[0.88] select-none">
@@ -176,12 +176,12 @@ export default function Hero({ initialProfile }: HeroProps) {
             className="flex flex-wrap items-center justify-between gap-4 w-full pb-3 border-b border-zinc-200/60 dark:border-zinc-800/50"
           >
             {/* CTA Buttons Dock */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
               {/* Primary CTA */}
               <Button
                 asChild
                 size="lg"
-                className="rounded-full bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 font-mono text-xs font-bold uppercase px-6 h-10 shadow-md transition-transform active:scale-95 cursor-pointer"
+                className="flex-1 sm:flex-initial rounded-full bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 font-mono text-xs font-bold uppercase px-6 h-10 shadow-md transition-transform active:scale-95 cursor-pointer justify-center"
               >
                 <a href={profile.cta_primary_url || "#projects"}>
                   <span>{profile.cta_primary_text || "Explore Projects"}</span>
@@ -194,7 +194,7 @@ export default function Hero({ initialProfile }: HeroProps) {
                 asChild
                 variant="outline"
                 size="lg"
-                className="rounded-full border border-zinc-300 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-mono text-xs font-semibold px-5 h-10 gap-2 shadow-2xs"
+                className="flex-1 sm:flex-initial rounded-full border border-zinc-300 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-mono text-xs font-semibold px-5 h-10 gap-2 shadow-2xs justify-center"
               >
                 <a
                   href={profile.cta_cv_url || CV_URL}
@@ -215,7 +215,7 @@ export default function Hero({ initialProfile }: HeroProps) {
                 asChild
                 variant="ghost"
                 size="lg"
-                className="rounded-full border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-950/50 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-mono text-xs font-medium px-4 h-10"
+                className="w-full sm:w-auto rounded-full border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-950/50 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-800 dark:text-zinc-200 font-mono text-xs font-medium px-4 h-10 justify-center"
               >
                 <a href={profile.cta_contact_url || "#contact"}>
                   {profile.cta_contact_text || "Contact Me"}

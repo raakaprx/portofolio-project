@@ -3,9 +3,20 @@
 import Link from "next/link";
 import { ArrowUp } from "lucide-react";
 import { Github, Linkedin, GmailLogo, WhatsappLogo, RakaLogo } from "@/components/icons";
+import { DEFAULT_PROFILE, type ProfileData } from "@/lib/portfolio-defaults";
 
-export default function Footer() {
+export default function Footer({
+  initialProfile,
+}: {
+  initialProfile?: ProfileData;
+}) {
   const currentYear = new Date().getFullYear();
+  const profile = initialProfile || DEFAULT_PROFILE;
+
+  const githubHref = profile.github_url || DEFAULT_PROFILE.github_url;
+  const linkedinHref = profile.linkedin_url || DEFAULT_PROFILE.linkedin_url;
+  const whatsappHref = profile.whatsapp_url || DEFAULT_PROFILE.whatsapp_url;
+  const emailAddress = profile.email || DEFAULT_PROFILE.email || "rakapradana.work@gmail.com";
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -29,7 +40,7 @@ export default function Footer() {
         {/* Middle: Socials with genuine brand logos */}
         <div className="flex items-center gap-3">
           <a
-            href="https://github.com/raakaprx"
+            href={githubHref}
             target="_blank"
             rel="noreferrer"
             className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors shadow-2xs"
@@ -38,7 +49,7 @@ export default function Footer() {
             <Github className="w-3.5 h-3.5" />
           </a>
           <a
-            href="https://linkedin.com/in/rakaprx"
+            href={linkedinHref}
             target="_blank"
             rel="noreferrer"
             className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors shadow-2xs"
@@ -47,7 +58,7 @@ export default function Footer() {
             <Linkedin className="w-3.5 h-3.5" />
           </a>
           <a
-            href="https://wa.me/6285156000636?text=Halo%20Raka%2C%20saya%20tertarik%20dengan%20portofolio%20anda"
+            href={whatsappHref}
             target="_blank"
             rel="noreferrer"
             className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors shadow-2xs"
@@ -56,7 +67,7 @@ export default function Footer() {
             <WhatsappLogo className="w-3.5 h-3.5" />
           </a>
           <a
-            href="mailto:rakapradana.work@gmail.com"
+            href={`mailto:${emailAddress}`}
             className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors shadow-2xs"
             aria-label="Gmail Dispatch"
           >

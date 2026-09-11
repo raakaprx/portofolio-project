@@ -12,10 +12,16 @@ import { Github, Linkedin, WhatsappLogo, GmailLogo } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { DEFAULT_PROFILE, type ProfileData } from "@/lib/portfolio-defaults";
 
-export default function Contact() {
+export default function Contact({
+  initialProfile,
+}: {
+  initialProfile?: ProfileData;
+}) {
   const [copied, setCopied] = useState(false);
-  const emailAddress = "rakapradana.work@gmail.com";
+  const profile = initialProfile || DEFAULT_PROFILE;
+  const emailAddress = profile.email || DEFAULT_PROFILE.email || "rakapradana.work@gmail.com";
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(emailAddress);
@@ -23,25 +29,29 @@ export default function Contact() {
     setTimeout(() => setCopied(false), 2500);
   };
 
+  const githubHref = profile.github_url || DEFAULT_PROFILE.github_url;
+  const linkedinHref = profile.linkedin_url || DEFAULT_PROFILE.linkedin_url;
+  const whatsappHref = profile.whatsapp_url || DEFAULT_PROFILE.whatsapp_url;
+
   const socialLinks = [
     {
       label: "GitHub",
-      handle: "github.com/raakaprx",
-      href: "https://github.com/raakaprx",
+      handle: githubHref.replace(/^https?:\/\//, ""),
+      href: githubHref,
       icon: Github,
       detail: "View open-source repositories & commits",
     },
     {
       label: "LinkedIn",
-      handle: "linkedin.com/in/rakaprx",
-      href: "https://linkedin.com/in/rakaprx",
+      handle: linkedinHref.replace(/^https?:\/\//, ""),
+      href: linkedinHref,
       icon: Linkedin,
       detail: "Professional career updates & endorsements",
     },
     {
       label: "WhatsApp",
-      handle: "+62 851-5600-0636",
-      href: "https://wa.me/6285156000636?text=Halo%20Raka%2C%20saya%20tertarik%20dengan%20portofolio%20anda",
+      handle: profile.phone || "+62 851-5600-0636",
+      href: whatsappHref,
       icon: WhatsappLogo,
       detail: "Instant messaging for project inquiries",
     },

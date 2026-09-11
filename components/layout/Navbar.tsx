@@ -93,8 +93,8 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Quick Actions & Theme Toggle */}
-        <div className="hidden md:flex items-center gap-3">
+        {/* Quick Actions & Theme Toggle (Desktop >= 1024px) */}
+        <div className="hidden lg:flex items-center gap-3">
           <ThemeToggle />
 
           <Button
@@ -109,8 +109,8 @@ export default function Navbar() {
           </Button>
         </div>
 
-        {/* Mobile Menu & Theme Controls */}
-        <div className="flex md:hidden items-center gap-2">
+        {/* Mobile & Tablet (< 1024px) Menu & Theme Controls */}
+        <div className="flex lg:hidden items-center gap-2">
           <ThemeToggle />
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

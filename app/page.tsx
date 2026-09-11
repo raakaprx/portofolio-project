@@ -37,8 +37,8 @@ export default async function Home() {
       <Projects initialProjects={projects} />
       <TechStack initialTechGroups={techGroups} />
       <Certificates initialCertificates={certificates} />
-      <Contact />
-      <Footer />
+      <Contact initialProfile={profile} />
+      <Footer initialProfile={profile} />
     </main>
   );
 }

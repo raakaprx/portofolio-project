@@ -461,13 +461,59 @@ export default function ProjectFormPage() {
 
             <div className="space-y-1.5 sm:col-span-2">
               <label className="text-xs font-mono font-medium text-zinc-300">
-                Tahun / Periode Pengerjaan (Opsional)
+                Kategori Proyek (Untuk Tab Filter Showcase) <span className="text-red-400">*</span>
               </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {[
+                  { value: "fullstack", label: "Full-Stack Web" },
+                  { value: "machine-learning", label: "Machine Learning / AI" },
+                  { value: "laravel", label: "Laravel Systems" },
+                  { value: "all", label: "General / Other" },
+                ].map((cat) => (
+                  <button
+                    key={cat.value}
+                    type="button"
+                    onClick={() => setFormField("category", cat.value)}
+                    className={`px-3 py-2 rounded-xl text-xs font-mono font-medium transition-all text-center border cursor-pointer ${
+                      formData.category === cat.value
+                        ? "bg-blue-600 text-white border-blue-500 shadow-xs font-semibold"
+                        : "bg-zinc-950 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-white"
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2 sm:col-span-2">
+              <div className="flex flex-wrap items-center justify-between gap-1.5">
+                <label className="text-xs font-mono font-medium text-zinc-300">
+                  Tahun / Periode Pengerjaan (Opsional)
+                </label>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] font-mono text-zinc-500">Preset:</span>
+                  {["2026", "2025", "2024", "2025 – 2026", "2026 – Present"].map((yPreset) => (
+                    <button
+                      key={yPreset}
+                      type="button"
+                      onClick={() => setFormField("year", yPreset)}
+                      className={`text-[10px] font-mono px-2 py-0.5 rounded-md border transition-colors cursor-pointer ${
+                        formData.year === yPreset
+                          ? "bg-zinc-700 text-white border-zinc-600 font-semibold"
+                          : "bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-white hover:border-zinc-700"
+                      }`}
+                    >
+                      {yPreset}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <input
                 type="text"
                 value={formData.year}
                 onChange={(e) => setFormField("year", e.target.value)}
-                placeholder="Contoh: 2026 atau Jan – Mar 2025"
+                placeholder="Pilih preset di atas atau ketik manual: 2026, Jan – Mar 2025"
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 font-mono"
               />
             </div>

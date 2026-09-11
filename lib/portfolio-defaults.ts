@@ -119,6 +119,7 @@ export interface ProfileData {
   github_url: string;
   linkedin_url: string;
   whatsapp_url: string;
+  phone?: string;
   email: string;
   highlights: ProfileHighlightCard[];
 }
