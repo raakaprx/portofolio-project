@@ -155,11 +155,12 @@ export default function ProjectFormPage() {
     const loadProject = async () => {
       setLoading(true);
       try {
-        const { data, error } = await supabase
-          .from("projects")
-          .select("*")
-          .or(`id.eq.${projectId},slug.eq.${projectId}`)
-          .single();
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(projectId);
+        const query = supabase.from("projects").select("*");
+        const { data, error } = await (isUuid
+          ? query.or(`id.eq.${projectId},slug.eq.${projectId}`).maybeSingle()
+          : query.eq("slug", projectId).maybeSingle()
+        );
 
         if (data && !error) {
           setFormData({
@@ -296,11 +297,13 @@ export default function ProjectFormPage() {
           if (error) throw error;
           toast.success("Project baru berhasil ditambahkan!");
         } else {
-          const { data, error } = await supabase
-            .from("projects")
-            .update(payloadToUse)
-            .or(`id.eq.${projectId},slug.eq.${projectId}`)
-            .select();
+          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(projectId);
+          const updateQuery = supabase.from("projects").update(payloadToUse);
+          const { data, error } = await (isUuid
+            ? updateQuery.or(`id.eq.${projectId},slug.eq.${projectId}`).select()
+            : updateQuery.eq("slug", projectId).select()
+          );
+
           if (error) throw error;
           if (!data || data.length === 0) {
             const { error: insertErr } = await supabase.from("projects").insert(payloadToUse);

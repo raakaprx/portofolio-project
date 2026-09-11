@@ -27,6 +27,7 @@ export function ImageUploader({
   const [uploading, setUploading] = useState(false);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [cropImageSrc, setCropImageSrc] = useState<string>("");
+  const [urlInput, setUrlInput] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
 
@@ -226,6 +227,30 @@ export function ImageUploader({
           </div>
         </div>
       )}
+
+      {/* Manual URL Input Option */}
+      <div className="flex items-center gap-2 pt-1">
+        <input
+          type="url"
+          value={urlInput}
+          onChange={(e) => setUrlInput(e.target.value)}
+          placeholder="Atau tempelkan URL gambar (https://...)"
+          className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 font-mono"
+        />
+        <button
+          type="button"
+          onClick={() => {
+            if (urlInput.trim()) {
+              onChange(urlInput.trim());
+              toast.success("URL gambar berhasil diterapkan!");
+              setUrlInput("");
+            }
+          }}
+          className="px-3.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-xs font-mono font-medium text-zinc-200 cursor-pointer transition-colors"
+        >
+          Terapkan
+        </button>
+      </div>
     </div>
   );
 }
