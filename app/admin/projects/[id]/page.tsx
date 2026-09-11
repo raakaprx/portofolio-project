@@ -29,6 +29,7 @@ interface ProjectFormData {
   title: string;
   slug: string;
   role: string;
+  year: string;
   category: string;
   short_summary: string;
   full_description: string;
@@ -45,6 +46,7 @@ const initialFormData: ProjectFormData = {
   title: "",
   slug: "",
   role: "Full-stack Developer",
+  year: "",
   category: "fullstack",
   short_summary: "",
   full_description: "",
@@ -164,6 +166,7 @@ export default function ProjectFormPage() {
             title: data.title || "",
             slug: data.slug || "",
             role: data.role || data.subtitle || "Full-stack Developer",
+            year: (typeof data.year === "string" ? data.year : "") || (typeof data.period === "string" ? data.period : "") || "",
             category: data.category || "fullstack",
             short_summary:
               data.short_summary ||
@@ -193,6 +196,7 @@ export default function ProjectFormPage() {
               title: fallback.title,
               slug: fallback.slug || fallback.id,
               role: fallback.role,
+              year: fallback.year || fallback.period || "",
               category: fallback.category || "fullstack",
               short_summary: fallback.short_summary,
               full_description: fallback.full_description,
@@ -234,6 +238,8 @@ export default function ProjectFormPage() {
         title: string;
         slug: string;
         role: string;
+        year?: string;
+        period?: string;
         short_summary: string;
         full_description: string;
         thumbnail_url: string;
@@ -259,6 +265,8 @@ export default function ProjectFormPage() {
         title: formData.title.trim(),
         slug: formData.slug.trim(),
         role: formData.role.trim(),
+        year: formData.year.trim(),
+        period: formData.year.trim(),
         short_summary: formData.short_summary.trim(),
         full_description: formData.full_description.trim(),
         thumbnail_url: formData.thumbnail_url.trim(),
@@ -445,6 +453,19 @@ export default function ProjectFormPage() {
                 placeholder="Contoh: Lead Full-Stack Developer"
                 required
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500"
+              />
+            </div>
+
+            <div className="space-y-1.5 sm:col-span-2">
+              <label className="text-xs font-mono font-medium text-zinc-300">
+                Tahun / Periode Pengerjaan (Opsional)
+              </label>
+              <input
+                type="text"
+                value={formData.year}
+                onChange={(e) => setFormField("year", e.target.value)}
+                placeholder="Contoh: 2026 atau Jan – Mar 2025"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 font-mono"
               />
             </div>
           </div>

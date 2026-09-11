@@ -218,7 +218,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 {project.tech_stacks.map((tech) => (
                   <span
                     key={tech}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-700/60 text-xs font-mono text-zinc-800 dark:text-zinc-200 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-xs font-mono font-medium text-zinc-900 dark:text-zinc-100 shadow-2xs hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors"
                   >
                     <span className="shrink-0 flex items-center justify-center">
                       {getTechLogo(tech, "w-4 h-4")}
@@ -228,23 +228,31 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 ))}
               </div>
 
-              <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-2 text-xs font-mono text-zinc-500">
-                <div className="flex justify-between">
-                  <span>Role:</span>
-                  <span className="text-zinc-800 dark:text-zinc-200 font-semibold">
+              <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-3 text-xs font-mono">
+                <div className="flex items-start justify-between gap-3">
+                  <span className="text-zinc-500 shrink-0">Role:</span>
+                  <span className="text-zinc-950 dark:text-zinc-100 font-semibold text-right">
                     {project.role}
                   </span>
                 </div>
+                {(project.year || project.period) && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-zinc-500 shrink-0">Tahun:</span>
+                    <span className="text-zinc-950 dark:text-zinc-100 font-semibold text-right">
+                      {project.year || project.period}
+                    </span>
+                  </div>
+                )}
                 {project.live_url && (
-                  <div className="flex justify-between">
-                    <span>Live Demo:</span>
-                    <span className="text-emerald-500 font-semibold">Aktif</span>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-zinc-500 shrink-0">Live Demo:</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Aktif</span>
                   </div>
                 )}
                 {project.repo_url && (
-                  <div className="flex justify-between">
-                    <span>Source Code:</span>
-                    <span className="text-blue-500 font-semibold">Public Repo</span>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-zinc-500 shrink-0">Source Code:</span>
+                    <span className="text-blue-600 dark:text-blue-400 font-semibold">Public Repo</span>
                   </div>
                 )}
               </div>

@@ -30,6 +30,8 @@ export interface ProjectDatabaseRow {
   slug?: string;
   title?: string;
   role?: string;
+  year?: string;
+  period?: string;
   subtitle?: string;
   short_summary?: string;
   summary?: string;
@@ -65,6 +67,12 @@ export function mapProjectRow(item: ProjectDatabaseRow, idx: number = 0): Projec
   const slug = item.slug || item.id || `project-${idx + 1}`;
   const title = item.title || fallbackItem?.title || "Untitled Project";
   const role = item.role || item.subtitle || fallbackItem?.role || "Full-stack Developer";
+  const year =
+    (typeof item.year === "string" ? item.year : "") ||
+    (typeof item.period === "string" ? item.period : "") ||
+    fallbackItem?.year ||
+    fallbackItem?.period ||
+    "";
 
   const short_summary =
     item.short_summary ||
@@ -105,6 +113,8 @@ export function mapProjectRow(item: ProjectDatabaseRow, idx: number = 0): Projec
     slug,
     title,
     role,
+    year,
+    period: year,
     short_summary,
     full_description,
     thumbnail_url,
@@ -275,6 +285,8 @@ export async function getCertificates(): Promise<CertificateItem[]> {
       credentialId: item.credential_id || "",
       imageUrl: item.image_url || undefined,
       skillsVerified: item.skills_verified || [],
+      expirationDate: item.expiration_date || item.valid_until || "",
+      isNoExpiration: Boolean(item.is_no_expiration ?? !(item.expiration_date || item.valid_until)),
     }));
   } catch (err) {
     console.error("[getCertificates] Unexpected failure fetching certificates:", err);

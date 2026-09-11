@@ -44,6 +44,8 @@ export default function AdminCertificatesPage() {
   const [date, setDate] = useState("");
   const [certMonth, setCertMonth] = useState("");
   const [isCustomDate, setIsCustomDate] = useState(false);
+  const [isNoExpiration, setIsNoExpiration] = useState(true);
+  const [expirationDate, setExpirationDate] = useState("");
   const [credentialId, setCredentialId] = useState("");
   const [credentialUrl, setCredentialUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -73,6 +75,8 @@ export default function AdminCertificatesPage() {
             credentialUrl: c.credential_url || "",
             imageUrl: c.image_url || undefined,
             skillsVerified: c.skills_verified || [],
+            expirationDate: c.expiration_date || c.valid_until || "",
+            isNoExpiration: Boolean(c.is_no_expiration ?? !(c.expiration_date || c.valid_until)),
           }))
         );
       }
@@ -104,6 +108,8 @@ export default function AdminCertificatesPage() {
     setCertMonth(currentYM);
     setDate(formatCertificateDate(currentYM));
     setIsCustomDate(false);
+    setIsNoExpiration(true);
+    setExpirationDate("");
     setCredentialId("");
     setCredentialUrl("");
     setImageUrl("");
@@ -120,6 +126,8 @@ export default function AdminCertificatesPage() {
     const parsed = parseDurationString(c.date);
     setCertMonth(parsed.startMonth || "");
     setIsCustomDate(false);
+    setIsNoExpiration(c.isNoExpiration ?? !c.expirationDate);
+    setExpirationDate(c.expirationDate || "");
 
     setCredentialId(c.credentialId || "");
     setCredentialUrl(c.credentialUrl);
@@ -156,6 +164,8 @@ export default function AdminCertificatesPage() {
         credential_url: credentialUrl.trim(),
         image_url: imageUrl.trim(),
         skills_verified: skillsVerified,
+        is_no_expiration: isNoExpiration,
+        expiration_date: isNoExpiration ? null : expirationDate.trim(),
       };
 
       const executeSave = async (payloadToUse: Record<string, unknown>) => {
@@ -291,6 +301,15 @@ export default function AdminCertificatesPage() {
                         {c.credentialId}
                       </span>
                     )}
+                    {c.isNoExpiration ? (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 font-semibold">
+                        Seumur Hidup / No Expiration
+                      </span>
+                    ) : c.expirationDate ? (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-blue-950/80 text-blue-400 border border-blue-800/60 font-semibold">
+                        Berlaku s.d. {c.expirationDate}
+                      </span>
+                    ) : null}
                   </div>
 
                   <p className="text-xs font-mono text-zinc-400">
@@ -411,7 +430,7 @@ export default function AdminCertificatesPage() {
                   type="month"
                   value={certMonth}
                   onChange={(e) => handleCertMonthChange(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3 py-1.5 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-emerald-500 transition-colors"
+                  className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500 transition-colors"
                 />
 
                 {isCustomDate ? (
@@ -451,6 +470,37 @@ export default function AdminCertificatesPage() {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Masa Berlaku / Validity Option */}
+            <div className="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800 space-y-2">
+              <label className="flex items-center gap-2 cursor-pointer select-none text-xs font-mono text-zinc-300 hover:text-white transition-colors">
+                <input
+                  type="checkbox"
+                  checked={isNoExpiration}
+                  onChange={(e) => {
+                    setIsNoExpiration(e.target.checked);
+                    if (e.target.checked) setExpirationDate("");
+                  }}
+                  className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-emerald-500 focus:ring-emerald-500/20 cursor-pointer accent-emerald-500"
+                />
+                <span>Masa Berlaku: Seumur Hidup / No Expiration</span>
+              </label>
+
+              {!isNoExpiration && (
+                <div className="space-y-1 pt-1.5">
+                  <label className="text-[11px] font-mono text-zinc-400 block">
+                    Masa Berlaku s.d. (Valid Until)
+                  </label>
+                  <input
+                    type="text"
+                    value={expirationDate}
+                    onChange={(e) => setExpirationDate(e.target.value)}
+                    placeholder="Contoh: Des 2028 atau Jun 2029"
+                    className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500 font-mono"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

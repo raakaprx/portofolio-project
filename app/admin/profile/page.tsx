@@ -317,66 +317,93 @@ NOTIFY pgrst, 'reload schema';`;
         </div>
       )}
 
-      {/* Live Hero Preview (Miniature matching screenshot) */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 sm:p-8 space-y-6 relative overflow-hidden shadow-xl">
-        <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
-          <span className="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-            Live Hero Section Preview
-          </span>
-          <span className="text-[11px] font-mono text-zinc-500">
-            Tampilan persis seperti di Landing Page
-          </span>
+      {/* Live Hero Preview (Full-Bleed Cinematic Editorial layout) */}
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 sm:p-8 space-y-6 relative overflow-hidden shadow-xl min-h-[420px] flex flex-col justify-between">
+        {/* Full-bleed Backdrop Image Preview */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-25">
+          <Image
+            src={avatarUrl || "/profile-raka.jpg"}
+            alt={name || "Raka Pradana"}
+            fill
+            className="object-cover object-[center_15%]"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/70 to-zinc-950/80" />
+          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-transparent to-zinc-950/80" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left: Text, Badges, CTA */}
-          <div className="lg:col-span-8 space-y-4">
-            {/* Status Pill */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/80 text-xs font-mono text-zinc-200">
-              {isAvailable && (
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        <div className="relative z-10 space-y-6">
+          <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+            <span className="text-xs font-mono uppercase tracking-widest text-zinc-400 font-semibold flex items-center gap-2">
+              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+              Live Hero Section Preview (Cinematic Editorial)
+            </span>
+            <span className="text-[11px] font-mono text-zinc-500">
+              Tampilan persis seperti di Landing Page
+            </span>
+          </div>
+
+
+
+          {/* Editorial Stage: OVERVIEW & PHILOSOPHY vs RAKA PRADANA & CORE DISCIPLINES */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end pt-2">
+            {/* Left Column */}
+            <div className="md:col-span-6 space-y-3 text-left">
+              <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest block font-semibold">
+                OVERVIEW & PHILOSOPHY
+              </span>
+              <p className="text-xs font-sans text-zinc-200 font-medium leading-relaxed line-clamp-3">
+                {tagline || "Deskripsi singkat mengenai fokus keahlian dan minat teknologi Anda..."}
+              </p>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/80 text-[10px] font-mono text-zinc-300">
+                {isAvailable && (
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                )}
+                <span>{statusBadge || "Available for Projects"}</span>
+              </div>
+            </div>
+
+            {/* Right Column: Display Name "RAKA PRADANA" & CORE DISCIPLINES */}
+            <div className="md:col-span-6 space-y-3 text-left md:text-right">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white uppercase tracking-tight leading-none">
+                <span className="block">RAKA</span>
+                <span className="block text-zinc-500">PRADANA</span>
+              </h1>
+              <div className="pt-2 border-t border-zinc-800/60">
+                <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest block font-semibold md:text-right">
+                  CORE DISCIPLINES & STACK
                 </span>
-              )}
-              <span>{statusBadge || "Available for Projects"}</span>
-            </div>
-
-            {/* Name */}
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              {name || "Nama Anda"}
-            </h1>
-
-            {/* Role */}
-            <div className="flex items-center gap-2 text-zinc-300 font-semibold text-base sm:text-lg">
-              <Code2 className="w-4 h-4 text-blue-400" />
-              <span>{role || "Profesi / Role"}</span>
-            </div>
-
-            {/* Tagline */}
-            <p className="text-sm text-zinc-400 leading-relaxed max-w-xl">
-              {tagline || "Deskripsi singkat mengenai fokus keahlian dan minat teknologi Anda."}
-            </p>
-
-            {/* Buttons Preview */}
-            <div className="flex flex-wrap items-center gap-2.5 pt-2">
-              <div className="px-4 py-2 rounded-full bg-white text-zinc-950 font-semibold text-xs flex items-center gap-1.5 shadow-sm">
-                <span>{ctaPrimaryText || "Explore Projects"}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <p className="text-xs font-mono font-bold text-zinc-300 uppercase">
+                  {role || "Full-Stack Web Developer"}
+                </p>
               </div>
+            </div>
+          </div>
 
-              <div className="px-3.5 py-2 rounded-full border border-zinc-700 bg-zinc-900 text-zinc-200 text-xs flex items-center gap-1.5">
-                <FileDown className="w-3.5 h-3.5 text-emerald-400" />
-                <span>{ctaCvText || "Download CV"}</span>
-              </div>
+          {/* Action Buttons Dock & Ticker Bar */}
+          <div className="pt-4 border-t border-zinc-800/80 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="px-3.5 py-1.5 rounded-full bg-white text-zinc-950 font-semibold text-xs flex items-center gap-1.5">
+                  <span>{ctaPrimaryText || "Explore Projects"}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </div>
 
-              <div className="px-3.5 py-2 rounded-full border border-zinc-800 bg-zinc-950 text-zinc-400 text-xs">
-                <span>{ctaContactText || "Contact Me"}</span>
+                <div className="px-3 py-1.5 rounded-full border border-zinc-700 bg-zinc-900 text-zinc-200 text-xs flex items-center gap-1.5">
+                  <FileDown className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>{ctaCvText || "Download CV"}</span>
+                </div>
+
+                <div className="px-3 py-1.5 rounded-full border border-zinc-800 bg-zinc-950 text-zinc-400 text-xs">
+                  <span>{ctaContactText || "Contact Me"}</span>
+                </div>
               </div>
 
               {/* Social Icons */}
-              <div className="flex items-center gap-1.5 pl-2">
+              <div className="flex items-center gap-1.5">
                 <div className="p-2 rounded-full border border-zinc-800 bg-zinc-900 text-zinc-400">
                   <Github className="w-3.5 h-3.5" />
                 </div>
@@ -391,47 +418,12 @@ NOTIFY pgrst, 'reload schema';`;
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Right: Circular Photo Preview */}
-          <div className="lg:col-span-4 flex justify-center items-center">
-            <div className="relative w-44 h-44 sm:w-52 sm:h-52 group">
-              {/* Spinning dashed ring matching Hero section */}
-              <div className="absolute inset-0 rounded-full border border-dashed border-zinc-600 animate-[spin_60s_linear_infinite]" />
-              <div className="absolute inset-2 sm:inset-2.5 rounded-full border-2 border-zinc-700 bg-zinc-900 overflow-hidden shadow-2xl">
-                <Image
-                  src={avatarUrl || "/profile-raka.jpg"}
-                  alt={name || "Avatar"}
-                  fill
-                  className="object-cover transition-transform duration-200"
-                  sizes="208px"
-                />
-              </div>
+            {/* Running Ticker Marquee Preview */}
+            <div className="overflow-hidden py-1 border-t border-b border-zinc-800/40 bg-zinc-950/80 font-mono text-[10px] text-zinc-500 uppercase tracking-widest whitespace-nowrap text-center">
+              ◀ PRODUCTION SYSTEMS • QUERY EFFICIENCY • DISTRIBUTED DATA • TELKOM 2026 ▶
             </div>
           </div>
-        </div>
-
-        {/* 3 Highlights Bento Cards Preview */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-zinc-800/80">
-          {highlights.map((card, idx) => (
-            <div
-              key={idx}
-              className="p-3.5 rounded-xl border border-zinc-800 bg-zinc-900/60"
-            >
-              <div className="flex items-center gap-1.5 text-zinc-400 text-[10px] font-mono font-semibold uppercase mb-1">
-                {idx === 0 && <Briefcase className="w-3 h-3 text-blue-400" />}
-                {idx === 1 && <Layers className="w-3 h-3 text-emerald-400" />}
-                {idx === 2 && <Database className="w-3 h-3 text-amber-400" />}
-                <span>{card.label}</span>
-              </div>
-              <p className="text-xs font-bold text-white leading-snug">
-                {card.title}
-              </p>
-              <p className="text-[11px] text-zinc-400 mt-0.5 font-mono">
-                {card.subtitle}
-              </p>
-            </div>
-          ))}
         </div>
       </div>
 

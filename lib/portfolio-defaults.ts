@@ -24,6 +24,8 @@ export interface ProjectItem {
   slug: string;
   title: string;
   role: string;
+  year?: string;
+  period?: string;
   short_summary: string;
   full_description: string;
   thumbnail_url: string;
@@ -74,6 +76,8 @@ export interface CertificateItem {
   credentialId?: string;
   imageUrl?: string;
   skillsVerified: string[];
+  expirationDate?: string;
+  isNoExpiration?: boolean;
 }
 
 export interface TechItem {
@@ -352,6 +356,7 @@ export const DEFAULT_PROJECTS: ProjectItem[] = [
     slug: "smart-material-management-system",
     title: "Smart Material Management System (SMMS)",
     role: "Lead Full-Stack Developer",
+    year: "2026",
     short_summary:
       "Aplikasi web pergudangan full-stack terintegrasi dengan 9 modul operasional, otentikasi RBAC 5 role, dan notifikasi real-time Socket.IO.",
     full_description: `## Ringkasan Proyek
@@ -431,6 +436,7 @@ export function handleMaterialApproval(io: Server, payload: { requestId: string;
     slug: "plastani-umkm-ecommerce",
     title: "Plastani",
     role: "Full-Stack Laravel Developer",
+    year: "2025",
     short_summary:
       "Platform e-commerce agrikultur untuk UMKM dan petani lokal dengan katalog produk terorganisir, integrasi order WhatsApp, dan analitik penjualan.",
     full_description: `## Ringkasan Proyek
@@ -501,6 +507,7 @@ Plastani merupakan platform e-commerce digital yang dirancang untuk memberdayaka
     slug: "jajansepy-single-brand",
     title: "JajanSepy",
     role: "Full-Stack Laravel Developer",
+    year: "2025",
     short_summary:
       "Web store single-brand UMKM kuliner dengan integrasi komunikasi WhatsApp Admin dan manajemen inventaris stok terpadu.",
     full_description: `## Ringkasan Proyek
@@ -561,6 +568,7 @@ Platform penjualan online yang dikembangkan khusus untuk lini produk single-bran
     slug: "renbook-online-rental",
     title: "Renbook",
     role: "Project Lead & Full-Stack Developer",
+    year: "2023",
     short_summary:
       "Sistem informasi peminjaman dan rental buku online dengan pemodelan 4 diagram UML, manajemen denda, dan pelacakan status sewa.",
     full_description: `## Ringkasan Proyek
@@ -631,6 +639,7 @@ Memimpin perancangan dan implementasi platform sewa buku online dari tahap pemod
     slug: "midtrans-payment-integration",
     title: "Midtrans Payment Gateway Integration",
     role: "Backend & Systems Engineer",
+    year: "2023",
     short_summary:
       "Microservice pembayaran digital dengan verifikasi signature kriptografis SHA-512, webhook callback asinkron, dan transaction audit log.",
     full_description: `## Ringkasan Proyek
@@ -698,6 +707,7 @@ Implementasi modul pembayaran digital menyeluruh menggunakan Midtrans API. Menja
     slug: "vehicle-price-prediction-model",
     title: "Vehicle Price Prediction Model",
     role: "Machine Learning Engineer",
+    year: "2024",
     short_summary:
       "Model regresi machine learning berbasis Python dengan akurasi 87% untuk estimasi harga kendaraan berdasarkan spesifikasi teknis dan kondisi.",
     full_description: `## Ringkasan Proyek

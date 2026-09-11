@@ -177,6 +177,11 @@ export default function AdminExperiencesPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isCurrent && startMonth && endMonth && endMonth < startMonth) {
+      toast.error("Periode tidak valid: Bulan selesai tidak boleh lebih awal dari bulan mulai");
+      return;
+    }
+
     const finalDuration =
       duration.trim() ||
       buildDurationPeriod(startMonth, isCurrent ? "" : endMonth, isCurrent);
@@ -536,57 +541,76 @@ NOTIFY pgrst, 'reload schema';`;
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {/* Tanggal Mulai */}
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-mono font-medium text-zinc-300 flex items-center justify-between">
-                    <span>Bulan Mulai (Start Date) <span className="text-red-400">*</span></span>
-                    {startMonth && (
-                      <span className="text-blue-400 font-normal">
-                        {formatMonthYear(startMonth)}
-                      </span>
-                    )}
-                  </label>
-                  <input
-                    type="month"
-                    required
-                    value={startMonth}
-                    onChange={(e) => handleStartMonthChange(e.target.value)}
-                    className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3 py-2 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500 transition-colors"
-                  />
-                </div>
+              {/* Date validation check */}
+              {(() => {
+                const isInvalidRange = !isCurrent && Boolean(startMonth) && Boolean(endMonth) && endMonth < startMonth;
 
-                {/* Tanggal Selesai */}
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-mono font-medium text-zinc-300 flex items-center justify-between">
-                    <span>Bulan Selesai (End Date)</span>
-                    {!isCurrent && endMonth && (
-                      <span className="text-blue-400 font-normal">
-                        {formatMonthYear(endMonth)}
-                      </span>
-                    )}
-                  </label>
-                  {isCurrent ? (
-                    <div className="w-full bg-zinc-900/60 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-400 flex items-center gap-2 min-h-[36px]">
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                      </span>
-                      <span className="font-mono text-emerald-400 font-medium text-[11px]">
-                        Sekarang / Masih Bekerja
-                      </span>
+                return (
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      {/* Tanggal Mulai */}
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-mono font-medium text-zinc-300 flex items-center justify-between">
+                          <span>Bulan Mulai (Start Date) <span className="text-red-400">*</span></span>
+                          {startMonth && (
+                            <span className="text-blue-400 font-normal">
+                              {formatMonthYear(startMonth)}
+                            </span>
+                          )}
+                        </label>
+                        <input
+                          type="month"
+                          required
+                          value={startMonth}
+                          onChange={(e) => handleStartMonthChange(e.target.value)}
+                          className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500 transition-colors"
+                        />
+                      </div>
+
+                      {/* Tanggal Selesai */}
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-mono font-medium text-zinc-300 flex items-center justify-between">
+                          <span>Bulan Selesai (End Date)</span>
+                          {!isCurrent && endMonth && (
+                            <span className={isInvalidRange ? "text-red-400 font-semibold" : "text-blue-400 font-normal"}>
+                              {formatMonthYear(endMonth)}
+                            </span>
+                          )}
+                        </label>
+                        {isCurrent ? (
+                          <div className="w-full bg-zinc-900/60 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-400 flex items-center gap-2 min-h-[36px]">
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span className="font-mono text-emerald-400 font-medium text-[11px]">
+                              Sekarang / Masih Bekerja
+                            </span>
+                          </div>
+                        ) : (
+                          <input
+                            type="month"
+                            min={startMonth}
+                            value={endMonth}
+                            onChange={(e) => handleEndMonthChange(e.target.value)}
+                            className={`w-full bg-zinc-900 border rounded-xl px-3 py-2 text-xs text-white focus:outline-none transition-colors ${
+                              isInvalidRange
+                                ? "border-red-500/80 text-red-300 focus:border-red-500"
+                                : "border-zinc-700/80 focus:border-blue-500"
+                            }`}
+                          />
+                        )}
+                      </div>
                     </div>
-                  ) : (
-                    <input
-                      type="month"
-                      min={startMonth}
-                      value={endMonth}
-                      onChange={(e) => handleEndMonthChange(e.target.value)}
-                      className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3 py-2 text-xs text-white [color-scheme:dark] focus:outline-none focus:border-blue-500 transition-colors"
-                    />
-                  )}
-                </div>
-              </div>
+
+                    {isInvalidRange && (
+                      <p className="text-[11px] font-mono text-red-400 bg-red-950/40 p-2 rounded-lg border border-red-900/50 flex items-center gap-1.5">
+                        <span>⚠️ Bulan selesai tidak boleh lebih awal dari bulan mulai ({formatMonthYear(startMonth)}).</span>
+                      </p>
+                    )}
+                  </>
+                );
+              })()}
 
               {/* Toggle Masih Bekerja */}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-zinc-800/80">

@@ -86,7 +86,7 @@ export function MarkdownView({ content, className = "" }: MarkdownViewProps) {
       elements.push(
         <h3
           key={`h3-${elements.length}`}
-          className="text-lg font-bold text-white mt-6 mb-2 tracking-tight flex items-center gap-2"
+          className="text-lg font-bold text-zinc-950 dark:text-white mt-6 mb-2 tracking-tight flex items-center gap-2"
         >
           <span className="w-2 h-2 rounded-sm bg-purple-500 inline-block" />
           {formatInline(line.substring(4))}
@@ -99,7 +99,7 @@ export function MarkdownView({ content, className = "" }: MarkdownViewProps) {
       elements.push(
         <h2
           key={`h2-${elements.length}`}
-          className="text-xl sm:text-2xl font-extrabold text-white mt-8 mb-3 tracking-tight border-b border-zinc-800/80 pb-2"
+          className="text-xl sm:text-2xl font-extrabold text-zinc-950 dark:text-white mt-8 mb-3 tracking-tight border-b border-zinc-200 dark:border-zinc-800/80 pb-2"
         >
           {formatInline(line.substring(3))}
         </h2>
@@ -111,7 +111,7 @@ export function MarkdownView({ content, className = "" }: MarkdownViewProps) {
       elements.push(
         <h1
           key={`h1-${elements.length}`}
-          className="text-2xl sm:text-3xl font-black text-white mt-8 mb-4 tracking-tight"
+          className="text-2xl sm:text-3xl font-black text-zinc-950 dark:text-white mt-8 mb-4 tracking-tight"
         >
           {formatInline(line.substring(2))}
         </h1>
@@ -124,7 +124,7 @@ export function MarkdownView({ content, className = "" }: MarkdownViewProps) {
       elements.push(
         <blockquote
           key={`quote-${elements.length}`}
-          className="my-3 border-l-2 border-blue-500 bg-blue-950/20 px-4 py-2.5 rounded-r-lg text-sm text-zinc-300 italic"
+          className="my-3 border-l-2 border-blue-500 bg-blue-50/60 dark:bg-blue-950/20 px-4 py-2.5 rounded-r-lg text-sm text-zinc-700 dark:text-zinc-300 italic"
         >
           {formatInline(line.substring(2))}
         </blockquote>
@@ -141,7 +141,7 @@ export function MarkdownView({ content, className = "" }: MarkdownViewProps) {
     elements.push(
       <p
         key={`p-${elements.length}`}
-        className="my-3 text-sm sm:text-base text-zinc-300 leading-relaxed font-normal"
+        className="my-3 text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal"
       >
         {formatInline(line)}
       </p>
@@ -168,7 +168,7 @@ function formatInline(text: string): React.ReactNode {
     const token = match[0];
     if (token.startsWith("**") && token.endsWith("**")) {
       tokens.push(
-        <strong key={match.index} className="font-semibold text-white">
+        <strong key={match.index} className="font-bold text-zinc-950 dark:text-white">
           {token.slice(2, -2)}
         </strong>
       );
@@ -176,7 +176,7 @@ function formatInline(text: string): React.ReactNode {
       tokens.push(
         <code
           key={match.index}
-          className="px-1.5 py-0.5 rounded bg-zinc-800/90 text-blue-300 font-mono text-xs border border-zinc-700/50"
+          className="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800/90 text-blue-700 dark:text-blue-300 font-mono text-xs border border-zinc-200 dark:border-zinc-700/50"
         >
           {token.slice(1, -1)}
         </code>
@@ -190,7 +190,7 @@ function formatInline(text: string): React.ReactNode {
           href={url}
           target="_blank"
           rel="noreferrer"
-          className="text-blue-400 hover:text-blue-300 underline underline-offset-2 transition-colors font-medium"
+          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline underline-offset-2 transition-colors font-medium"
         >
           {label}
         </a>
