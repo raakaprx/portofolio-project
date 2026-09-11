@@ -18,19 +18,42 @@ interface AvatarCropModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCropComplete: (croppedBlob: Blob, previewUrl: string) => void;
+  aspect?: number;
+  cropShape?: "round" | "rect";
+  title?: string;
+  description?: string;
 }
 
 /**
- * Ekstrak pixel hasil crop menjadi file Blob berkualitas tinggi (WebP 512x512)
+ * Ekstrak pixel hasil crop menjadi file Blob berkualitas tinggi (WebP)
  */
 async function getCroppedImg(
   imageSrc: string,
   pixelCrop: Area,
-  outputSize = 512
+  outputSize = 512,
+  cropShape: "round" | "rect" = "round",
+  aspect = 1
 ): Promise<{ blob: Blob; url: string }> {
+  let sourceUrl = imageSrc;
+  let objectUrlCreated = false;
+
+  // Jika URL remote, upayakan fetch sebagai blob untuk mencegah tainted canvas
+  try {
+    if (imageSrc.startsWith("http://") || imageSrc.startsWith("https://")) {
+      const res = await fetch(imageSrc, { mode: "cors" });
+      if (res.ok) {
+        const b = await res.blob();
+        sourceUrl = URL.createObjectURL(b);
+        objectUrlCreated = true;
+      }
+    }
+  } catch {
+    sourceUrl = imageSrc;
+  }
+
   const image = new window.Image();
-  image.src = imageSrc;
   image.crossOrigin = "anonymous";
+  image.src = sourceUrl;
 
   await new Promise<void>((resolve, reject) => {
     image.onload = () => resolve();
@@ -38,11 +61,20 @@ async function getCroppedImg(
   });
 
   const canvas = document.createElement("canvas");
-  canvas.width = outputSize;
-  canvas.height = outputSize;
+  let targetWidth = outputSize;
+  let targetHeight = outputSize;
+
+  if (cropShape === "rect") {
+    targetWidth = Math.min(1920, Math.max(800, Math.round(pixelCrop.width)));
+    targetHeight = Math.round(targetWidth / (aspect || (16 / 9)));
+  }
+
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
   const ctx = canvas.getContext("2d");
 
   if (!ctx) {
+    if (objectUrlCreated) URL.revokeObjectURL(sourceUrl);
     throw new Error("Gagal menginisialisasi canvas context 2D");
   }
 
@@ -57,9 +89,13 @@ async function getCroppedImg(
     pixelCrop.height,
     0,
     0,
-    outputSize,
-    outputSize
+    targetWidth,
+    targetHeight
   );
+
+  if (objectUrlCreated) {
+    URL.revokeObjectURL(sourceUrl);
+  }
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
@@ -93,6 +129,10 @@ export function AvatarCropModal({
   isOpen,
   onClose,
   onCropComplete,
+  aspect = 1,
+  cropShape = "round",
+  title,
+  description,
 }: AvatarCropModalProps) {
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -122,7 +162,13 @@ export function AvatarCropModal({
 
     setProcessing(true);
     try {
-      const { blob, url } = await getCroppedImg(imageSrc, croppedAreaPixels);
+      const { blob, url } = await getCroppedImg(
+        imageSrc,
+        croppedAreaPixels,
+        cropShape === "round" ? 512 : 1280,
+        cropShape,
+        aspect
+      );
       onCropComplete(blob, url);
       onClose();
     } catch (err) {
@@ -138,15 +184,20 @@ export function AvatarCropModal({
     setZoom(1);
   };
 
+  const resolvedTitle = title || (cropShape === "round" ? "Sesuaikan Foto Profil" : "Sesuaikan & Crop Gambar");
+  const resolvedDesc = description || (cropShape === "round"
+    ? "Geser foto agar wajah berada tepat di dalam lingkaran, lalu atur zoom sesuai keinginan."
+    : "Geser dan perbesar gambar untuk menyesuaikan area tampilan yang pas.");
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-md bg-zinc-950 border border-zinc-800 text-white p-6 rounded-2xl shadow-2xl space-y-4">
         <DialogHeader className="space-y-1 text-left">
           <DialogTitle className="text-lg font-mono font-bold text-white flex items-center gap-2">
-            <span>Sesuaikan Foto Profil</span>
+            <span>{resolvedTitle}</span>
           </DialogTitle>
           <DialogDescription className="text-xs text-zinc-400 font-sans">
-            Geser foto agar wajah berada tepat di dalam lingkaran, lalu atur zoom sesuai keinginan.
+            {resolvedDesc}
           </DialogDescription>
         </DialogHeader>
 
@@ -157,9 +208,9 @@ export function AvatarCropModal({
               image={imageSrc}
               crop={crop}
               zoom={zoom}
-              aspect={1}
-              cropShape="round"
-              showGrid={false}
+              aspect={aspect}
+              cropShape={cropShape}
+              showGrid={cropShape === "rect"}
               onCropChange={onCropChange}
               onZoomChange={onZoomChange}
               onCropComplete={onCropAreaComplete}

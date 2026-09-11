@@ -9,7 +9,7 @@ import {
 import { Github, Linkedin, GmailLogo, WhatsappLogo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
-import { DEFAULT_PROFILE, type ProfileData } from "@/lib/portfolio-defaults";
+import { DEFAULT_PROFILE, parseAvatarUrl, type ProfileData } from "@/lib/portfolio-defaults";
 import { naturalTransition } from "@/lib/motion";
 
 export const CV_URL = "/cv.pdf";
@@ -20,7 +20,13 @@ interface HeroProps {
 
 export default function Hero({ initialProfile }: HeroProps) {
   const profile = initialProfile || DEFAULT_PROFILE;
-  const avatarSrc = profile.avatar_url?.split("?")[0] || "/profile-raka.jpg";
+  const avatarConfig = parseAvatarUrl(profile.avatar_url);
+  const avatarSrc = avatarConfig.cleanUrl || "/profile-raka.jpg";
+  const avatarPosition = profile.avatar_position || avatarConfig.position || "55% 20%";
+  const avatarScale = (profile.avatar_scale ?? avatarConfig.scale ?? 100) / 100;
+  const avatarOffsetY = profile.avatar_offset_y ?? avatarConfig.offsetY ?? 0;
+  const avatarOffsetX = profile.avatar_offset_x ?? avatarConfig.offsetX ?? 0;
+  const avatarOpacity = (profile.avatar_opacity ?? avatarConfig.opacity ?? 45) / 100;
 
   const highlights =
     Array.isArray(profile.highlights) && profile.highlights.length > 0
@@ -48,15 +54,27 @@ export default function Hero({ initialProfile }: HeroProps) {
       {/* ========================================================================= */}
       {/* FULL-BLEED PORTRAIT BACKDROP (Terang, Jelas, & Kontras High-End) */}
       {/* ========================================================================= */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <Image
-          src={avatarSrc}
-          alt={profile.name || "Raka Pradana"}
-          fill
-          priority
-          className="object-cover object-[center_15%] lg:object-[55%_20%] opacity-50 dark:opacity-45 filter contrast-105 brightness-100"
-          sizes="100vw"
-        />
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+        <div
+          className="relative w-full h-full transition-transform duration-300"
+          style={{
+            transform: `scale(${avatarScale}) translate(${avatarOffsetX}px, ${avatarOffsetY}px)`,
+            transformOrigin: avatarPosition,
+          }}
+        >
+          <Image
+            src={avatarSrc}
+            alt={profile.name || "Raka Pradana"}
+            fill
+            priority
+            className="object-cover filter contrast-105 brightness-100 transition-all duration-300"
+            style={{
+              objectPosition: avatarPosition,
+              opacity: avatarOpacity,
+            }}
+            sizes="100vw"
+          />
+        </div>
         {/* Soft Vignette Gradients agar foto tampak berwibawa tanpa tenggelam */}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background/50" />

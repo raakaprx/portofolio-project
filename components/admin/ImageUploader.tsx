@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { Upload, X, Loader2, Crop } from "lucide-react";
+import { Upload, X, Loader2, Crop, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { AvatarCropModal } from "@/components/admin/AvatarCropModal";
 import { toast } from "sonner";
@@ -13,6 +13,7 @@ interface ImageUploaderProps {
   bucket?: string;
   folder?: string;
   previewShape?: "rounded" | "circle";
+  cropAspect?: number;
   imageStyle?: React.CSSProperties;
 }
 
@@ -22,6 +23,7 @@ export function ImageUploader({
   bucket = "portfolio-assets",
   folder = "projects",
   previewShape = "rounded",
+  cropAspect,
   imageStyle,
 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
@@ -113,7 +115,7 @@ export function ImageUploader({
       } = supabase.storage.from(bucket).getPublicUrl(data.path);
 
       onChange(publicUrl);
-      toast.success("Foto profil berhasil di-crop & disimpan!");
+      toast.success("Foto berhasil disesuaikan & disimpan!");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal menyimpan foto hasil crop";
       toast.error("Upload gagal: " + msg);
@@ -122,20 +124,33 @@ export function ImageUploader({
     }
   };
 
+  const handleOpenCurrentCrop = () => {
+    if (!value) return;
+    const cleanUrl = value.split(/[?#]/)[0];
+    setCropImageSrc(cleanUrl);
+    setCropModalOpen(true);
+  };
+
   return (
     <div className="space-y-3">
-      {/* Crop Modal untuk Avatar Lingkaran */}
-      {previewShape === "circle" && (
-        <AvatarCropModal
-          imageSrc={cropImageSrc}
-          isOpen={cropModalOpen}
-          onClose={() => {
-            setCropModalOpen(false);
-            setCropImageSrc("");
-          }}
-          onCropComplete={handleCroppedUpload}
-        />
-      )}
+      {/* Crop Modal (Bisa untuk Avatar Lingkaran maupun Gambar Persegi) */}
+      <AvatarCropModal
+        imageSrc={cropImageSrc}
+        isOpen={cropModalOpen}
+        cropShape={previewShape === "circle" ? "round" : "rect"}
+        aspect={cropAspect || (previewShape === "circle" ? 1 : 16 / 9)}
+        title={previewShape === "circle" ? "Sesuaikan & Posisikan Wajah" : "Sesuaikan & Crop Gambar"}
+        description={
+          previewShape === "circle"
+            ? "Geser foto agar wajah berada tepat di dalam lingkaran, lalu atur zoom sesuai keinginan."
+            : "Geser dan perbesar area gambar yang ingin ditampilkan."
+        }
+        onClose={() => {
+          setCropModalOpen(false);
+          setCropImageSrc("");
+        }}
+        onCropComplete={handleCroppedUpload}
+      />
 
       {/* Hidden File Input */}
       <input
@@ -148,53 +163,99 @@ export function ImageUploader({
       />
 
       {value ? (
-        <div className="flex flex-col sm:flex-row items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3.5 rounded-2xl border border-zinc-800 bg-zinc-950/80">
+          {/* Thumbnail Preview with Delete button */}
           <div
-            className={`relative group overflow-hidden border border-zinc-700 bg-zinc-950 shrink-0 ${
+            className={`relative group overflow-hidden border border-zinc-700 bg-zinc-900 shrink-0 shadow-md ${
               previewShape === "circle"
-                ? "rounded-full w-36 h-36"
-                : "rounded-xl max-w-sm h-44 w-full"
+                ? "rounded-full w-28 h-28 sm:w-32 sm:h-32"
+                : "rounded-xl max-w-sm h-36 w-full sm:w-56"
             }`}
           >
             <Image
-              src={value}
+              src={value.split(/[?#]/)[0]}
               alt="Uploaded Preview"
               fill
-              className="object-cover transition-transform duration-200"
+              className="object-cover transition-transform duration-200 group-hover:scale-105"
               style={imageStyle}
-              sizes="384px"
+              sizes="256px"
             />
             <button
               type="button"
-              onClick={() => onChange("")}
-              className="absolute top-2 right-2 p-1.5 rounded-full bg-black/75 hover:bg-red-600 text-white transition-colors z-10 cursor-pointer shadow-md"
-              title="Hapus gambar"
+              onClick={() => {
+                onChange("");
+                toast.info("Foto dihapus");
+              }}
+              className="absolute top-2 right-2 p-1.5 rounded-full bg-black/80 hover:bg-red-600 text-white transition-colors z-10 cursor-pointer shadow-md"
+              title="Hapus foto ini"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="space-y-2 text-center sm:text-left">
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              className="px-4 py-2 rounded-xl text-xs font-mono font-semibold bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border border-zinc-700 transition-colors flex items-center gap-2 cursor-pointer shadow-sm"
-            >
-              {uploading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
-                  <span>Mengunggah foto...</span>
-                </>
-              ) : (
-                <>
-                  <Crop className="w-4 h-4 text-emerald-400" />
-                  <span>Ganti / Crop Foto Baru</span>
-                </>
-              )}
-            </button>
+          {/* Action Buttons (Separated Distinct Actions: Upload, Crop, Delete) */}
+          <div className="space-y-2.5 flex-1 w-full text-left">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-mono text-emerald-400 font-semibold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/40">
+                ✓ Foto Aktif
+              </span>
+              <span className="text-[11px] text-zinc-400 font-sans">
+                Pilih aksi di bawah untuk foto ini:
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 pt-0.5">
+              {/* Tombol 1: Posisikan / Crop Ulang Gambar Saat Ini */}
+              <button
+                type="button"
+                onClick={handleOpenCurrentCrop}
+                disabled={uploading}
+                className="px-3.5 py-2 rounded-xl text-xs font-mono font-semibold bg-blue-600 hover:bg-blue-500 text-white border border-blue-500 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 disabled:opacity-50"
+                title="Buka crop modal untuk menggeser posisi atau zoom foto yang sudah terpasang"
+              >
+                <Crop className="w-3.5 h-3.5" />
+                <span>Posisikan & Crop Foto</span>
+              </button>
+
+              {/* Tombol 2: Upload / Ganti File Baru Dari Komputer */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="px-3.5 py-2 rounded-xl text-xs font-mono font-semibold bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border border-zinc-700 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 disabled:opacity-50"
+                title="Pilih file baru dari komputer untuk mengganti foto ini"
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400" />
+                    <span>Mengunggah...</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-3.5 h-3.5 text-zinc-300" />
+                    <span>Upload File Baru</span>
+                  </>
+                )}
+              </button>
+
+              {/* Tombol 3: Hapus Foto */}
+              <button
+                type="button"
+                onClick={() => {
+                  onChange("");
+                  toast.info("Foto telah dihapus");
+                }}
+                disabled={uploading}
+                className="px-3 py-2 rounded-xl text-xs font-mono font-semibold bg-red-950/50 hover:bg-red-900/70 text-red-300 border border-red-800/60 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+                title="Hapus foto saat ini"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Hapus Foto</span>
+              </button>
+            </div>
+
             <p className="text-[11px] text-zinc-400 font-sans">
-              Format bebas: JPG, PNG, WebP, dll. Otomatis dipotong rapi melingkar.
+              Klik <strong>Posisikan & Crop Foto</strong> untuk menggeser posisi wajah/objek langsung tanpa perlu pilih file lagi dari komputer.
             </p>
           </div>
         </div>

@@ -107,6 +107,7 @@ export interface ProfileData {
   avatar_scale?: number;
   avatar_offset_y?: number;
   avatar_offset_x?: number;
+  avatar_opacity?: number;
   status_badge: string;
   is_available: boolean;
   cta_primary_text: string;
@@ -128,6 +129,7 @@ export function parseAvatarUrl(url?: string): {
   scale?: number;
   offsetY?: number;
   offsetX?: number;
+  opacity?: number;
 } {
   const raw = url || "/profile-raka.jpg";
   if (!raw.includes("?") && !raw.includes("#")) {
@@ -143,12 +145,14 @@ export function parseAvatarUrl(url?: string): {
       scale?: number;
       offsetY?: number;
       offsetX?: number;
+      opacity?: number;
     } = { cleanUrl: base || "/profile-raka.jpg" };
 
     if (params.has("pos")) result.position = params.get("pos") || undefined;
     if (params.has("scale")) result.scale = Number(params.get("scale")) || undefined;
     if (params.has("y")) result.offsetY = Number(params.get("y")) || undefined;
     if (params.has("x")) result.offsetX = Number(params.get("x")) || undefined;
+    if (params.has("op")) result.opacity = Number(params.get("op")) || undefined;
     return result;
   } catch {
     return { cleanUrl: raw };
@@ -157,14 +161,15 @@ export function parseAvatarUrl(url?: string): {
 
 export function buildAvatarUrl(
   baseCleanUrl: string,
-  config: { position?: string; scale?: number; offsetY?: number; offsetX?: number }
+  config: { position?: string; scale?: number; offsetY?: number; offsetX?: number; opacity?: number }
 ): string {
   const clean = (baseCleanUrl || "/profile-raka.jpg").split(/[?#]/)[0];
   const params = new URLSearchParams();
-  if (config.position && config.position !== "center 20%") params.set("pos", config.position);
+  if (config.position && config.position !== "55% 20%") params.set("pos", config.position);
   if (typeof config.scale === "number" && config.scale !== 100) params.set("scale", String(config.scale));
   if (typeof config.offsetY === "number" && config.offsetY !== 0) params.set("y", String(config.offsetY));
   if (typeof config.offsetX === "number" && config.offsetX !== 0) params.set("x", String(config.offsetX));
+  if (typeof config.opacity === "number" && config.opacity !== 45) params.set("op", String(config.opacity));
 
   const qs = params.toString();
   return qs ? `${clean}?${qs}` : clean;
@@ -177,10 +182,11 @@ export const DEFAULT_PROFILE: ProfileData = {
   tagline:
     "Crafting scalable web architectures, robust transactional backends, and data-driven systems. Focused on clean system design, database query efficiency, and high-performance user experiences.",
   avatar_url: "/profile-raka.jpg",
-  avatar_position: "center 20%",
+  avatar_position: "55% 20%",
   avatar_scale: 100,
   avatar_offset_y: 0,
   avatar_offset_x: 0,
+  avatar_opacity: 45,
   status_badge: "Available for Engineering Projects",
   is_available: true,
   cta_primary_text: "Explore Projects",

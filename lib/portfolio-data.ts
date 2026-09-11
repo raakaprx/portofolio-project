@@ -351,10 +351,11 @@ export async function getProfile(): Promise<ProfileData> {
     }
 
     const avatarConfig = parseAvatarUrl(data.avatar_url);
-    const position = data.avatar_position || avatarConfig.position || DEFAULT_PROFILE.avatar_position || "center 20%";
+    const position = data.avatar_position || avatarConfig.position || DEFAULT_PROFILE.avatar_position || "55% 20%";
     const scale = typeof data.avatar_scale === "number" ? data.avatar_scale : (avatarConfig.scale ?? DEFAULT_PROFILE.avatar_scale ?? 100);
     const offsetY = typeof data.avatar_offset_y === "number" ? data.avatar_offset_y : (avatarConfig.offsetY ?? DEFAULT_PROFILE.avatar_offset_y ?? 0);
     const offsetX = typeof data.avatar_offset_x === "number" ? data.avatar_offset_x : (avatarConfig.offsetX ?? DEFAULT_PROFILE.avatar_offset_x ?? 0);
+    const opacity = typeof data.avatar_opacity === "number" ? data.avatar_opacity : (avatarConfig.opacity ?? DEFAULT_PROFILE.avatar_opacity ?? 45);
 
     return {
       id: data.id || DEFAULT_PROFILE.id,
@@ -366,6 +367,7 @@ export async function getProfile(): Promise<ProfileData> {
       avatar_scale: scale,
       avatar_offset_y: offsetY,
       avatar_offset_x: offsetX,
+      avatar_opacity: opacity,
       status_badge: data.status_badge || DEFAULT_PROFILE.status_badge,
       is_available: typeof data.is_available === "boolean" ? data.is_available : DEFAULT_PROFILE.is_available,
       cta_primary_text: data.cta_primary_text || DEFAULT_PROFILE.cta_primary_text,

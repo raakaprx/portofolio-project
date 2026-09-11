@@ -214,17 +214,32 @@ CREATE TABLE IF NOT EXISTS public.profile (
         {"label": "CORE SPECIALTIES", "title": "Laravel & Next.js", "subtitle": "REST APIs & ML Pipelines", "icon": "layers"},
         {"label": "DATABASE FOCUS", "title": "PostgreSQL & MySQL", "subtitle": "ACID & Index Tuning", "icon": "database"}
     ]'::jsonb,
+    avatar_position TEXT DEFAULT '55% 20%',
+    avatar_scale INT DEFAULT 100,
+    avatar_offset_y INT DEFAULT 0,
+    avatar_offset_x INT DEFAULT 0,
+    avatar_opacity INT DEFAULT 45,
     updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- Pastikan kolom baru selalu ada di database Supabase yang sudah aktif
+ALTER TABLE public.profile ADD COLUMN IF NOT EXISTS avatar_position TEXT DEFAULT '55% 20%';
+ALTER TABLE public.profile ADD COLUMN IF NOT EXISTS avatar_scale INT DEFAULT 100;
+ALTER TABLE public.profile ADD COLUMN IF NOT EXISTS avatar_offset_y INT DEFAULT 0;
+ALTER TABLE public.profile ADD COLUMN IF NOT EXISTS avatar_offset_x INT DEFAULT 0;
+ALTER TABLE public.profile ADD COLUMN IF NOT EXISTS avatar_opacity INT DEFAULT 45;
+
 -- Inisialisasi baris default 'main' jika tabel profile kosong
-INSERT INTO public.profile (id, name, role, tagline, avatar_url, status_badge, is_available)
+INSERT INTO public.profile (id, name, role, tagline, avatar_url, avatar_position, avatar_scale, avatar_opacity, status_badge, is_available)
 VALUES (
     'main',
     'Muhammad Raka Pradana',
     'Full-Stack Web Developer',
     'Crafting scalable web architectures, robust transactional backends, and data-driven systems. Focused on clean system design, database query efficiency, and high-performance user experiences.',
     '/profile-raka.jpg',
+    '55% 20%',
+    100,
+    45,
     'Available for Engineering Projects',
     true
 )
