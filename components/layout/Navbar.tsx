@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { Menu, X, ArrowRight, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -21,6 +21,13 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,13 +58,20 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "py-3.5 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-300 dark:border-zinc-800/80 shadow-md shadow-zinc-200/50 dark:shadow-black/40"
-          : "py-6 bg-transparent"
-      }`}
-    >
+    <>
+      {/* Top Scroll Progress Indicator */}
+      <motion.div
+        style={{ scaleX }}
+        className="fixed top-0 left-0 right-0 h-[2.5px] bg-emerald-500 origin-left z-[60] pointer-events-none shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+      />
+
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "py-3.5 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-300 dark:border-zinc-800/80 shadow-md shadow-zinc-200/50 dark:shadow-black/40"
+            : "py-6 bg-transparent"
+        }`}
+      >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Brand Logo */}
         <a href="#home" className="flex items-center gap-2 group" aria-label="Raka Dev">
@@ -174,5 +188,6 @@ export default function Navbar() {
         )}
       </AnimatePresence>
     </header>
-  );
+  </>
+);
 }

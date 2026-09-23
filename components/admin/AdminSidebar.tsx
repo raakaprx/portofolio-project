@@ -5,11 +5,13 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   User,
+  BookOpen,
   FolderGit2,
   Briefcase,
   Award,
   Layers,
   BarChart3,
+  MessageSquare,
   ExternalLink,
   LogOut,
   X,
@@ -26,11 +28,13 @@ interface AdminSidebarProps {
 const NAV_LINKS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/profile", label: "Profile", icon: User },
+  { href: "/admin/about", label: "About", icon: BookOpen },
   { href: "/admin/projects", label: "Projects", icon: FolderGit2 },
   { href: "/admin/experiences", label: "Experiences", icon: Briefcase },
   { href: "/admin/certificates", label: "Certificates", icon: Award },
   { href: "/admin/tech-stack", label: "Tech Stack", icon: Layers },
-  { href: "/admin/analytics", label: "Visitor Analytics", icon: BarChart3 },
+  { href: "/admin/messages", label: "Messages", icon: MessageSquare },
+  { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 export function AdminSidebar({ mobileOpen, onCloseMobile }: AdminSidebarProps) {
@@ -41,11 +45,11 @@ export function AdminSidebar({ mobileOpen, onCloseMobile }: AdminSidebarProps) {
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
-      toast.success("Berhasil keluar dari admin");
+      toast.success("Signed out successfully");
       router.push("/admin/login");
       router.refresh();
     } catch {
-      toast.error("Gagal keluar");
+      toast.error("Failed to sign out");
     }
   };
 
@@ -76,7 +80,7 @@ export function AdminSidebar({ mobileOpen, onCloseMobile }: AdminSidebarProps) {
       {/* Navigation Links */}
       <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
         <div className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 px-3 mb-2 font-semibold">
-          Menu Manajemen
+          Management
         </div>
         {NAV_LINKS.map((item) => {
           const Icon = item.icon;
@@ -111,7 +115,7 @@ export function AdminSidebar({ mobileOpen, onCloseMobile }: AdminSidebarProps) {
         >
           <span className="flex items-center gap-2">
             <ExternalLink className="w-3.5 h-3.5" />
-            <span>Lihat Website</span>
+            <span>View Website</span>
           </span>
           <span className="text-[10px] bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-400">Live</span>
         </Link>
@@ -121,7 +125,7 @@ export function AdminSidebar({ mobileOpen, onCloseMobile }: AdminSidebarProps) {
           className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-mono font-medium text-red-400 hover:text-red-300 hover:bg-red-950/30 transition-colors cursor-pointer"
         >
           <LogOut className="w-3.5 h-3.5" />
-          <span>Keluar (Logout)</span>
+          <span>Sign Out</span>
         </button>
       </div>
     </aside>

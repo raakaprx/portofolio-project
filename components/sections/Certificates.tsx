@@ -23,6 +23,16 @@ const CERTIFICATES: Certificate[] = [
   },
 ];
 
+function getIssuerBadge(issuer: string = "") {
+  const norm = issuer.toLowerCase();
+  if (norm.includes("bnsp")) return "Verified • BNSP RI";
+  if (norm.includes("dicoding")) return "Verified • Dicoding";
+  if (norm.includes("coursera")) return "Verified • Coursera";
+  if (norm.includes("aws") || norm.includes("amazon")) return "Verified • AWS";
+  if (norm.includes("google")) return "Verified • Google";
+  return "Official • Verified";
+}
+
 export default function Certificates({
   initialCertificates,
 }: {
@@ -81,7 +91,7 @@ export default function Certificates({
                   {/* Authentic, Clean Official Accreditation Badge (Non-AI Style) */}
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800/80 text-[11px] font-bold text-emerald-850 dark:text-emerald-400 shadow-2xs">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    <span className="font-sans tracking-tight">Verified • BNSP RI</span>
+                    <span className="font-sans tracking-tight">{getIssuerBadge(cert.issuer)}</span>
                   </div>
                 </div>
 

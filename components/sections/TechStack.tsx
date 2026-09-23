@@ -333,7 +333,7 @@ export default function TechStack({
                           tabIndex={0}
                           role="button"
                           aria-label={`${item.name} (${item.proficiency})`}
-                          className="group inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-50/90 dark:bg-zinc-900/70 border border-zinc-200/90 dark:border-zinc-800/80 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-100/90 dark:hover:bg-zinc-800/80 hover:-translate-y-0.5 transition-all duration-150 shadow-2xs cursor-default select-none focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:focus:ring-zinc-600"
+                          className="group inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-50/90 dark:bg-zinc-900/70 border border-zinc-200/90 dark:border-zinc-800/80 hover:border-emerald-500/40 dark:hover:border-emerald-500/50 hover:shadow-[0_0_14px_rgba(16,185,129,0.22)] dark:hover:shadow-[0_0_18px_rgba(16,185,129,0.28)] hover:bg-zinc-100/90 dark:hover:bg-zinc-800/80 hover:-translate-y-0.5 transition-all duration-200 shadow-2xs cursor-default select-none focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:focus:ring-emerald-600"
                         >
                           {/* Brand / Tool Icon */}
                           <div className="w-4 h-4 flex items-center justify-center shrink-0">

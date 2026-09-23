@@ -124,6 +124,20 @@ export interface ProfileData {
   highlights: ProfileHighlightCard[];
 }
 
+export interface AboutData {
+  id?: string;
+  bio_paragraph_1: string;
+  bio_paragraph_2: string;
+  years_experience: number;
+  projects_count: number;
+  gpa: string;
+  education_degree: string;
+  education_university: string;
+  education_years: string;
+  career_objective: string;
+  current_focus: string;
+}
+
 export function parseAvatarUrl(url?: string): {
   cleanUrl: string;
   position?: string;
@@ -222,6 +236,24 @@ export const DEFAULT_PROFILE: ProfileData = {
   ],
 };
 
+export const DEFAULT_ABOUT: AboutData = {
+  id: "main",
+  bio_paragraph_1:
+    "I am a passionate Full-Stack Web Developer and an Information Systems student (S1 Sistem Informasi) at Telkom University. My journey in technology is driven by a deep curiosity for system design and a focus on developing scalable frontend and backend web applications. I enjoy building efficient systems, integrating AI solutions, and constantly adapting to cutting-edge technologies.",
+  bio_paragraph_2:
+    "With academic training in Software Engineering, Database Systems, OOP, and System Analysis & Design, I prioritize structural reliability, clean code, and intuitive user experiences.",
+  years_experience: 3,
+  projects_count: 10,
+  gpa: "3.75",
+  education_degree: "S1 Sistem Informasi",
+  education_university: "Telkom University",
+  education_years: "2022 – 2026",
+  career_objective:
+    "To engineer scalable full-stack web architectures, optimizing data-intensive backends, and delivering frictionless user interfaces for real-world enterprise applications.",
+  current_focus:
+    "Focusing on full-stack web architectures, optimizing database performance, and integrating secure payment processing and AI technologies.",
+};
+
 export const DEFAULT_EXPERIENCES: ExperienceItem[] = [
   {
     company: "PT Maxxima Innovative Engineering",
@@ -251,10 +283,7 @@ export const DEFAULT_EXPERIENCES: ExperienceItem[] = [
       { label: "Fokus Inti", value: "Sistem Web & Database" },
       { label: "Core Stack", value: "Next.js & PostgreSQL" },
     ],
-    photos: [
-      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
-    ],
+    photos: [],
   },
   {
     company: "PT. Sundaya",
@@ -283,10 +312,7 @@ export const DEFAULT_EXPERIENCES: ExperienceItem[] = [
       { label: "Performa", value: "Lazy Loading & Code Splitting" },
       { label: "Tracking", value: "Real-Time Inventory" },
     ],
-    photos: [
-      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=1200&auto=format&fit=crop",
-    ],
+    photos: [],
   },
 ];
 

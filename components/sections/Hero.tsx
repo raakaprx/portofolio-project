@@ -273,15 +273,44 @@ export default function Hero({ initialProfile }: HeroProps) {
           </motion.div>
 
           {/* Running Ticker / Marquee Bar */}
-          <div className="w-full overflow-hidden select-none py-1 border-t border-b border-zinc-200/60 dark:border-zinc-800/40 bg-zinc-100/50 dark:bg-zinc-950/50 font-mono text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
-            <div className="whitespace-nowrap flex items-center justify-between gap-6 px-2">
-              <span>PRODUCTION SYSTEMS</span>
-              <span className="text-zinc-400 dark:text-zinc-700">•</span>
-              <span>QUERY EFFICIENCY</span>
-              <span className="text-zinc-400 dark:text-zinc-700">•</span>
-              <span>DISTRIBUTED DATA</span>
-              <span className="text-zinc-400 dark:text-zinc-700">•</span>
-              <span>TELKOM 2026</span>
+          <div className="w-full overflow-hidden select-none py-1.5 border-t border-b border-zinc-200/60 dark:border-zinc-800/40 bg-zinc-100/50 dark:bg-zinc-950/50 font-mono text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-500">
+            <div className="animate-marquee whitespace-nowrap flex items-center">
+              <div className="flex items-center gap-6 px-3 shrink-0">
+                <span>REACT</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>NEXT.JS</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>TYPESCRIPT</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>LARAVEL</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>NODE.JS</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>POSTGRESQL</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>SUPABASE</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>FULL-STACK ENGINEER</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+              </div>
+              <div className="flex items-center gap-6 px-3 shrink-0" aria-hidden="true">
+                <span>REACT</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>NEXT.JS</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>TYPESCRIPT</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>LARAVEL</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>NODE.JS</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>POSTGRESQL</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>SUPABASE</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+                <span>FULL-STACK ENGINEER</span>
+                <span className="text-zinc-400 dark:text-zinc-700">•</span>
+              </div>
             </div>
           </div>
         </div>

@@ -73,10 +73,7 @@ const EXPERIENCES: ExperienceItem[] = [
       { label: "Core Focus", value: "Full-Stack Architecture" },
       { label: "Stack", value: "TypeScript & Next.js" },
     ],
-    photos: [
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
-    ],
+    photos: [],
   },
   {
     company: "PT. Sundaya",
@@ -106,10 +103,7 @@ const EXPERIENCES: ExperienceItem[] = [
       { label: "Error Reduction", value: "85% Manual Errors Cut" },
       { label: "Architecture", value: "Real-Time Sockets" },
     ],
-    photos: [
-      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=1200&auto=format&fit=crop",
-    ],
+    photos: [],
   },
 ];
 

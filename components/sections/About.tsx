@@ -3,8 +3,15 @@
 import { motion } from "framer-motion";
 import { BookOpen, Trophy, Target, Compass } from "lucide-react";
 import { naturalTransition } from "@/lib/motion";
+import { DEFAULT_ABOUT, type AboutData } from "@/lib/portfolio-defaults";
 
-export default function About() {
+export default function About({
+  initialAbout,
+}: {
+  initialAbout?: AboutData;
+}) {
+  const about = initialAbout || DEFAULT_ABOUT;
+
   return (
     <section id="about" className="py-24 relative overflow-hidden bg-background transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -44,24 +51,26 @@ export default function About() {
                 My Journey
               </h3>
               <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed mb-6 font-normal">
-                I am a passionate Full-Stack Web Developer and an Information Systems student (S1 Sistem Informasi) at Telkom University. My journey in technology is driven by a deep curiosity for system design and a focus on developing scalable frontend and backend web applications. I enjoy building efficient systems, integrating AI solutions, and constantly adapting to cutting-edge technologies.
+                {about.bio_paragraph_1}
               </p>
-              <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
-                With academic training in Software Engineering, Database Systems, OOP, and System Analysis & Design, I prioritize structural reliability, clean code, and intuitive user experiences.
-              </p>
+              {about.bio_paragraph_2 && (
+                <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
+                  {about.bio_paragraph_2}
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800">
               <div>
-                <p className="text-3xl font-extrabold text-zinc-950 dark:text-white">3+</p>
+                <p className="text-3xl font-extrabold text-zinc-950 dark:text-white">{about.years_experience}+</p>
                 <p className="text-xs font-sans text-zinc-500 dark:text-zinc-400 uppercase font-semibold tracking-wider mt-1">Years Experience</p>
               </div>
               <div>
-                <p className="text-3xl font-extrabold text-zinc-950 dark:text-white">10+</p>
+                <p className="text-3xl font-extrabold text-zinc-950 dark:text-white">{about.projects_count}+</p>
                 <p className="text-xs font-sans text-zinc-500 dark:text-zinc-400 uppercase font-semibold tracking-wider mt-1">Built Projects</p>
               </div>
               <div>
-                <p className="text-3xl font-extrabold text-zinc-950 dark:text-white">3.75</p>
+                <p className="text-3xl font-extrabold text-zinc-950 dark:text-white">{about.gpa}</p>
                 <p className="text-xs font-sans text-zinc-500 dark:text-zinc-400 uppercase font-semibold tracking-wider mt-1">Academic GPA</p>
               </div>
             </div>
@@ -84,12 +93,12 @@ export default function About() {
                 <h4 className="font-bold text-sm text-zinc-950 dark:text-white">Education</h4>
               </div>
               <div>
-                <p className="font-bold text-sm text-zinc-950 dark:text-zinc-200">S1 Sistem Informasi</p>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5 font-medium">Telkom University</p>
+                <p className="font-bold text-sm text-zinc-950 dark:text-zinc-200">{about.education_degree}</p>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5 font-medium">{about.education_university}</p>
                 <div className="flex items-center gap-3 mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">
-                  <span className="font-semibold text-zinc-700 dark:text-zinc-300 font-mono">GPA: 3.75 / 4.00</span>
+                  <span className="font-semibold text-zinc-700 dark:text-zinc-300 font-mono">GPA: {about.gpa} / 4.00</span>
                   <span>•</span>
-                  <span className="font-mono">2022 – 2026</span>
+                  <span className="font-mono">{about.education_years}</span>
                 </div>
               </div>
             </motion.div>
@@ -109,7 +118,7 @@ export default function About() {
                 <h4 className="font-bold text-sm text-zinc-950 dark:text-white">Career Objective</h4>
               </div>
               <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
-                To engineer scalable full-stack web architectures, optimizing data-intensive backends, and delivering frictionless user interfaces for real-world enterprise applications.
+                {about.career_objective}
               </p>
             </motion.div>
 
@@ -128,7 +137,7 @@ export default function About() {
                 <h4 className="font-bold text-sm text-zinc-950 dark:text-white">Current Focus</h4>
               </div>
               <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
-                Focusing on full-stack web architectures, optimizing database performance, and integrating secure payment processing and AI technologies.
+                {about.current_focus}
               </p>
             </motion.div>
           </div>

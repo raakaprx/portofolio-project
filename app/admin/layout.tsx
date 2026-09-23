@@ -28,10 +28,12 @@ export default function AdminLayout({
   const getPageTitle = () => {
     if (pathname === "/admin") return "Overview & Analytics";
     if (pathname.startsWith("/admin/profile")) return "Profile & Hero Configuration";
+    if (pathname.startsWith("/admin/about")) return "About & Biography Configuration";
     if (pathname.startsWith("/admin/projects")) return "Project Management";
     if (pathname.startsWith("/admin/experiences")) return "Experience Management";
     if (pathname.startsWith("/admin/certificates")) return "Certificate Credentials";
     if (pathname.startsWith("/admin/tech-stack")) return "Tech Stack Management";
+    if (pathname.startsWith("/admin/messages")) return "Messages & Inquiries";
     if (pathname.startsWith("/admin/analytics")) return "Visitor Activity & Logs";
     return "CMS Dashboard";
   };

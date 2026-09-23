@@ -5,6 +5,7 @@ import {
   DEFAULT_CERTIFICATES,
   DEFAULT_TECH_GROUPS,
   DEFAULT_PROFILE,
+  DEFAULT_ABOUT,
   parseAvatarUrl,
   type ProjectItem,
   type ProjectMetric,
@@ -17,6 +18,7 @@ import {
   type TechItem,
   type ProfileData,
   type ProfileHighlightCard,
+  type AboutData,
 } from "./portfolio-defaults";
 
 export * from "./portfolio-defaults";
@@ -389,3 +391,40 @@ export async function getProfile(): Promise<ProfileData> {
     return DEFAULT_PROFILE;
   }
 }
+
+export async function getAboutContent(): Promise<AboutData> {
+  try {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("about_content")
+      .select("*")
+      .maybeSingle();
+
+    if (error) {
+      console.warn("[getAboutContent] Supabase query returned an error, using fallback:", error.message);
+      return DEFAULT_ABOUT;
+    }
+
+    if (!data) {
+      return DEFAULT_ABOUT;
+    }
+
+    return {
+      id: data.id || DEFAULT_ABOUT.id,
+      bio_paragraph_1: data.bio_paragraph_1 || DEFAULT_ABOUT.bio_paragraph_1,
+      bio_paragraph_2: data.bio_paragraph_2 || DEFAULT_ABOUT.bio_paragraph_2,
+      years_experience: typeof data.years_experience === "number" ? data.years_experience : (parseInt(data.years_experience, 10) || DEFAULT_ABOUT.years_experience),
+      projects_count: typeof data.projects_count === "number" ? data.projects_count : (parseInt(data.projects_count, 10) || DEFAULT_ABOUT.projects_count),
+      gpa: data.gpa || DEFAULT_ABOUT.gpa,
+      education_degree: data.education_degree || DEFAULT_ABOUT.education_degree,
+      education_university: data.education_university || DEFAULT_ABOUT.education_university,
+      education_years: data.education_years || DEFAULT_ABOUT.education_years,
+      career_objective: data.career_objective || DEFAULT_ABOUT.career_objective,
+      current_focus: data.current_focus || DEFAULT_ABOUT.current_focus,
+    };
+  } catch (err) {
+    console.error("[getAboutContent] Unexpected failure fetching about content:", err);
+    return DEFAULT_ABOUT;
+  }
+}
+
