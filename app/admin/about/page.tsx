@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   BookOpen,
   Save,
@@ -42,7 +42,8 @@ export default function AdminAboutPage() {
   const [careerObjective, setCareerObjective] = useState(DEFAULT_ABOUT.career_objective);
   const [currentFocus, setCurrentFocus] = useState(DEFAULT_ABOUT.current_focus);
 
-  const fetchAbout = async () => {
+  /** Fetches the About section content from Supabase and populates all form fields. Falls back to DEFAULT_ABOUT if table is missing or data is null. */
+  const fetchAbout = useCallback(async () => {
     setLoading(true);
     setTableMissing(false);
     try {
@@ -56,7 +57,7 @@ export default function AdminAboutPage() {
         if (error.code === "PGRST205" || error.message?.includes("not find the table")) {
           setTableMissing(true);
         }
-        console.warn("[fetchAbout] Gunakan data default about:", error.message);
+        toast.info("Tabel 'about_content' belum ditemukan. Menggunakan data fallback default.");
         return;
       }
 
@@ -72,34 +73,47 @@ export default function AdminAboutPage() {
         setCareerObjective(data.career_objective || DEFAULT_ABOUT.career_objective);
         setCurrentFocus(data.current_focus || DEFAULT_ABOUT.current_focus);
       }
-    } catch (err) {
-      console.error("[fetchAbout] Error fetching:", err);
+    } catch {
       toast.error("Gagal memuat data About.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchAbout();
-  }, []);
+  }, [fetchAbout]);
 
-  const handleSave = async () => {
+  /** Validates and upserts the About section payload to Supabase, then triggers ISR revalidation so the public page reflects the latest content. */
+  const handleSave = useCallback(async () => {
+    if (saving) return;
+
+    const parsedYears = Number(yearsExp);
+    const parsedProjects = Number(projectsCount);
+    if (isNaN(parsedYears) || parsedYears < 0) {
+      toast.error("Tahun pengalaman harus berupa angka positif.");
+      return;
+    }
+    if (isNaN(parsedProjects) || parsedProjects < 0) {
+      toast.error("Jumlah proyek harus berupa angka positif.");
+      return;
+    }
+
     setSaving(true);
     try {
       const supabase = createClient();
       const payload: AboutData = {
         id: "main",
-        bio_paragraph_1: bio1.trim(),
-        bio_paragraph_2: bio2.trim(),
-        years_experience: Number(yearsExp) || 0,
-        projects_count: Number(projectsCount) || 0,
-        gpa: gpa.trim(),
-        education_degree: educationDegree.trim(),
-        education_university: educationUniversity.trim(),
-        education_years: educationYears.trim(),
-        career_objective: careerObjective.trim(),
-        current_focus: currentFocus.trim(),
+        bio_paragraph_1: bio1?.trim() ?? "",
+        bio_paragraph_2: bio2?.trim() ?? "",
+        years_experience: parsedYears,
+        projects_count: parsedProjects,
+        gpa: gpa?.trim() ?? "",
+        education_degree: educationDegree?.trim() ?? "",
+        education_university: educationUniversity?.trim() ?? "",
+        education_years: educationYears?.trim() ?? "",
+        career_objective: careerObjective?.trim() ?? "",
+        current_focus: currentFocus?.trim() ?? "",
       };
 
       const { error } = await supabase
@@ -122,7 +136,19 @@ export default function AdminAboutPage() {
     } finally {
       setSaving(false);
     }
-  };
+  }, [
+    saving,
+    yearsExp,
+    projectsCount,
+    bio1,
+    bio2,
+    gpa,
+    educationDegree,
+    educationUniversity,
+    educationYears,
+    careerObjective,
+    currentFocus,
+  ]);
 
   const sqlCode = `-- Jalankan di SQL Editor dashboard Supabase Anda:
 CREATE TABLE IF NOT EXISTS public.about_content (
@@ -180,6 +206,7 @@ INSERT INTO public.about_content (id) VALUES ('main') ON CONFLICT (id) DO NOTHIN
             variant="outline"
             size="sm"
             onClick={() => fetchAbout()}
+            aria-label="Muat ulang data About dari database"
             className="border-zinc-700 bg-zinc-800 text-zinc-200 hover:bg-zinc-700 gap-1.5"
           >
             <RefreshCw className="w-3.5 h-3.5" />
@@ -190,6 +217,7 @@ INSERT INTO public.about_content (id) VALUES ('main') ON CONFLICT (id) DO NOTHIN
             onClick={handleSave}
             disabled={saving}
             size="sm"
+            aria-label="Simpan konten About section"
             className="bg-emerald-600 text-white hover:bg-emerald-500 font-semibold gap-1.5 shadow-sm"
           >
             {saving ? (
@@ -212,7 +240,7 @@ INSERT INTO public.about_content (id) VALUES ('main') ON CONFLICT (id) DO NOTHIN
         <div className="p-4 sm:p-5 rounded-2xl bg-amber-950/40 border border-amber-800/80 text-amber-200 space-y-3">
           <div className="flex items-center gap-2 text-sm font-bold text-amber-300">
             <AlertTriangle className="w-4 h-4 text-amber-400" />
-            Tabel &apos;about_content&apos; belum ada di Supabase
+            Tabel &apos;about_content&apos; belum ada — Salin SQL di bawah &amp; jalankan di Supabase
           </div>
           <p className="text-xs text-amber-200/80 leading-relaxed">
             Data saat ini menggunakan fallback default. Untuk mengaktifkan penyimpanan dinamis, silakan salin skrip SQL berikut dan jalankan di SQL Editor dashboard Supabase Anda:
@@ -405,6 +433,7 @@ INSERT INTO public.about_content (id) VALUES ('main') ON CONFLICT (id) DO NOTHIN
         <Button
           onClick={handleSave}
           disabled={saving}
+          aria-label="Simpan konten About section (bawah)"
           className="bg-emerald-600 text-white hover:bg-emerald-500 font-semibold gap-2 h-11 px-6 shadow-md"
         >
           {saving ? (
