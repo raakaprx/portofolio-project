@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPublicClient } from "@/lib/supabase/server";
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 /**
  * Dispatches optional real-time push notifications to your mobile phone
  * via Telegram Bot or Discord Webhook whenever a new contact message is received.
@@ -9,9 +16,11 @@ async function sendMobileNotification(payload: {
   name: string;
   email: string;
   message: string;
-}) {
+}): Promise<{ telegram: string; discord: string }> {
   const { name, email, message } = payload;
   const timeStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
+  let tgStatus = "not_configured";
+  let discordStatus = "not_configured";
 
   // 1. Telegram Mobile Push (Free, instantaneous push notification on phone)
   const tgToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -20,23 +29,32 @@ async function sendMobileNotification(payload: {
   if (tgToken && tgChatId) {
     try {
       const text =
-        `📬 *New Portfolio Message!*\n\n` +
-        `👤 *From:* ${name}\n` +
-        `📧 *Email:* \`${email}\`\n` +
-        `⏰ *Time:* ${timeStr}\n\n` +
-        `💬 *Message:*\n${message}`;
+        `📬 <b>New Portfolio Message!</b>\n\n` +
+        `👤 <b>From:</b> ${escapeHtml(name)}\n` +
+        `📧 <b>Email:</b> <code>${escapeHtml(email)}</code>\n` +
+        `⏰ <b>Time:</b> ${escapeHtml(timeStr)}\n\n` +
+        `💬 <b>Message:</b>\n${escapeHtml(message)}`;
 
-      await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
+      const tgRes = await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chat_id: tgChatId,
           text,
-          parse_mode: "Markdown",
+          parse_mode: "HTML",
         }),
       });
-    } catch (err) {
-      console.warn("[MobileNotification] Telegram send failed:", err);
+
+      const tgJson = await tgRes.json().catch(() => null);
+      if (tgRes.ok && tgJson?.ok) {
+        tgStatus = "sent";
+      } else {
+        tgStatus = `failed: ${tgJson?.description || tgRes.statusText}`;
+        console.error("[MobileNotification] Telegram API error:", tgJson);
+      }
+    } catch (err: unknown) {
+      tgStatus = `error: ${err instanceof Error ? err.message : String(err)}`;
+      console.warn("[MobileNotification] Telegram fetch error:", err);
     }
   }
 
@@ -44,7 +62,7 @@ async function sendMobileNotification(payload: {
   const discordWebhook = process.env.DISCORD_WEBHOOK_URL;
   if (discordWebhook) {
     try {
-      await fetch(discordWebhook, {
+      const dcRes = await fetch(discordWebhook, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -77,10 +95,15 @@ async function sendMobileNotification(payload: {
           ],
         }),
       });
-    } catch (err) {
+
+      discordStatus = dcRes.ok ? "sent" : `failed: ${dcRes.statusText}`;
+    } catch (err: unknown) {
+      discordStatus = `error: ${err instanceof Error ? err.message : String(err)}`;
       console.warn("[MobileNotification] Discord webhook send failed:", err);
     }
   }
+
+  return { telegram: tgStatus, discord: discordStatus };
 }
 
 export async function POST(req: NextRequest) {
@@ -128,14 +151,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Trigger phone notification asynchronously (does not block response)
-    sendMobileNotification({
+    // Must await in serverless runtime so execution is not frozen prematurely
+    const notificationResult = await sendMobileNotification({
       name: name.trim(),
       email: email.trim(),
       message: message.trim(),
-    }).catch(() => {});
+    });
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json(
+      { success: true, notification: notificationResult },
+      { status: 200 }
+    );
   } catch (err) {
     console.error("[api/contact POST] Unexpected error:", err);
     return NextResponse.json(
