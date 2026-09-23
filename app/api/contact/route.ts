@@ -23,6 +23,45 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
+// ─── Turnstile Bot Verification ───────────────────────────────────────────────
+
+/**
+ * Validates Cloudflare Turnstile token against Cloudflare's siteverify API.
+ * If CF_TURNSTILE_SECRET_KEY is not set in env, it logs a warning and passes (graceful fallback).
+ */
+async function verifyTurnstileToken(token: string | undefined, ip: string): Promise<boolean> {
+  const secretKey = process.env.CF_TURNSTILE_SECRET_KEY;
+  if (!secretKey) {
+    console.warn("[Turnstile] CF_TURNSTILE_SECRET_KEY is not configured. Skipping verification.");
+    return true;
+  }
+
+  if (!token || typeof token !== "string" || token.trim().length === 0) {
+    return false;
+  }
+
+  try {
+    const formData = new URLSearchParams();
+    formData.append("secret", secretKey);
+    formData.append("response", token);
+    if (ip && ip !== "unknown") {
+      formData.append("remoteip", ip);
+    }
+
+    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: formData,
+    });
+
+    const data = await res.json();
+    return Boolean(data.success);
+  } catch (err) {
+    console.error("[Turnstile] Verification request failed:", err);
+    return false;
+  }
+}
+
 // ─── Sanitizers ───────────────────────────────────────────────────────────────
 
 /** Escapes HTML special characters to prevent markup injection in Telegram HTML mode. */
@@ -150,15 +189,29 @@ export async function POST(req: NextRequest) {
       req.headers.get("x-real-ip") ??
       "unknown";
 
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") {
+      return NextResponse.json({ error: "Invalid request payload." }, { status: 400 });
+    }
+
+    const { name, email, message, turnstileToken } = body;
+
+    // 1. Cloudflare Turnstile Verification (Stops automated bots before rate limit check)
+    const isHuman = await verifyTurnstileToken(turnstileToken, ip);
+    if (!isHuman) {
+      return NextResponse.json(
+        { error: "Security verification failed. Please complete the verification check." },
+        { status: 403 }
+      );
+    }
+
+    // 2. Rate limiting
     if (isRateLimited(ip)) {
       return NextResponse.json(
         { error: "Too many requests. Please wait a moment before trying again." },
         { status: 429 }
       );
     }
-
-    const body = await req.json();
-    const { name, email, message } = body ?? {};
 
     if (!name || typeof name !== "string" || name.trim().length < 2)
       return NextResponse.json({ error: "Invalid name." }, { status: 400 });

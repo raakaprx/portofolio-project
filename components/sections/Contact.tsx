@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import Script from "next/script";
 import { motion } from "framer-motion";
 import {
   Copy,
@@ -31,6 +32,66 @@ export default function Contact({
   const [senderEmail, setSenderEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileContainerRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+
+  // Initialize Cloudflare Turnstile widget
+  useEffect(() => {
+    const siteKey = process.env.NEXT_PUBLIC_CF_TURNSTILE_SITE_KEY;
+    if (!siteKey) return;
+
+    let checkTimer: NodeJS.Timeout | null = null;
+
+    const renderWidget = () => {
+      if (typeof window !== "undefined" && (window as any).turnstile && turnstileContainerRef.current) {
+        if (widgetIdRef.current) {
+          try {
+            (window as any).turnstile.remove(widgetIdRef.current);
+          } catch {}
+        }
+        turnstileContainerRef.current.innerHTML = "";
+        try {
+          const id = (window as any).turnstile.render(turnstileContainerRef.current, {
+            sitekey: siteKey,
+            callback: (token: string) => {
+              setTurnstileToken(token);
+            },
+            "expired-callback": () => {
+              setTurnstileToken(null);
+            },
+            "error-callback": () => {
+              setTurnstileToken(null);
+            },
+            theme: "auto",
+          });
+          widgetIdRef.current = id;
+        } catch (err) {
+          console.error("[Turnstile] Render error:", err);
+        }
+      }
+    };
+
+    if (typeof window !== "undefined" && (window as any).turnstile) {
+      renderWidget();
+    } else {
+      checkTimer = setInterval(() => {
+        if (typeof window !== "undefined" && (window as any).turnstile) {
+          if (checkTimer) clearInterval(checkTimer);
+          renderWidget();
+        }
+      }, 200);
+    }
+
+    return () => {
+      if (checkTimer) clearInterval(checkTimer);
+      if (widgetIdRef.current && typeof window !== "undefined" && (window as any).turnstile) {
+        try {
+          (window as any).turnstile.remove(widgetIdRef.current);
+        } catch {}
+      }
+    };
+  }, []);
 
   const profile = initialProfile || DEFAULT_PROFILE;
   const emailAddress = profile.email || DEFAULT_PROFILE.email || "rakapradana.work@gmail.com";
@@ -57,6 +118,12 @@ export default function Contact({
       return;
     }
 
+    const siteKey = process.env.NEXT_PUBLIC_CF_TURNSTILE_SITE_KEY;
+    if (siteKey && !turnstileToken) {
+      toast.error("Please complete the security verification challenge.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const res = await fetch("/api/contact", {
@@ -66,6 +133,7 @@ export default function Contact({
           name: name.trim(),
           email: senderEmail.trim(),
           message: message.trim(),
+          turnstileToken,
         }),
       });
 
@@ -73,6 +141,10 @@ export default function Contact({
 
       if (!res.ok) {
         toast.error(json.error || "Failed to send message.");
+        if (widgetIdRef.current && (window as any).turnstile) {
+          (window as any).turnstile.reset(widgetIdRef.current);
+          setTurnstileToken(null);
+        }
         return;
       }
 
@@ -80,8 +152,16 @@ export default function Contact({
       setName("");
       setSenderEmail("");
       setMessage("");
+      setTurnstileToken(null);
+      if (widgetIdRef.current && (window as any).turnstile) {
+        (window as any).turnstile.reset(widgetIdRef.current);
+      }
     } catch {
       toast.error("Network error. Please try again.");
+      if (widgetIdRef.current && (window as any).turnstile) {
+        (window as any).turnstile.reset(widgetIdRef.current);
+        setTurnstileToken(null);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -310,6 +390,13 @@ export default function Contact({
                   </div>
                 </div>
 
+                {/* Cloudflare Turnstile Verification Widget */}
+                {process.env.NEXT_PUBLIC_CF_TURNSTILE_SITE_KEY && (
+                  <div className="flex flex-col items-center justify-center my-1 min-h-[65px]">
+                    <div ref={turnstileContainerRef} />
+                  </div>
+                )}
+
                 <div className="pt-4 border-t border-zinc-200 dark:border-zinc-850">
                   <Button
                     type="submit"
@@ -334,6 +421,14 @@ export default function Contact({
           </motion.div>
         </div>
       </div>
+
+      {/* Cloudflare Turnstile explicit script loader */}
+      {process.env.NEXT_PUBLIC_CF_TURNSTILE_SITE_KEY && (
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+          strategy="afterInteractive"
+        />
+      )}
     </section>
   );
 }
