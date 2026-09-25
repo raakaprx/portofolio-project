@@ -378,7 +378,7 @@ export default function AdminDashboardPage() {
             )}
           </div>
 
-          <div className="pt-4 mt-6 border-t border-zinc-800 flex items-center justify-between text-[11px] text-zinc-500 font-mono">
+          <div className="pt-4 mt-6 border-t border-zinc-800 flex items-center justify-between text-[11px] text-zinc-400 font-mono">
             <span>Dihitung dari event klik pengunjung</span>
             <Link href="/admin/analytics" className="text-purple-400 hover:underline">
               Lihat Detail Analitik &rarr;
@@ -403,7 +403,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {data.recentEvents.length === 0 ? (
-            <p className="text-xs text-zinc-500 font-mono py-8 text-center">
+            <p className="text-xs text-zinc-400 font-mono py-8 text-center">
               Belum ada aktivitas yang terekam.
             </p>
           ) : (
@@ -411,7 +411,7 @@ export default function AdminDashboardPage() {
               {data.recentEvents.map((ev) => (
                 <div
                   key={ev.id}
-                  className="py-3 flex items-center justify-between gap-3 text-xs font-mono"
+                  className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 text-xs font-mono"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span
@@ -426,17 +426,17 @@ export default function AdminDashboardPage() {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-3 text-zinc-500 shrink-0 text-[11px]">
+                  <div className="flex items-center gap-3 text-zinc-400 shrink-0 text-[11px]">
                     <span className="flex items-center gap-1">
                       {ev.device_type === "Mobile" ? (
-                        <Smartphone className="w-3 h-3" />
+                        <Smartphone className="w-3 h-3 text-emerald-400" />
                       ) : (
-                        <Monitor className="w-3 h-3" />
+                        <Monitor className="w-3 h-3 text-blue-400" />
                       )}
                       <span>{ev.device_type || "Desktop"}</span>
                     </span>
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
+                      <Clock className="w-3 h-3 text-zinc-400" />
                       <span>{formatTime(ev.created_at)}</span>
                     </span>
                   </div>

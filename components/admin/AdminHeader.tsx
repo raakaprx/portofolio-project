@@ -39,15 +39,15 @@ export function AdminHeader({
   return (
     <header className="h-16 px-4 sm:px-6 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between text-zinc-100 shrink-0">
       {/* Left: Mobile Toggle & Page Title */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 min-w-0">
         <button
           onClick={onOpenMobileSidebar}
-          className="md:hidden p-2 rounded-lg bg-zinc-800 text-zinc-300 hover:text-white"
+          className="md:hidden p-2 rounded-lg bg-zinc-800 text-zinc-300 hover:text-white shrink-0"
           aria-label="Open Sidebar"
         >
           <Menu className="w-5 h-5" />
         </button>
-        <h1 className="text-base sm:text-lg font-bold font-mono tracking-tight text-white">
+        <h1 className="text-base sm:text-lg font-bold font-mono tracking-tight text-white truncate">
           {title}
         </h1>
       </div>

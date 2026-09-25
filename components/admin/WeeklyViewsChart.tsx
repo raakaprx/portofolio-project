@@ -54,20 +54,30 @@ export function WeeklyViewsChart({ data, loading = false }: WeeklyViewsChartProp
       {/* Chart Canvas */}
       <div className="pt-6">
         {loading ? (
-          <div className="h-48 flex items-center justify-center text-xs font-mono text-zinc-500 animate-pulse">
-            Memuat data analitik 7 hari...
+          <div className="relative animate-pulse">
+            <div className="h-48 flex items-end justify-between gap-2 sm:gap-4 pt-4 pb-8 px-2 sm:px-4">
+              {[35, 60, 80, 45, 95, 65, 75].map((h, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center justify-end h-full">
+                  <div
+                    style={{ height: `${h}%` }}
+                    className="w-full max-w-[42px] bg-zinc-800/80 rounded-t-md"
+                  />
+                  <div className="mt-2 h-2.5 w-10 bg-zinc-800/60 rounded-sm" />
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="relative">
-            {/* Horizontal Grid lines */}
+            {/* Horizontal Grid lines (WCAG AA Contrast) */}
             <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8">
-              <div className="border-b border-zinc-800/60 w-full flex justify-between text-[10px] font-mono text-zinc-600">
+              <div className="border-b border-zinc-800/80 w-full flex justify-between text-[10px] font-mono text-zinc-400">
                 <span>{maxCount}</span>
               </div>
-              <div className="border-b border-zinc-800/40 w-full flex justify-between text-[10px] font-mono text-zinc-600">
+              <div className="border-b border-zinc-800/60 w-full flex justify-between text-[10px] font-mono text-zinc-400">
                 <span>{Math.round(maxCount / 2)}</span>
               </div>
-              <div className="border-b border-zinc-800/80 w-full flex justify-between text-[10px] font-mono text-zinc-600">
+              <div className="border-b border-zinc-800/80 w-full flex justify-between text-[10px] font-mono text-zinc-400">
                 <span>0</span>
               </div>
             </div>
@@ -77,6 +87,8 @@ export function WeeklyViewsChart({ data, loading = false }: WeeklyViewsChartProp
               {data.map((item, idx) => {
                 const heightPercent = maxCount > 0 ? (item.count / maxCount) * 100 : 0;
                 const isHovered = hoveredIdx === idx;
+                const isFirst = idx === 0;
+                const isLast = idx === data.length - 1;
 
                 return (
                   <div
@@ -85,19 +97,27 @@ export function WeeklyViewsChart({ data, loading = false }: WeeklyViewsChartProp
                     onMouseEnter={() => setHoveredIdx(idx)}
                     onMouseLeave={() => setHoveredIdx(null)}
                   >
-                    {/* Tooltip */}
+                    {/* Tooltip with Boundary Clamping */}
                     {isHovered && (
-                      <div className="absolute -top-12 z-20 px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-700 text-white text-[11px] font-mono shadow-xl whitespace-nowrap pointer-events-none animate-in fade-in zoom-in-95 duration-150">
+                      <div
+                        className={`absolute -top-12 z-20 px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-700 text-white text-[11px] font-mono shadow-xl whitespace-nowrap pointer-events-none animate-in fade-in zoom-in-95 duration-150 ${
+                          isFirst
+                            ? "left-0"
+                            : isLast
+                            ? "right-0"
+                            : "left-1/2 -translate-x-1/2"
+                        }`}
+                      >
                         <p className="font-semibold text-blue-400">{item.count} kunjungan</p>
                         <p className="text-[10px] text-zinc-400">{item.fullDate}</p>
                       </div>
                     )}
 
-                    {/* Bar */}
+                    {/* Bar with Mount Animation */}
                     <div className="w-full max-w-[42px] flex items-end justify-center h-full">
                       <div
                         style={{ height: `${Math.max(heightPercent, 4)}%` }}
-                        className={`w-full rounded-t-md transition-all duration-300 ease-out ${
+                        className={`w-full rounded-t-md transition-all duration-300 ease-out animate-bar-grow ${
                           item.count === 0
                             ? "bg-zinc-800 group-hover:bg-zinc-700"
                             : isHovered

@@ -369,7 +369,7 @@ export default function AdminAnalyticsPage() {
             <span className="text-[11px]">Auto-Refresh (20s)</span>
           </label>
           <span className="text-zinc-600 hidden sm:inline">•</span>
-          <span className="text-[11px] text-zinc-500 flex items-center gap-1.5">
+          <span className="text-[11px] text-zinc-400 flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>Database Supabase Aktif</span>
           </span>
@@ -382,7 +382,7 @@ export default function AdminAnalyticsPage() {
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="relative flex-1">
-          <Search className="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={search}
@@ -393,7 +393,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-zinc-500" />
+          <Filter className="w-4 h-4 text-zinc-400" />
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
@@ -408,7 +408,7 @@ export default function AdminAnalyticsPage() {
         </div>
       </div>
 
-      {/* Log Activity Table */}
+      {/* Log Activity Table / Mobile Cards */}
       <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 overflow-hidden shadow-sm">
         {loading ? (
           <div className="py-16 flex flex-col items-center justify-center gap-3 text-zinc-400">
@@ -417,7 +417,7 @@ export default function AdminAnalyticsPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="py-16 flex flex-col items-center justify-center gap-3 text-center px-4">
-            <div className="p-3 rounded-2xl bg-zinc-950 border border-zinc-800 text-zinc-500">
+            <div className="p-3 rounded-2xl bg-zinc-950 border border-zinc-800 text-zinc-400">
               <BarChart3 className="w-7 h-7" />
             </div>
             <h3 className="text-sm font-bold font-mono text-white">
@@ -443,72 +443,124 @@ export default function AdminAnalyticsPage() {
             )}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-mono">
-              <thead className="bg-zinc-950/80 border-b border-zinc-800 text-zinc-400 uppercase text-[10px] tracking-wider">
-                <tr>
-                  <th className="py-3 px-4">Waktu</th>
-                  <th className="py-3 px-4">Aksi / Event</th>
-                  <th className="py-3 px-4">Target Aksi</th>
-                  <th className="py-3 px-4">Alamat IP</th>
-                  <th className="py-3 px-4">Perangkat & Browser</th>
-                  <th className="py-3 px-4">Sumber (Referrer)</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
-                {filtered.map((row) => {
-                  const ip = extractIp(row);
-                  return (
-                    <tr key={row.id} className="hover:bg-zinc-800/30 transition-colors">
-                      <td className="py-3 px-4 text-zinc-400 whitespace-nowrap">
-                        {formatTimestamp(row.created_at)}
-                      </td>
-                      <td className="py-3 px-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 py-0.5 rounded-full border text-[10px] font-semibold uppercase tracking-wider ${getEventBadge(
-                            row.event_type
-                          )}`}
-                        >
-                          {row.event_type.replace("_", " ")}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 font-medium text-white max-w-xs truncate">
-                        {row.target_name || "—"}
-                      </td>
-                      <td className="py-3 px-4 whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-zinc-950 border border-zinc-800 text-zinc-200 font-mono text-[11px]">
-                          <Globe className="w-3 h-3 text-blue-400 shrink-0" />
-                          <span>{ip}</span>
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-zinc-300 max-w-xs truncate">
-                        <span className="inline-flex items-center gap-1.5">
-                          {cleanDevice(row).includes("Mobile") ? (
-                            <Smartphone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                          ) : (
-                            <Monitor className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                          )}
-                          <span className="truncate">{cleanDevice(row)}</span>
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-zinc-400 max-w-xs truncate">
-                        {row.referrer && row.referrer !== "Direct" ? (
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs font-mono">
+                <thead className="bg-zinc-950/80 border-b border-zinc-800 text-zinc-400 uppercase text-[10px] tracking-wider">
+                  <tr>
+                    <th className="py-3 px-4">Waktu</th>
+                    <th className="py-3 px-4">Aksi / Event</th>
+                    <th className="py-3 px-4">Target Aksi</th>
+                    <th className="py-3 px-4">Alamat IP</th>
+                    <th className="py-3 px-4">Perangkat & Browser</th>
+                    <th className="py-3 px-4">Sumber (Referrer)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
+                  {filtered.map((row) => {
+                    const ip = extractIp(row);
+                    return (
+                      <tr key={row.id} className="hover:bg-zinc-800/30 transition-colors">
+                        <td className="py-3 px-4 text-zinc-400 whitespace-nowrap">
+                          {formatTimestamp(row.created_at)}
+                        </td>
+                        <td className="py-3 px-4 whitespace-nowrap">
                           <span
-                            title={row.referrer}
-                            className="text-blue-400 underline underline-offset-2"
+                            className={`px-2 py-0.5 rounded-full border text-[10px] font-semibold uppercase tracking-wider ${getEventBadge(
+                              row.event_type
+                            )}`}
                           >
-                            {row.referrer}
+                            {row.event_type.replace("_", " ")}
                           </span>
+                        </td>
+                        <td className="py-3 px-4 font-medium text-white max-w-xs truncate">
+                          {row.target_name || "—"}
+                        </td>
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-zinc-950 border border-zinc-800 text-zinc-200 font-mono text-[11px]">
+                            <Globe className="w-3 h-3 text-blue-400 shrink-0" />
+                            <span>{ip}</span>
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-zinc-300 max-w-xs truncate">
+                          <span className="inline-flex items-center gap-1.5">
+                            {cleanDevice(row).includes("Mobile") ? (
+                              <Smartphone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            ) : (
+                              <Monitor className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                            )}
+                            <span className="truncate">{cleanDevice(row)}</span>
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-zinc-400 max-w-xs truncate">
+                          {row.referrer && row.referrer !== "Direct" ? (
+                            <span
+                              title={row.referrer}
+                              className="text-blue-400 underline underline-offset-2"
+                            >
+                              {row.referrer}
+                            </span>
+                          ) : (
+                            <span className="text-zinc-500">Direct / Langsung</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card-Based Log View */}
+            <div className="md:hidden divide-y divide-zinc-800/70">
+              {filtered.map((row) => {
+                const ip = extractIp(row);
+                return (
+                  <div key={row.id} className="p-4 space-y-2.5 text-xs font-mono">
+                    <div className="flex items-center justify-between gap-2">
+                      <span
+                        className={`px-2 py-0.5 rounded-full border text-[10px] font-semibold uppercase tracking-wider ${getEventBadge(
+                          row.event_type
+                        )}`}
+                      >
+                        {row.event_type.replace("_", " ")}
+                      </span>
+                      <span className="text-zinc-400 text-[11px]">
+                        {formatTimestamp(row.created_at)}
+                      </span>
+                    </div>
+
+                    <div className="font-medium text-white text-sm break-words">
+                      {row.target_name || "—"}
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-zinc-950 border border-zinc-800 text-zinc-300 text-[11px]">
+                        <Globe className="w-3 h-3 text-blue-400 shrink-0" />
+                        <span>{ip}</span>
+                      </span>
+
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-950 border border-zinc-800 text-zinc-300 text-[11px]">
+                        {cleanDevice(row).includes("Mobile") ? (
+                          <Smartphone className="w-3 h-3 text-emerald-400 shrink-0" />
                         ) : (
-                          <span className="text-zinc-500">Direct / Langsung</span>
+                          <Monitor className="w-3 h-3 text-blue-400 shrink-0" />
                         )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                        <span className="truncate max-w-[140px]">{cleanDevice(row)}</span>
+                      </span>
+
+                      {row.referrer && row.referrer !== "Direct" && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-zinc-950 border border-zinc-800 text-blue-400 text-[11px] truncate max-w-[200px]">
+                          ref: {row.referrer}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
     </div>

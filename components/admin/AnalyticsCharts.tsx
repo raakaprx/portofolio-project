@@ -219,8 +219,29 @@ export function AnalyticsCharts({ events, dateFilter, loading = false }: Analyti
 
   if (loading) {
     return (
-      <div className="p-8 rounded-2xl bg-zinc-900 border border-zinc-800 text-center font-mono text-xs text-zinc-500 animate-pulse">
-        Memuat data visualisasi analitik...
+      <div className="space-y-6">
+        <div className="p-6 rounded-2xl bg-zinc-900 border border-zinc-800 shadow-sm animate-pulse">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-800/80">
+            <div className="space-y-2">
+              <div className="h-5 w-48 bg-zinc-800 rounded-md" />
+              <div className="h-3 w-64 bg-zinc-800/60 rounded-md" />
+            </div>
+            <div className="h-8 w-72 bg-zinc-800/50 rounded-xl" />
+          </div>
+          <div className="pt-6">
+            <div className="h-52 flex items-end justify-between gap-2 sm:gap-3 pt-6 pb-8 px-2">
+              {[45, 70, 30, 85, 55, 90, 40, 65, 35, 75].map((h, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center justify-end h-full">
+                  <div
+                    style={{ height: `${h}%` }}
+                    className="w-full max-w-[42px] bg-zinc-800/80 rounded-t-md"
+                  />
+                  <div className="mt-2 h-2.5 w-8 bg-zinc-800/60 rounded-sm" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -228,7 +249,7 @@ export function AnalyticsCharts({ events, dateFilter, loading = false }: Analyti
   return (
     <div className="space-y-6">
       {/* ─── 1. Main Timeline Activity Chart ─────────────────────────── */}
-      <div className="p-6 rounded-2xl bg-zinc-900 border border-zinc-800 shadow-sm">
+      <div className="p-6 rounded-2xl bg-gradient-to-b from-zinc-900 via-zinc-900 to-zinc-950 border border-zinc-700/80 shadow-lg shadow-black/20 ring-1 ring-zinc-800/60">
         {/* Header with Title and Category Filter Tabs */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-800/80">
           <div>
@@ -311,77 +332,98 @@ export function AnalyticsCharts({ events, dateFilter, loading = false }: Analyti
           </div>
         </div>
 
-        {/* Visual Bar Canvas */}
+        {/* Visual Bar Canvas with Mobile Horizontal Scroll Support */}
         <div className="pt-6">
-          <div className="relative">
-            {/* Background Grid Lines */}
-            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8">
-              <div className="border-b border-zinc-800/60 w-full flex justify-between text-[10px] font-mono text-zinc-600">
-                <span>Puncak ({maxBucketValue})</span>
-              </div>
-              <div className="border-b border-zinc-800/40 w-full flex justify-between text-[10px] font-mono text-zinc-600">
-                <span>{Math.round(maxBucketValue / 2)}</span>
-              </div>
-              <div className="border-b border-zinc-800/80 w-full flex justify-between text-[10px] font-mono text-zinc-600">
-                <span>0</span>
-              </div>
+          {timeBuckets.length > 7 && (
+            <div className="sm:hidden flex items-center justify-end gap-1 text-[10px] font-mono text-zinc-400 mb-2">
+              <span>Geser ke samping untuk melihat semua &rarr;</span>
             </div>
+          )}
 
-            {/* Bars Column */}
-            <div className="h-52 flex items-end justify-between gap-1.5 sm:gap-3 pt-6 pb-8 relative z-10 px-1 sm:px-2">
-              {timeBuckets.map((b, idx) => {
-                const count = getActiveBucketCount(b);
-                const heightPercent = maxBucketValue > 0 ? (count / maxBucketValue) * 100 : 0;
-                const isHovered = hoveredBucketIdx === idx;
+          <div className="overflow-x-auto pb-2 -mx-2 px-2 scrollbar-thin">
+            <div
+              className="relative"
+              style={{ minWidth: timeBuckets.length > 7 ? `${Math.max(timeBuckets.length * 42, 540)}px` : "100%" }}
+            >
+              {/* Background Grid Lines (WCAG AA Contrast) */}
+              <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8">
+                <div className="border-b border-zinc-800/80 w-full flex justify-between text-[10px] font-mono text-zinc-400">
+                  <span>Puncak ({maxBucketValue})</span>
+                </div>
+                <div className="border-b border-zinc-800/60 w-full flex justify-between text-[10px] font-mono text-zinc-400">
+                  <span>{Math.round(maxBucketValue / 2)}</span>
+                </div>
+                <div className="border-b border-zinc-800/80 w-full flex justify-between text-[10px] font-mono text-zinc-400">
+                  <span>0</span>
+                </div>
+              </div>
 
-                return (
-                  <div
-                    key={b.key}
-                    className="flex-1 flex flex-col items-center justify-end h-full group relative cursor-pointer"
-                    onMouseEnter={() => setHoveredBucketIdx(idx)}
-                    onMouseLeave={() => setHoveredBucketIdx(null)}
-                  >
-                    {/* Tooltip Box */}
-                    {isHovered && (
-                      <div className="absolute -top-20 z-30 px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-700 text-white text-[11px] font-mono shadow-2xl whitespace-nowrap pointer-events-none animate-in fade-in zoom-in-95 duration-150">
-                        <p className="font-bold text-white mb-1">{b.fullLabel}</p>
-                        <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px]">
-                          <span className="text-blue-400">Views: {b.views}</span>
-                          <span className="text-emerald-400">CV: {b.cvs}</span>
-                          <span className="text-purple-400">Projects: {b.projects}</span>
-                          <span className="text-amber-400">Kontak: {b.contacts}</span>
+              {/* Bars Column */}
+              <div className="h-52 flex items-end justify-between gap-1.5 sm:gap-3 pt-6 pb-8 relative z-10 px-1 sm:px-2">
+                {timeBuckets.map((b, idx) => {
+                  const count = getActiveBucketCount(b);
+                  const heightPercent = maxBucketValue > 0 ? (count / maxBucketValue) * 100 : 0;
+                  const isHovered = hoveredBucketIdx === idx;
+                  const isFirst = idx === 0;
+                  const isLast = idx === timeBuckets.length - 1;
+
+                  return (
+                    <div
+                      key={b.key}
+                      className="flex-1 flex flex-col items-center justify-end h-full group relative cursor-pointer"
+                      onMouseEnter={() => setHoveredBucketIdx(idx)}
+                      onMouseLeave={() => setHoveredBucketIdx(null)}
+                    >
+                      {/* Tooltip Box with Boundary Clamping */}
+                      {isHovered && (
+                        <div
+                          className={`absolute -top-20 z-30 px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-700 text-white text-[11px] font-mono shadow-2xl whitespace-nowrap pointer-events-none animate-in fade-in zoom-in-95 duration-150 ${
+                            isFirst
+                              ? "left-0"
+                              : isLast
+                              ? "right-0"
+                              : "left-1/2 -translate-x-1/2"
+                          }`}
+                        >
+                          <p className="font-bold text-white mb-1">{b.fullLabel}</p>
+                          <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px]">
+                            <span className="text-blue-400">Views: {b.views}</span>
+                            <span className="text-emerald-400">CV: {b.cvs}</span>
+                            <span className="text-purple-400">Projects: {b.projects}</span>
+                            <span className="text-amber-400">Kontak: {b.contacts}</span>
+                          </div>
+                          <p className="mt-1 pt-1 border-t border-zinc-800 text-[10px] text-zinc-400">
+                            Total Event: <strong className="text-white">{b.total}</strong>
+                          </p>
                         </div>
-                        <p className="mt-1 pt-1 border-t border-zinc-800 text-[10px] text-zinc-400">
-                          Total Event: <strong className="text-white">{b.total}</strong>
-                        </p>
+                      )}
+
+                      {/* Bar Component with Mount Animation */}
+                      <div className="w-full max-w-[48px] flex items-end justify-center h-full">
+                        <div
+                          style={{ height: `${Math.max(heightPercent, 4)}%` }}
+                          className={`w-full rounded-t-md transition-all duration-300 ease-out animate-bar-grow ${
+                            count === 0
+                              ? "bg-zinc-800 group-hover:bg-zinc-700"
+                              : getBarColor(activeCategory, isHovered)
+                          }`}
+                        />
                       </div>
-                    )}
 
-                    {/* Bar Component */}
-                    <div className="w-full max-w-[48px] flex items-end justify-center h-full">
-                      <div
-                        style={{ height: `${Math.max(heightPercent, 4)}%` }}
-                        className={`w-full rounded-t-md transition-all duration-300 ease-out ${
-                          count === 0
-                            ? "bg-zinc-800 group-hover:bg-zinc-700"
-                            : getBarColor(activeCategory, isHovered)
-                        }`}
-                      />
+                      {/* X-Axis Label */}
+                      <div className="absolute -bottom-1 w-full text-center">
+                        <span
+                          className={`text-[10px] font-mono transition-colors duration-150 block truncate ${
+                            isHovered ? "text-blue-300 font-bold" : "text-zinc-400 group-hover:text-zinc-200"
+                          }`}
+                        >
+                          {b.label}
+                        </span>
+                      </div>
                     </div>
-
-                    {/* X-Axis Label */}
-                    <div className="absolute -bottom-1 w-full text-center">
-                      <span
-                        className={`text-[10px] font-mono transition-colors duration-150 block truncate ${
-                          isHovered ? "text-blue-300 font-bold" : "text-zinc-400 group-hover:text-zinc-200"
-                        }`}
-                      >
-                        {b.label}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

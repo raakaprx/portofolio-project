@@ -203,3 +203,20 @@ body {
   animation-play-state: paused;
 }
 
+/* Bar chart reveal micro-animation */
+@keyframes barGrow {
+  from {
+    transform: scaleY(0);
+    opacity: 0.3;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.animate-bar-grow {
+  transform-origin: bottom;
+  animation: barGrow 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
