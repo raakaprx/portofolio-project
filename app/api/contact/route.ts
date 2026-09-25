@@ -1,26 +1,70 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPublicClient } from "@/lib/supabase/server";
+import { Redis } from "@upstash/redis";
+import { Ratelimit } from "@upstash/ratelimit";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const MAX_NAME_LEN = 100;
 const MAX_EMAIL_LEN = 254; // RFC 5321 max
 const MAX_MESSAGE_LEN = 2000;
 
-// ─── In-memory rate limiter (per IP, resets on cold start) ───────────────────
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+// ─── Rate Limiter (Upstash Redis with In-Memory Graceful Fallback) ─────────────
 const RATE_LIMIT_MAX = 3;
-const RATE_LIMIT_WINDOW = 60_000; // 60 seconds
+const RATE_LIMIT_WINDOW_MS = 60_000; // 60 seconds
 
-function isRateLimited(ip: string): boolean {
+// In-memory fallback map (for local dev or if Upstash credentials are missing)
+const inMemoryRateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function isInMemoryRateLimited(ip: string): boolean {
   const now = Date.now();
-  const entry = rateLimitMap.get(ip);
+  const entry = inMemoryRateLimitMap.get(ip);
   if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    inMemoryRateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
     return false;
   }
   if (entry.count >= RATE_LIMIT_MAX) return true;
   entry.count += 1;
   return false;
+}
+
+// Lazy singleton for Upstash Ratelimit
+let upstashRatelimit: Ratelimit | null = null;
+
+function getRatelimit(): Ratelimit | null {
+  if (upstashRatelimit) return upstashRatelimit;
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (url && token) {
+    try {
+      const redis = new Redis({ url, token });
+      upstashRatelimit = new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(RATE_LIMIT_MAX, "60 s"),
+        analytics: true,
+        prefix: "@upstash/ratelimit/contact",
+      });
+      return upstashRatelimit;
+    } catch (err) {
+      console.warn("[RateLimit] Failed to initialize Upstash Redis client:", err);
+      return null;
+    }
+  }
+  return null;
+}
+
+async function isRateLimited(ip: string): Promise<boolean> {
+  const limiter = getRatelimit();
+  if (limiter) {
+    try {
+      const { success } = await limiter.limit(ip);
+      return !success; // success === false means rate-limited
+    } catch (err) {
+      console.warn("[RateLimit] Upstash request failed, falling back to in-memory:", err);
+      return isInMemoryRateLimited(ip);
+    }
+  }
+  return isInMemoryRateLimited(ip);
 }
 
 // ─── Turnstile Bot Verification ───────────────────────────────────────────────
@@ -206,7 +250,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Rate limiting
-    if (isRateLimited(ip)) {
+    if (await isRateLimited(ip)) {
       return NextResponse.json(
         { error: "Too many requests. Please wait a moment before trying again." },
         { status: 429 }

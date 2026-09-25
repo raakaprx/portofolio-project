@@ -20,6 +20,16 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_CERTIFICATES, type CertificateItem } from "@/lib/portfolio-defaults";
@@ -37,6 +47,8 @@ export default function AdminCertificatesPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [certToDelete, setCertToDelete] = useState<{ id: string; title: string } | null>(null);
 
   // Form State
   const [title, setTitle] = useState("");
@@ -216,13 +228,13 @@ export default function AdminCertificatesPage() {
     }
   };
 
-  const handleDelete = async (id?: string, certTitle?: string) => {
+  const handleDelete = async (id?: string) => {
     if (!id) {
       toast.error("Sertifikat default tidak dapat dihapus dari database lokal");
       return;
     }
-    if (!confirm(`Hapus sertifikat "${certTitle}"?`)) return;
 
+    setDeletingId(id);
     try {
       const { error } = await supabase
         .from("certificates")
@@ -231,9 +243,12 @@ export default function AdminCertificatesPage() {
       if (error) throw error;
       toast.success("Sertifikat berhasil dihapus");
       await triggerRevalidation("/");
+      setCertToDelete(null);
       fetchCertificates();
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, "Gagal menghapus sertifikat"));
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -356,12 +371,17 @@ export default function AdminCertificatesPage() {
 
                   {c.id && (
                     <Button
-                      onClick={() => handleDelete(c.id, c.title)}
+                      onClick={() => setCertToDelete({ id: c.id!, title: c.title })}
+                      disabled={deletingId === c.id}
                       size="sm"
                       variant="outline"
                       className="h-8 rounded-xl border-red-900/60 bg-red-950/30 hover:bg-red-900/50 text-red-300 text-xs font-mono"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      {deletingId === c.id ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-3 h-3" />
+                      )}
                     </Button>
                   )}
                 </div>
@@ -582,6 +602,49 @@ export default function AdminCertificatesPage() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Confirmation Alert Dialog */}
+      <AlertDialog
+        open={!!certToDelete}
+        onOpenChange={(open) => {
+          if (!open && !deletingId) setCertToDelete(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Sertifikat?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini tidak dapat dibatalkan. Sertifikat{" "}
+              <strong className="text-white font-semibold">
+                &quot;{certToDelete?.title}&quot;
+              </strong>{" "}
+              akan dihapus permanen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deletingId !== null}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deletingId !== null}
+              onClick={() => {
+                if (certToDelete) {
+                  handleDelete(certToDelete.id);
+                }
+              }}
+            >
+              {deletingId ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                  Menghapus...
+                </>
+              ) : (
+                "Hapus Sertifikat"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -16,14 +16,58 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { StatsCard } from "@/components/admin/StatsCard";
+import { WeeklyViewsChart, DailyViewStat } from "@/components/admin/WeeklyViewsChart";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
+
+function aggregateLast7DaysViews(events: Array<{ created_at: string }>): DailyViewStat[] {
+  const result: DailyViewStat[] = [];
+  const now = new Date();
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(now.getDate() - i);
+    d.setHours(0, 0, 0, 0);
+    const dateKey = d.toISOString().split("T")[0];
+
+    const rawWeekday = d.toLocaleDateString("id-ID", { weekday: "short" });
+    const dayNum = d.toLocaleDateString("id-ID", { day: "numeric" });
+    const label = `${rawWeekday} ${dayNum}`;
+    const fullDate = d.toLocaleDateString("id-ID", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    });
+
+    result.push({
+      dateKey,
+      label,
+      fullDate,
+      count: 0,
+    });
+  }
+
+  events.forEach((ev) => {
+    try {
+      const evDateKey = new Date(ev.created_at).toISOString().split("T")[0];
+      const match = result.find((r) => r.dateKey === evDateKey);
+      if (match) {
+        match.count += 1;
+      }
+    } catch {
+      // ignore parse error
+    }
+  });
+
+  return result;
+}
 
 interface AnalyticsSummary {
   totalViews: number;
   totalCvDownloads: number;
   totalProjectClicks: number;
   totalContactClicks: number;
+  weeklyViews: DailyViewStat[];
   recentEvents: Array<{
     id: string;
     event_type: string;
@@ -36,11 +80,13 @@ interface AnalyticsSummary {
 
 export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
+  const [lastFetched, setLastFetched] = useState<Date | null>(null);
   const [data, setData] = useState<AnalyticsSummary>({
     totalViews: 0,
     totalCvDownloads: 0,
     totalProjectClicks: 0,
     totalContactClicks: 0,
+    weeklyViews: aggregateLast7DaysViews([]),
     recentEvents: [],
     topProjects: [],
   });
@@ -50,36 +96,53 @@ export default function AdminDashboardPage() {
   const fetchDashboardData = async (isManualRefresh = false) => {
     if (isManualRefresh) setLoading(true);
     try {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+      sevenDaysAgo.setHours(0, 0, 0, 0);
+
       // Execute aggregate count queries in parallel directly against Postgres
-      const [viewsRes, cvRes, projectClicksRes, contactClicksRes, recentRes, projectClicksDataRes] =
-        await Promise.all([
-          supabase
-            .from("analytics_events")
-            .select("*", { count: "exact", head: true })
-            .eq("event_type", "page_view"),
-          supabase
-            .from("analytics_events")
-            .select("*", { count: "exact", head: true })
-            .eq("event_type", "cv_download"),
-          supabase
-            .from("analytics_events")
-            .select("*", { count: "exact", head: true })
-            .eq("event_type", "project_click"),
-          supabase
-            .from("analytics_events")
-            .select("*", { count: "exact", head: true })
-            .eq("event_type", "contact_click"),
-          supabase
-            .from("analytics_events")
-            .select("id, event_type, target_name, device_type, created_at")
-            .order("created_at", { ascending: false })
-            .limit(15),
-          supabase
-            .from("analytics_events")
-            .select("target_name")
-            .eq("event_type", "project_click")
-            .limit(200),
-        ]);
+      const [
+        viewsRes,
+        cvRes,
+        projectClicksRes,
+        contactClicksRes,
+        recentRes,
+        projectClicksDataRes,
+        pageViews7dRes,
+      ] = await Promise.all([
+        supabase
+          .from("analytics_events")
+          .select("*", { count: "exact", head: true })
+          .eq("event_type", "page_view"),
+        supabase
+          .from("analytics_events")
+          .select("*", { count: "exact", head: true })
+          .eq("event_type", "cv_download"),
+        supabase
+          .from("analytics_events")
+          .select("*", { count: "exact", head: true })
+          .eq("event_type", "project_click"),
+        supabase
+          .from("analytics_events")
+          .select("*", { count: "exact", head: true })
+          .eq("event_type", "contact_click"),
+        supabase
+          .from("analytics_events")
+          .select("id, event_type, target_name, device_type, created_at")
+          .order("created_at", { ascending: false })
+          .limit(15),
+        supabase
+          .from("analytics_events")
+          .select("target_name")
+          .eq("event_type", "project_click")
+          .limit(200),
+        supabase
+          .from("analytics_events")
+          .select("created_at")
+          .eq("event_type", "page_view")
+          .gte("created_at", sevenDaysAgo.toISOString())
+          .limit(1000),
+      ]);
 
       // If all queries failed (e.g. database table not created yet), provide demo fallback
       const hasError = viewsRes.error && recentRes.error;
@@ -89,6 +152,15 @@ export default function AdminDashboardPage() {
           totalCvDownloads: 24,
           totalProjectClicks: 65,
           totalContactClicks: 18,
+          weeklyViews: [
+            { dateKey: "d1", label: "Sab 19", fullDate: "Sabtu, 19 Sep", count: 14 },
+            { dateKey: "d2", label: "Min 20", fullDate: "Minggu, 20 Sep", count: 18 },
+            { dateKey: "d3", label: "Sen 21", fullDate: "Senin, 21 Sep", count: 25 },
+            { dateKey: "d4", label: "Sel 22", fullDate: "Selasa, 22 Sep", count: 22 },
+            { dateKey: "d5", label: "Rab 23", fullDate: "Rabu, 23 Sep", count: 31 },
+            { dateKey: "d6", label: "Kam 24", fullDate: "Kamis, 24 Sep", count: 19 },
+            { dateKey: "d7", label: "Jum 25", fullDate: "Jumat, 25 Sep", count: 28 },
+          ],
           recentEvents: [
             {
               id: "demo-1",
@@ -133,6 +205,9 @@ export default function AdminDashboardPage() {
         totalCvDownloads: cvRes.count ?? 0,
         totalProjectClicks: projectClicksRes.count ?? 0,
         totalContactClicks: contactClicksRes.count ?? 0,
+        weeklyViews: pageViews7dRes.data
+          ? aggregateLast7DaysViews(pageViews7dRes.data)
+          : aggregateLast7DaysViews([]),
         recentEvents: (recentRes.data as AnalyticsSummary["recentEvents"]) || [],
         topProjects: sortedProjects,
       });
@@ -140,6 +215,7 @@ export default function AdminDashboardPage() {
       // Fallback cleanly on network failure
     } finally {
       setLoading(false);
+      setLastFetched(new Date());
     }
   };
 
@@ -189,7 +265,7 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Button
             onClick={() => fetchDashboardData(true)}
             variant="outline"
@@ -199,6 +275,13 @@ export default function AdminDashboardPage() {
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
             <span>Refresh</span>
           </Button>
+
+          {lastFetched && (
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-zinc-500 font-mono">
+              <Clock className="w-3.5 h-3.5 text-zinc-500" />
+              <span>Diperbarui {lastFetched.toLocaleTimeString("id-ID")}</span>
+            </div>
+          )}
 
           <Button
             asChild
@@ -244,6 +327,9 @@ export default function AdminDashboardPage() {
           accentColor="amber"
         />
       </div>
+
+      {/* Tren Kunjungan 7 Hari Terakhir Chart */}
+      <WeeklyViewsChart data={data.weeklyViews} loading={loading} />
 
       {/* Two Column Grid: Top Projects & Live Activity Log */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

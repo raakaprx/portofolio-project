@@ -24,6 +24,16 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { MultiImageUploader } from "@/components/admin/MultiImageUploader";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_EXPERIENCES, type ExperienceItem } from "@/lib/portfolio-defaults";
@@ -43,6 +53,8 @@ export default function AdminExperiencesPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [expToDelete, setExpToDelete] = useState<{ id: string; company: string } | null>(null);
 
   // Form State
   const [company, setCompany] = useState("");
@@ -298,21 +310,24 @@ NOTIFY pgrst, 'reload schema';`;
     });
   };
 
-  const handleDelete = async (id?: string, compName?: string) => {
+  const handleDelete = async (id?: string) => {
     if (!id) {
       toast.error("Pengalaman default tidak dapat dihapus dari database lokal");
       return;
     }
-    if (!confirm(`Hapus pengalaman di "${compName}"?`)) return;
 
+    setDeletingId(id);
     try {
       const { error } = await supabase.from("experiences").delete().eq("id", id);
       if (error) throw error;
       toast.success("Pengalaman kerja berhasil dihapus");
       await triggerRevalidation("/");
+      setExpToDelete(null);
       fetchExperiences();
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, "Gagal menghapus pengalaman"));
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -469,12 +484,17 @@ NOTIFY pgrst, 'reload schema';`;
 
                   {exp.id && (
                     <Button
-                      onClick={() => handleDelete(exp.id, exp.company)}
+                      onClick={() => setExpToDelete({ id: exp.id!, company: exp.company })}
+                      disabled={deletingId === exp.id}
                       size="sm"
                       variant="outline"
                       className="h-8 rounded-xl border-red-900/60 bg-red-950/30 hover:bg-red-900/50 text-red-300 text-xs font-mono"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      {deletingId === exp.id ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-3 h-3" />
+                      )}
                     </Button>
                   )}
                 </div>
@@ -815,6 +835,49 @@ NOTIFY pgrst, 'reload schema';`;
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Confirmation Alert Dialog */}
+      <AlertDialog
+        open={!!expToDelete}
+        onOpenChange={(open) => {
+          if (!open && !deletingId) setExpToDelete(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Pengalaman Kerja?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini tidak dapat dibatalkan. Pengalaman kerja di{" "}
+              <strong className="text-white font-semibold">
+                &quot;{expToDelete?.company}&quot;
+              </strong>{" "}
+              akan dihapus permanen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deletingId !== null}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deletingId !== null}
+              onClick={() => {
+                if (expToDelete) {
+                  handleDelete(expToDelete.id);
+                }
+              }}
+            >
+              {deletingId ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                  Menghapus...
+                </>
+              ) : (
+                "Hapus Pengalaman"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

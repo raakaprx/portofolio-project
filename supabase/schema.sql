@@ -113,20 +113,81 @@ ALTER TABLE public.certificates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.tech_stacks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.analytics_events ENABLE ROW LEVEL SECURITY;
 
--- 8. POLICIES: PUBLIC ACCESS (SELECT KONTEN & INSERT ANALYTICS)
-CREATE POLICY "Public can view projects" ON public.projects FOR SELECT USING (true);
-CREATE POLICY "Public can view experiences" ON public.experiences FOR SELECT USING (true);
-CREATE POLICY "Public can view certificates" ON public.certificates FOR SELECT USING (true);
-CREATE POLICY "Public can view tech_stacks" ON public.tech_stacks FOR SELECT USING (true);
-CREATE POLICY "Public can insert analytics events" ON public.analytics_events FOR INSERT WITH CHECK (true);
+-- 8. GRANT PRIVILEGES (LEAST PRIVILEGE)
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
 
--- 9. POLICIES: CMS FULL ACCESS (INSERT, UPDATE, DELETE)
--- Mengizinkan modifikasi data dari CMS secara langsung
-CREATE POLICY "CMS full access projects" ON public.projects FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "CMS full access experiences" ON public.experiences FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "CMS full access certificates" ON public.certificates FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "CMS full access tech_stacks" ON public.tech_stacks FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "CMS full access analytics" ON public.analytics_events FOR ALL USING (true) WITH CHECK (true);
+-- Anon: HANYA boleh SELECT konten publik dan INSERT analytics_events
+GRANT SELECT ON TABLE public.projects TO anon;
+GRANT SELECT ON TABLE public.experiences TO anon;
+GRANT SELECT ON TABLE public.certificates TO anon;
+GRANT SELECT ON TABLE public.tech_stacks TO anon;
+GRANT INSERT ON TABLE public.analytics_events TO anon;
+
+-- Authenticated: Full access
+GRANT ALL ON TABLE public.projects TO authenticated;
+GRANT ALL ON TABLE public.experiences TO authenticated;
+GRANT ALL ON TABLE public.certificates TO authenticated;
+GRANT ALL ON TABLE public.tech_stacks TO authenticated;
+GRANT ALL ON TABLE public.analytics_events TO authenticated;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated;
+
+-- 9. CLEANUP POLICIES LAMA (IDEMPOTENT)
+DROP POLICY IF EXISTS "Public can view projects" ON public.projects;
+DROP POLICY IF EXISTS "Public can view experiences" ON public.experiences;
+DROP POLICY IF EXISTS "Public can view certificates" ON public.certificates;
+DROP POLICY IF EXISTS "Public can view tech_stacks" ON public.tech_stacks;
+DROP POLICY IF EXISTS "Public can insert analytics events" ON public.analytics_events;
+DROP POLICY IF EXISTS "CMS full access projects" ON public.projects;
+DROP POLICY IF EXISTS "CMS full access experiences" ON public.experiences;
+DROP POLICY IF EXISTS "CMS full access certificates" ON public.certificates;
+DROP POLICY IF EXISTS "CMS full access tech_stacks" ON public.tech_stacks;
+DROP POLICY IF EXISTS "CMS full access analytics" ON public.analytics_events;
+DROP POLICY IF EXISTS "Public read projects" ON public.projects;
+DROP POLICY IF EXISTS "Public read experiences" ON public.experiences;
+DROP POLICY IF EXISTS "Public read certificates" ON public.certificates;
+DROP POLICY IF EXISTS "Public read tech_stacks" ON public.tech_stacks;
+DROP POLICY IF EXISTS "Public insert analytics" ON public.analytics_events;
+DROP POLICY IF EXISTS "Authenticated full access projects" ON public.projects;
+DROP POLICY IF EXISTS "Authenticated full access experiences" ON public.experiences;
+DROP POLICY IF EXISTS "Authenticated full access certificates" ON public.certificates;
+DROP POLICY IF EXISTS "Authenticated full access tech_stacks" ON public.tech_stacks;
+DROP POLICY IF EXISTS "Authenticated manage analytics" ON public.analytics_events;
+
+-- 10. POLICIES: PUBLIC ACCESS & AUTHENTICATED ACCESS
+-- Projects: Publik hanya bisa baca, Admin punya akses penuh
+CREATE POLICY "Public read projects" ON public.projects
+    FOR SELECT TO anon, authenticated USING (true);
+
+CREATE POLICY "Authenticated full access projects" ON public.projects
+    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- Experiences: Publik hanya bisa baca, Admin punya akses penuh
+CREATE POLICY "Public read experiences" ON public.experiences
+    FOR SELECT TO anon, authenticated USING (true);
+
+CREATE POLICY "Authenticated full access experiences" ON public.experiences
+    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- Certificates: Publik hanya bisa baca, Admin punya akses penuh
+CREATE POLICY "Public read certificates" ON public.certificates
+    FOR SELECT TO anon, authenticated USING (true);
+
+CREATE POLICY "Authenticated full access certificates" ON public.certificates
+    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- Tech Stacks: Publik hanya bisa baca, Admin punya akses penuh
+CREATE POLICY "Public read tech_stacks" ON public.tech_stacks
+    FOR SELECT TO anon, authenticated USING (true);
+
+CREATE POLICY "Authenticated full access tech_stacks" ON public.tech_stacks
+    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- Analytics Events: Publik & Admin bisa kirim telemetry (INSERT), Admin bisa baca/kelola (ALL)
+CREATE POLICY "Public insert analytics" ON public.analytics_events
+    FOR INSERT TO anon, authenticated WITH CHECK (true);
+
+CREATE POLICY "Authenticated manage analytics" ON public.analytics_events
+    FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 10. STORAGE: BUCKET UNTUK ASSETS PORTFOLIO
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -153,18 +214,22 @@ EXCEPTION
     WHEN undefined_object THEN NULL;
 END $$;
 
--- Storage Policies: Public Read & CMS Full Upload/Update/Delete
+-- Storage Policies: Public Read & CMS Authenticated Upload/Update/Delete
 CREATE POLICY "Public can view portfolio assets" ON storage.objects
-FOR SELECT USING (bucket_id = 'portfolio-assets');
+    FOR SELECT TO anon, authenticated
+    USING (bucket_id = 'portfolio-assets');
 
 CREATE POLICY "CMS can upload portfolio assets" ON storage.objects
-FOR INSERT WITH CHECK (bucket_id = 'portfolio-assets');
+    FOR INSERT TO authenticated
+    WITH CHECK (bucket_id = 'portfolio-assets');
 
 CREATE POLICY "CMS can update portfolio assets" ON storage.objects
-FOR UPDATE USING (bucket_id = 'portfolio-assets');
+    FOR UPDATE TO authenticated
+    USING (bucket_id = 'portfolio-assets');
 
 CREATE POLICY "CMS can delete portfolio assets" ON storage.objects
-FOR DELETE USING (bucket_id = 'portfolio-assets');
+    FOR DELETE TO authenticated
+    USING (bucket_id = 'portfolio-assets');
 
 -- 11. SEED DEFAULT DATA PORTFOLIO LENGKAP (SESUAI CV TERBARU)
 -- Experiences

@@ -15,6 +15,16 @@ import {
 } from "lucide-react";
 import { Github, getTechLogo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_PROJECTS } from "@/lib/portfolio-defaults";
 import { triggerRevalidation } from "@/lib/revalidate";
@@ -48,6 +58,7 @@ export default function AdminProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<{ id: string; title: string } | null>(null);
 
   const supabase = createClient();
 
@@ -144,8 +155,6 @@ export default function AdminProjectsPage() {
   };
 
   const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`Hapus project "${title}" secara permanen?`)) return;
-
     setDeletingId(id);
     try {
       const { error } = await supabase.from("projects").delete().eq("id", id);
@@ -154,6 +163,7 @@ export default function AdminProjectsPage() {
       setProjects((prev) => prev.filter((item) => item.id !== id));
       toast.success(`Project "${title}" berhasil dihapus`);
       await triggerRevalidation("/");
+      setProjectToDelete(null);
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, "Gagal menghapus project"));
     } finally {
@@ -346,7 +356,7 @@ export default function AdminProjectsPage() {
                   </Button>
 
                   <Button
-                    onClick={() => handleDelete(p.id, p.title)}
+                    onClick={() => setProjectToDelete({ id: p.id, title: p.title })}
                     disabled={deletingId === p.id}
                     size="sm"
                     variant="outline"
@@ -365,6 +375,49 @@ export default function AdminProjectsPage() {
           </div>
         )}
       </div>
+
+      {/* Confirmation Alert Dialog */}
+      <AlertDialog
+        open={!!projectToDelete}
+        onOpenChange={(open) => {
+          if (!open && !deletingId) setProjectToDelete(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Project?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini tidak dapat dibatalkan. Project{" "}
+              <strong className="text-white font-semibold">
+                &quot;{projectToDelete?.title}&quot;
+              </strong>{" "}
+              akan dihapus permanen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deletingId !== null}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deletingId !== null}
+              onClick={() => {
+                if (projectToDelete) {
+                  handleDelete(projectToDelete.id, projectToDelete.title);
+                }
+              }}
+            >
+              {deletingId ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                  Menghapus...
+                </>
+              ) : (
+                "Hapus Project"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

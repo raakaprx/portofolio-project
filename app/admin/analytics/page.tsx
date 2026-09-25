@@ -38,6 +38,8 @@ interface AnalyticsEventRecord {
 }
 
 export default function AdminAnalyticsPage() {
+  type DateFilter = "today" | "7d" | "30d" | "all";
+  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [events, setEvents] = useState<AnalyticsEventRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -47,14 +49,27 @@ export default function AdminAnalyticsPage() {
 
   const supabase = createClient();
 
-  const fetchEvents = async (silent = false) => {
+  const fetchEvents = async (silent = false, activeDateFilter = dateFilter) => {
     if (!silent) setLoading(true);
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from("analytics_events")
         .select("*")
-        .order("created_at", { ascending: false })
-        .limit(300);
+        .order("created_at", { ascending: false });
+
+      if (activeDateFilter === "today") {
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        query = query.gte("created_at", todayStart.toISOString());
+      } else if (activeDateFilter === "7d") {
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        query = query.gte("created_at", sevenDaysAgo.toISOString());
+      } else if (activeDateFilter === "30d") {
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        query = query.gte("created_at", thirtyDaysAgo.toISOString());
+      }
+
+      const { data, error } = await query.limit(300);
 
       if (error) {
         toast.error(getErrorMessage(error, "Gagal memuat analitik"));
@@ -71,19 +86,19 @@ export default function AdminAnalyticsPage() {
   };
 
   useEffect(() => {
-    fetchEvents();
+    fetchEvents(false, dateFilter);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dateFilter]);
 
   // Optional auto-refresh every 20 seconds
   useEffect(() => {
     if (!autoRefresh) return;
     const interval = setInterval(() => {
-      fetchEvents(true);
+      fetchEvents(true, dateFilter);
     }, 20000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoRefresh]);
+  }, [autoRefresh, dateFilter]);
 
   const extractIp = (row: AnalyticsEventRecord) => {
     if (row.ip_address) return row.ip_address;
@@ -229,6 +244,31 @@ export default function AdminAnalyticsPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          {/* Date Range Filter Buttons */}
+          <div className="inline-flex items-center p-1 rounded-xl bg-zinc-900 border border-zinc-800 text-xs font-mono">
+            {(
+              [
+                { id: "all", label: "All Time" },
+                { id: "30d", label: "30 Days" },
+                { id: "7d", label: "7 Days" },
+                { id: "today", label: "Today" },
+              ] as const
+            ).map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setDateFilter(tab.id)}
+                className={`px-3 py-1 rounded-lg transition-all duration-150 ${
+                  dateFilter === tab.id
+                    ? "bg-zinc-800 text-white font-medium shadow-sm border border-zinc-700/60"
+                    : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
           <Button
             onClick={handleTestPing}
             disabled={sendingTest}
@@ -238,11 +278,11 @@ export default function AdminAnalyticsPage() {
             title="Kirim event uji coba untuk mengecek IP Anda sendiri"
           >
             <Send className={`w-3.5 h-3.5 ${sendingTest ? "animate-pulse" : ""}`} />
-            <span>Test Ping (Cek IP Saya)</span>
+            <span>Test Ping</span>
           </Button>
 
           <Button
-            onClick={() => fetchEvents(false)}
+            onClick={() => fetchEvents(false, dateFilter)}
             variant="outline"
             size="sm"
             className="rounded-xl border-zinc-700 bg-zinc-800 text-zinc-300 hover:text-white text-xs font-mono h-9 gap-1.5"
