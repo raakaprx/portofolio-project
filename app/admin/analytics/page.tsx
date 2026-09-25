@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatsCard } from "@/components/admin/StatsCard";
+import { AnalyticsCharts } from "@/components/admin/AnalyticsCharts";
 import { createClient } from "@/lib/supabase/client";
 import { getErrorMessage } from "@/lib/utils";
 import { toast } from "sonner";
@@ -374,6 +375,9 @@ export default function AdminAnalyticsPage() {
           </span>
         </div>
       </div>
+
+      {/* Visual Analytics Charts Section */}
+      <AnalyticsCharts events={events} dateFilter={dateFilter} loading={loading} />
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
