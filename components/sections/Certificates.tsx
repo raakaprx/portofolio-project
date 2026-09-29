@@ -79,7 +79,7 @@ export default function Certificates({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-md rounded-2xl p-6 sm:p-7 flex flex-col justify-between group relative overflow-hidden bg-white dark:bg-zinc-950/80 border border-zinc-300 dark:border-zinc-800 hover:border-zinc-500 dark:hover:border-zinc-650 shadow-sm hover:shadow-lg dark:hover:shadow-black/40 transition-all duration-300"
+              className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-md rounded-2xl p-6 sm:p-7 flex flex-col justify-between group relative overflow-hidden bg-white dark:bg-zinc-950/80 border border-zinc-300 dark:border-zinc-800 hover:border-zinc-500 dark:hover:border-zinc-700 shadow-sm hover:shadow-lg dark:hover:shadow-black/40 transition-all duration-300"
             >
               <div>
                 {/* Header: Icon + Official Credential Seal */}
@@ -89,7 +89,7 @@ export default function Certificates({
                   </div>
 
                   {/* Authentic, Clean Official Accreditation Badge (Non-AI Style) */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800/80 text-[11px] font-bold text-emerald-850 dark:text-emerald-400 shadow-2xs">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800/80 text-[11px] font-bold text-emerald-800 dark:text-emerald-400 shadow-2xs">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     <span className="font-sans tracking-tight">{getIssuerBadge(cert.issuer)}</span>
                   </div>
@@ -110,7 +110,7 @@ export default function Certificates({
                 </div>
               </div>
 
-              <div className="mt-8 pt-4 border-t border-zinc-200 dark:border-zinc-850">
+              <div className="mt-8 pt-4 border-t border-zinc-200 dark:border-zinc-800">
                 <div className="flex flex-wrap gap-1.5 mb-5">
                   {cert.skillsVerified.map((skill) => (
                     <span

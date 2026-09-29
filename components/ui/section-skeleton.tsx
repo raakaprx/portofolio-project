@@ -8,7 +8,7 @@ export function SectionSkeleton({
       <div className="flex flex-col items-center mb-12">
         <div className="h-5 w-28 bg-zinc-200 dark:bg-zinc-800 rounded-full mb-3" />
         <div className="h-9 w-64 bg-zinc-200 dark:bg-zinc-800 rounded-xl mb-3" />
-        <div className="h-4 w-80 max-w-full bg-zinc-100 dark:bg-zinc-850 rounded-lg" />
+        <div className="h-4 w-80 max-w-full bg-zinc-100 dark:bg-zinc-800 rounded-lg" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -24,9 +24,9 @@ export function SectionSkeleton({
               <div className="h-3.5 w-5/6 bg-zinc-100 dark:bg-zinc-900 rounded" />
             </div>
             <div className="flex gap-2 pt-2">
-              <div className="h-6 w-16 bg-zinc-200 dark:bg-zinc-850 rounded-md" />
-              <div className="h-6 w-16 bg-zinc-200 dark:bg-zinc-850 rounded-md" />
-              <div className="h-6 w-16 bg-zinc-200 dark:bg-zinc-850 rounded-md" />
+              <div className="h-6 w-16 bg-zinc-200 dark:bg-zinc-800 rounded-md" />
+              <div className="h-6 w-16 bg-zinc-200 dark:bg-zinc-800 rounded-md" />
+              <div className="h-6 w-16 bg-zinc-200 dark:bg-zinc-800 rounded-md" />
             </div>
           </div>
         ))}

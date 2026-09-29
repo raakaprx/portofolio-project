@@ -86,12 +86,12 @@ export default function ProjectJourney() {
                   transition={{ duration: 0.4 }}
                   className="w-full bg-white/90 dark:bg-zinc-950/80 rounded-2xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800/80 hover:border-zinc-300 dark:hover:border-zinc-700/80 transition-all duration-300 relative shadow-xs"
                 >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-zinc-900 pb-4">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-zinc-200 dark:border-zinc-900 pb-4">
                     <div>
-                      <span className="text-2xl font-extrabold text-white font-mono">{step.year}</span>
-                      <h3 className="text-base font-semibold text-zinc-300 mt-0.5">{step.focus}</h3>
+                      <span className="text-2xl font-extrabold text-zinc-950 dark:text-white font-mono">{step.year}</span>
+                      <h3 className="text-base font-semibold text-zinc-700 dark:text-zinc-300 mt-0.5">{step.focus}</h3>
                     </div>
-                    <span className="px-2.5 py-1 text-xs font-mono rounded bg-zinc-900 border border-zinc-800/80 text-zinc-500 self-start md:self-center">
+                    <span className="px-2.5 py-1 text-xs font-mono rounded bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800/80 text-zinc-600 dark:text-zinc-400 self-start md:self-center">
                       Phase {index + 1}
                     </span>
                   </div>
@@ -100,13 +100,13 @@ export default function ProjectJourney() {
                     {step.projects.map((proj) => (
                       <div
                         key={proj.title}
-                        className="bg-zinc-950/40 border border-zinc-900/80 rounded-xl p-4 flex flex-col gap-2 hover:bg-zinc-950/80 transition-colors"
+                        className="bg-zinc-50 dark:bg-zinc-950/40 border border-zinc-200 dark:border-zinc-900/80 rounded-xl p-4 flex flex-col gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-950/80 transition-colors"
                       >
                         <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-zinc-500 shrink-0 mt-0.5" />
-                          <h4 className="font-semibold text-sm text-white leading-tight">{proj.title}</h4>
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                          <h4 className="font-semibold text-sm text-zinc-950 dark:text-white leading-tight">{proj.title}</h4>
                         </div>
-                        <p className="text-xs text-zinc-500 leading-relaxed">{proj.details}</p>
+                        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">{proj.details}</p>
                       </div>
                     ))}
                   </div>
@@ -117,7 +117,7 @@ export default function ProjectJourney() {
                   <div className="py-8 flex flex-col items-center gap-1.5 opacity-40">
                     <div className="w-px h-10 bg-gradient-to-b from-zinc-800 to-transparent" />
                     <ArrowDown className="w-4 h-4 text-zinc-500" />
-                    <div className="w-px h-10 bg-gradient-to-t from-zinc-850 to-transparent" />
+                    <div className="w-px h-10 bg-gradient-to-t from-zinc-800 to-transparent" />
                   </div>
                 )}
               </div>

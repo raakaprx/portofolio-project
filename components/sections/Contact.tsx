@@ -271,7 +271,7 @@ export default function Contact({
                     asChild
                     variant="outline"
                     size="sm"
-                    className="flex-1 rounded-xl border border-zinc-300 dark:border-zinc-750 bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-xs font-semibold gap-1.5"
+                    className="flex-1 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-xs font-semibold gap-1.5"
                   >
                     <a
                       href={`mailto:${emailAddress}`}
@@ -397,7 +397,7 @@ export default function Contact({
                   </div>
                 )}
 
-                <div className="pt-4 border-t border-zinc-200 dark:border-zinc-850">
+                <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
                   <Button
                     type="submit"
                     disabled={isSubmitting}
