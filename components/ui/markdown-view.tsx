@@ -24,8 +24,8 @@ export function MarkdownView({ content, className = "" }: MarkdownViewProps) {
       elements.push(
         <ul key={`list-${elements.length}`} className="my-3 space-y-2 pl-2">
           {listBuffer.map((item, idx) => (
-            <li key={idx} className="flex items-start gap-2.5 text-zinc-300 text-sm leading-relaxed">
-              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+            <li key={idx} className="flex items-start gap-2.5 text-zinc-700 dark:text-zinc-300 text-sm leading-relaxed">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-blue-400 shrink-0" />
               <span>{formatInline(item)}</span>
             </li>
           ))}

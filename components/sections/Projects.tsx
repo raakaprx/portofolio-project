@@ -169,8 +169,8 @@ export default function Projects({
 
                     {project.is_featured && (
                       <div className="absolute top-2.5 right-2.5">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-zinc-900/90 dark:bg-white/90 backdrop-blur-md text-[10px] font-sans font-semibold text-white dark:text-zinc-950 shadow-xs border border-white/10 dark:border-zinc-800">
-                          <Sparkles className="w-3 h-3 text-amber-400 dark:text-amber-500" />
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-zinc-900/90 dark:bg-zinc-900/90 backdrop-blur-md text-[10px] font-sans font-semibold text-zinc-100 dark:text-zinc-100 shadow-xs border border-zinc-700/60 dark:border-zinc-700/80">
+                          <Sparkles className="w-3 h-3 text-amber-400" />
                           Featured
                         </span>
                       </div>
@@ -274,9 +274,9 @@ export default function Projects({
                     sizes="(max-width: 768px) 100vw, 672px"
                   />
                   <div className="absolute top-3 left-3">
-                    <Badge className="bg-black/70 backdrop-blur-md text-white border-zinc-700 font-sans text-xs">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-black/75 backdrop-blur-md text-white border border-white/20 font-sans text-xs font-semibold shadow-md">
                       {previewProject.role}
-                    </Badge>
+                    </span>
                   </div>
                 </div>
 

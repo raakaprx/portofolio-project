@@ -124,10 +124,10 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
             </Badge>
 
             {project.is_featured && (
-              <Badge className="bg-amber-500/10 text-amber-500 border border-amber-500/20 font-mono text-xs gap-1">
-                <Sparkles className="w-3 h-3" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-amber-500/10 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 dark:border-amber-500/30 font-mono text-xs font-semibold">
+                <Sparkles className="w-3.5 h-3.5" />
                 Featured Project
-              </Badge>
+              </span>
             )}
           </div>
 
@@ -195,7 +195,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                       key={idx}
                       className="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/80 text-center"
                     >
-                      <span className="text-xs text-zinc-500 font-mono block mb-1">
+                      <span className="text-xs text-zinc-500 dark:text-zinc-400 font-mono block mb-1">
                         {m.label}
                       </span>
                       <span className="text-sm sm:text-base font-bold text-zinc-950 dark:text-white font-mono">
@@ -233,14 +233,14 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
               <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-3 text-xs font-mono">
                 <div className="flex items-start justify-between gap-3">
-                  <span className="text-zinc-500 shrink-0">Role:</span>
+                  <span className="text-zinc-500 dark:text-zinc-400 shrink-0">Role:</span>
                   <span className="text-zinc-950 dark:text-zinc-100 font-semibold text-right">
                     {project.role}
                   </span>
                 </div>
                 {(project.year || project.period) && (
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-zinc-500 shrink-0">Tahun:</span>
+                    <span className="text-zinc-500 dark:text-zinc-400 shrink-0">Tahun:</span>
                     <span className="text-zinc-950 dark:text-zinc-100 font-semibold text-right">
                       {project.year || project.period}
                     </span>
@@ -248,13 +248,13 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 )}
                 {project.live_url && (
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-zinc-500 shrink-0">Live Demo:</span>
+                    <span className="text-zinc-500 dark:text-zinc-400 shrink-0">Live Demo:</span>
                     <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Aktif</span>
                   </div>
                 )}
                 {project.repo_url && (
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-zinc-500 shrink-0">Source Code:</span>
+                    <span className="text-zinc-500 dark:text-zinc-400 shrink-0">Source Code:</span>
                     <span className="text-blue-600 dark:text-blue-400 font-semibold">Public Repo</span>
                   </div>
                 )}

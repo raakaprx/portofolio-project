@@ -160,7 +160,7 @@ export default function Navbar() {
               <Button
                 asChild
                 variant="outline"
-                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-750 bg-zinc-100 dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-800 h-11 justify-center gap-2 font-semibold"
+                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-800 h-11 justify-center gap-2 font-semibold"
               >
                 <a
                   href="/cv.pdf"
