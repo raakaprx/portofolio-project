@@ -96,25 +96,25 @@ export default function Projects({
             <TabsList className="bg-zinc-100/90 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-1 rounded-xl flex overflow-x-auto max-w-full scrollbar-none w-full sm:w-auto justify-start sm:justify-center shadow-xs">
               <TabsTrigger
                 value="all"
-                className="whitespace-nowrap shrink-0 text-xs font-semibold text-zinc-700 dark:text-zinc-300 data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-850 data-[state=active]:text-zinc-950 dark:data-[state=active]:text-white data-[state=active]:shadow-xs"
+                className="whitespace-nowrap shrink-0 text-xs font-semibold text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white data-[state=active]:bg-white dark:data-[state=active]:bg-white data-[state=active]:text-zinc-950 dark:data-[state=active]:text-zinc-950 data-[state=active]:shadow-xs"
               >
                 All Projects
               </TabsTrigger>
               <TabsTrigger
                 value="fullstack"
-                className="whitespace-nowrap shrink-0 text-xs font-semibold text-zinc-700 dark:text-zinc-300 data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-850 data-[state=active]:text-zinc-950 dark:data-[state=active]:text-white data-[state=active]:shadow-xs"
+                className="whitespace-nowrap shrink-0 text-xs font-semibold text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white data-[state=active]:bg-white dark:data-[state=active]:bg-white data-[state=active]:text-zinc-950 dark:data-[state=active]:text-zinc-950 data-[state=active]:shadow-xs"
               >
                 Full-Stack
               </TabsTrigger>
               <TabsTrigger
                 value="laravel"
-                className="whitespace-nowrap shrink-0 text-xs font-semibold text-zinc-700 dark:text-zinc-300 data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-850 data-[state=active]:text-zinc-950 dark:data-[state=active]:text-white data-[state=active]:shadow-xs"
+                className="whitespace-nowrap shrink-0 text-xs font-semibold text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white data-[state=active]:bg-white dark:data-[state=active]:bg-white data-[state=active]:text-zinc-950 dark:data-[state=active]:text-zinc-950 data-[state=active]:shadow-xs"
               >
                 Laravel & Backend
               </TabsTrigger>
               <TabsTrigger
                 value="machine-learning"
-                className="whitespace-nowrap shrink-0 text-xs font-semibold text-zinc-700 dark:text-zinc-300 data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-850 data-[state=active]:text-zinc-950 dark:data-[state=active]:text-white data-[state=active]:shadow-xs"
+                className="whitespace-nowrap shrink-0 text-xs font-semibold text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white data-[state=active]:bg-white dark:data-[state=active]:bg-white data-[state=active]:text-zinc-950 dark:data-[state=active]:text-zinc-950 data-[state=active]:shadow-xs"
               >
                 Machine Learning
               </TabsTrigger>

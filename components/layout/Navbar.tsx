@@ -114,7 +114,7 @@ export default function Navbar() {
           <Button
             asChild
             size="sm"
-            className="rounded-full bg-zinc-950 text-white hover:bg-zinc-850 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 font-semibold px-4.5 h-9 shadow-xs text-xs cursor-pointer hover:-translate-y-0.5 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            className="rounded-full bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200 font-semibold px-4.5 h-9 shadow-xs text-xs cursor-pointer hover:-translate-y-0.5 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]"
           >
             <a href="#contact">
               Let&apos;s Talk

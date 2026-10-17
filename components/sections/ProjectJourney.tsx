@@ -117,7 +117,7 @@ export default function ProjectJourney() {
                   <div className="py-8 flex flex-col items-center gap-1.5 opacity-40">
                     <div className="w-px h-10 bg-gradient-to-b from-zinc-800 to-transparent" />
                     <ArrowDown className="w-4 h-4 text-zinc-500" />
-                    <div className="w-px h-10 bg-gradient-to-t from-zinc-850 to-transparent" />
+                    <div className="w-px h-10 bg-gradient-to-t from-zinc-800 to-transparent" />
                   </div>
                 )}
               </div>

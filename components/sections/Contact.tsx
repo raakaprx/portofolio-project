@@ -397,7 +397,7 @@ export default function Contact({
                   </div>
                 )}
 
-                <div className="pt-4 border-t border-zinc-200 dark:border-zinc-850">
+                <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
                   <Button
                     type="submit"
                     disabled={isSubmitting}
